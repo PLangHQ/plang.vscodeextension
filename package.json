@@ -1,11 +1,15 @@
 {
-    "name": "p-language",
-    "displayName": "p-language",
-    "description": "",
-    "version": "0.0.1",
+    "name": "plang-extension",
+    "displayName": "plang-extension",
+    "description": "Add support for plang programming language to VS Code",
+    "version": "0.1.0",
     "engines": {
         "vscode": "^1.79.0"
     },
+    "repository": {
+        "url": "https://github.com/PLangHQ/plang.vscodeextension"
+    },
+    "publisher": "PlangHQ",
     "categories": [
         "Other"
     ],
@@ -54,7 +58,10 @@
                                 "items": {
                                     "type": "string"
                                 },
-                                "default": ["run", "${input:parameterName}"]
+                                "default": [
+                                    "run",
+                                    "${input:parameterName}"
+                                ]
                             },
                             "runtimeExecutable": {
                                 "type": "string",
@@ -78,9 +85,11 @@
                                 "items": {
                                     "type": "string"
                                 },
-                                "default": ["exec", "${input:parameterName}"]
+                                "default": [
+                                    "exec",
+                                    "${input:parameterName}"
+                                ]
                             }
-                            
                         }
                     }
                 },
@@ -150,7 +159,6 @@
                 "command": "extension.startPLangDebug",
                 "title": "Start PLang Debug"
             }
-            
         ],
         "keybindings": [
             {
@@ -163,10 +171,10 @@
                 "key": "f5",
                 "when": "editorTextFocus"
             },
-              {
-                  "key": "f12",
-                  "command": "extension.goToGoal"
-                }
+            {
+                "key": "f12",
+                "command": "extension.goToGoal"
+            }
         ],
         "viewsContainers": {
             "activitybar": [
@@ -222,7 +230,7 @@
         "ts-loader": "^9.4.2",
         "typescript": "^5.1.6",
         "webpack": "^5.81.0",
-        "webpack-cli": "^5.0.2"
+        "webpack-cli": "^5.1.4"
     },
     "dependencies": {
         "@types/chokidar": "^2.1.3",
