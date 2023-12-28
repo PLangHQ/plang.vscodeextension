@@ -1,0 +1,236 @@
+{
+    "name": "p-language",
+    "displayName": "p-language",
+    "description": "",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.79.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onLanguage:goal",
+        "onDebug:goal"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "languages": [
+            {
+                "id": "goal",
+                "extensions": [
+                    ".goal"
+                ]
+            }
+        ],
+        "breakpoints": [
+            {
+                "language": "goal"
+            }
+        ],
+        "debuggers": [
+            {
+                "type": "goal",
+                "label": "Goal Debugger",
+                "program": "./dist/extension.js",
+                "runtime": "node",
+                "languages": [
+                    "goal"
+                ],
+                "configurationAttributes": {
+                    "launch": {
+                        "required": [
+                            "program"
+                        ],
+                        "properties": {
+                            "program": {
+                                "type": "string",
+                                "description": "Path to the PLang executable.",
+                                "default": "plang.exe"
+                            },
+                            "args": {
+                                "type": "array",
+                                "description": "Command line arguments to pass to the PLang executable.",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "default": ["run", "${input:parameterName}"]
+                            },
+                            "runtimeExecutable": {
+                                "type": "string",
+                                "description": "Path to the runtime executable to be used. Default is the PLang executable."
+                            }
+                        }
+                    },
+                    "launchFile": {
+                        "required": [
+                            "program"
+                        ],
+                        "properties": {
+                            "program": {
+                                "type": "string",
+                                "description": "Path to the PLang executable.",
+                                "default": "plang.exe"
+                            },
+                            "args": {
+                                "type": "array",
+                                "description": "Command line arguments to pass to the PLang executable.",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "default": ["exec", "${input:parameterName}"]
+                            }
+                            
+                        }
+                    }
+                },
+                "initialConfigurations": [
+                    {
+                        "type": "goal",
+                        "request": "launch",
+                        "name": "Debug with PLang",
+                        "program": "${file}",
+                        "args": [
+                            "run",
+                            "${input:parameterName}",
+                            "--debug"
+                        ],
+                        "runtimeExecutable": "plang.exe"
+                    },
+                    {
+                        "type": "goal",
+                        "request": "launchFile",
+                        "name": "Debug file with PLang",
+                        "program": "${file}",
+                        "args": [
+                            "run",
+                            "file",
+                            "${input:parameterName}",
+                            "--debug"
+                        ],
+                        "runtimeExecutable": "plang.exe",
+                        "customParameter": "${input:parameterName}"
+                    }
+                ]
+            }
+        ],
+        "inputs": [
+            {
+                "id": "parameterName",
+                "type": "promptString",
+                "description": "Please enter a parameter value.",
+                "default": ""
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "extension.regenerateStep",
+                    "group": "navigation",
+                    "when": "resourceExtname == .goal"
+                }
+            ],
+            "editor/lineNumber/context": [
+                {
+                    "command": "extension.goToLine",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "extension.goToLine",
+                "title": "Run from here"
+            },
+            {
+                "command": "extension.regenerateStep",
+                "title": "Regenerate step"
+            },
+            {
+                "command": "extension.startPLangDebug",
+                "title": "Start PLang Debug"
+            }
+            
+        ],
+        "keybindings": [
+            {
+                "command": "extension.regenerateStep",
+                "key": "ctrl+shift+b",
+                "mac": "cmd+k"
+            },
+            {
+                "command": "extension.startPLangDebug",
+                "key": "f5",
+                "when": "editorTextFocus"
+            },
+              {
+                  "key": "f12",
+                  "command": "extension.goToGoal"
+                }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "PLanguage",
+                    "title": "PLanguage",
+                    "icon": "media/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "PLanguage": [
+                {
+                    "id": "source",
+                    "name": "Source"
+                },
+                {
+                    "id": "documentation",
+                    "name": "Documentation"
+                },
+                {
+                    "id": "code",
+                    "name": "Code"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run package",
+        "compile": "webpack --config webpack.config.js",
+        "watch": "webpack --config webpack.config.js --watch",
+        "package": "webpack --mode production --devtool hidden-source-map",
+        "compile-tests": "tsc -p . --outDir out",
+        "watch-tests": "tsc -p . -w --outDir out",
+        "pretest": "npm run compile-tests && npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.20",
+        "@types/glob": "^8.1.0",
+        "@types/jsonpath": "^0.2.2",
+        "@types/mocha": "^10.0.1",
+        "@types/node": "16.x",
+        "@types/vscode": "^1.79.0",
+        "@typescript-eslint/eslint-plugin": "^5.59.1",
+        "@typescript-eslint/parser": "^5.59.1",
+        "@vscode/debugadapter": "^1.63.0",
+        "@vscode/test-electron": "^2.3.0",
+        "eslint": "^8.39.0",
+        "glob": "^8.1.0",
+        "mocha": "^10.2.0",
+        "ts-loader": "^9.4.2",
+        "typescript": "^5.1.6",
+        "webpack": "^5.81.0",
+        "webpack-cli": "^5.0.2"
+    },
+    "dependencies": {
+        "@types/chokidar": "^2.1.3",
+        "@vscode/debugprotocol": "^1.63.0",
+        "await-notify": "^1.0.1",
+        "chokidar": "^3.5.3",
+        "express": "^4.18.2",
+        "jsonpath": "^1.1.1",
+        "node-fetch": "^3.3.2"
+    }
+}
