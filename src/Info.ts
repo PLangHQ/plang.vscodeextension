@@ -27,10 +27,11 @@ export class Info extends vscode.TreeItem  {
 					arguments: [vscode.Uri.file(fileToOpen)]
 				};
 			} else {
+				var arg = (fileToOpen.indexOf('http') != -1) ? vscode.Uri.parse(fileToOpen) : vscode.Uri.file(fileToOpen); 
 				this.command = {
 					command: 'vscode.open',
 					title: '',
-					arguments: [vscode.Uri.file(fileToOpen)]
+					arguments: [arg]
 				};
 			}
 		}

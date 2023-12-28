@@ -261,6 +261,7 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
 	if (refreshSourceView) ShowCode('');
 	codeProvider.treeView!.message = '';
 	if (prFile) {
+		codeProvider.data.push(new Info('Documentation', 'Click to open', 'https://github.com/PLangHQ/plang/blob/main/Documentation/modules/' + step.ModuleType + '.md'));
 		codeProvider.data.push(new Info('Module', step.ModuleType, ''));
 		codeProvider.data.push(new Info('Open pr file', 'Click to open', prFile.path));
 		if (prFile.Action) {

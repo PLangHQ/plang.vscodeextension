@@ -2,7 +2,7 @@
     "name": "plang-extension",
     "displayName": "plang-extension",
     "description": "Add support for plang programming language to VS Code",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "engines": {
         "vscode": "^1.79.0"
     },
@@ -10,8 +10,12 @@
         "url": "https://github.com/PLangHQ/plang.vscodeextension"
     },
     "publisher": "PlangHQ",
+    "author": { "name": "Ingi Gauti"},
+    "bugs": { "url": "https://github.com/PLangHQ/plang.vscodeextension/issues"},
+    "homepage": "https://plang.is",
+    "keywords": ["plang", "ide"],
     "categories": [
-        "Other"
+        "Programming Languages", "Debuggers" 
     ],
     "activationEvents": [
         "onLanguage:goal",
