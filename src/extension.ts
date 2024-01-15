@@ -19,7 +19,7 @@ import * as chokidar from 'chokidar';
 let sourceProvider: SourceCodeProvider;
 let documentationProvider: DocumentationProvider;
 let codeProvider: CodeProvider;
-const GoalFileName = '00. Goal.pr';
+export const GoalFileName = '00. Goal.pr';
 let runTerminal: vscode.Terminal;
 let buildTerminal: vscode.Terminal;
 let server: Server;
@@ -108,50 +108,91 @@ let isBuilding = false;
 let lastRuntimeValue : string | undefined = undefined;
 
 function setupDebugger(context: vscode.ExtensionContext) {
+
+	context.subscriptions.push(vscode.debug.onDidTerminateDebugSession((debugSession ) => {
+        // Check if the terminated session is the one we're interested in
+		var ds = debugDescriptor.debugSession as GoalDebugSession;
+        //if (debugSession === ds) {
+            // Debug session has ended, reset debugDescriptor.debugSession
+			debugDescriptor.debugSession?.clearDecorations();
+            debugDescriptor.debugSession = undefined;
+			
+            console.log('Debug session ended');
+        //}
+    }));
+
 	let disposable = vscode.commands.registerCommand('extension.startPLangDebug', async () => {
-        // Assuming you have a way to get the path of the file to check
-        let fileToCheck = '.build/Start/' + GoalFileName;
-		let runtimeExecutable = 'plang.exe';
-		var editor = vscode.window.activeTextEditor;
-		var folderPath = getRootPath(editor?.document.fileName);
-		var startFile = path.join(folderPath, fileToCheck);
-		if (fs.existsSync(startFile)) {
-			// Read the file and determine the correct executable
-			let content = fs.readFileSync(startFile, 'utf8');
-			runtimeExecutable = content.indexOf('"ModuleType": "PLang.Modules.WindowAppModule"') != -1 ? 'plangw.exe' : 'plang.exe';
+				
+		if (vscode.debug.activeDebugSession) {
+            // Continue the current debug session
+            vscode.commands.executeCommand('workbench.action.debug.continue');
+			return;
 		}
-		lastRuntimeValue = await vscode.window.showInputBox({
+
+		if (debugDescriptor.debugSession && vscode.debug.activeDebugSession) return;
+
+		let runtimeExecutable = 'plang.exe';
+		let command = await vscode.window.showInputBox({
             prompt: "Please enter a parameter value",
             placeHolder: "Enter parameter here", 
 			value: lastRuntimeValue
         });
-
-		if (lastRuntimeValue === undefined) {
-            // User pressed ESC or closed the input box
+		if (command === undefined) {
             return;
         }
+		lastRuntimeValue = command;	
+		const regex = /(?<option>--\w+)|(?<param>\w+=["']?[\w\s]+["']?)|(?<file>\w+)/g;
 
+		let match;
+		let options = '';
+		let parameter = '';
+		let startFile = 'Start';
 
+		var args = ['exec'];
+		while ((match = regex.exec(command)) !== null && match.groups) {
+			if (match.groups.option) {
+				options = match.groups.option;
+				args.push(options);
+			} else if (match.groups.param) {
+				parameter = match.groups.param;
+				args.push(parameter);
+			} else if (match.groups.file) {
+				startFile = match.groups.file;
+				
+			}
+		}
+		args.push(startFile);
+		var editor = vscode.window.activeTextEditor;
+		var folderPath = getRootPath(editor?.document.fileName);
+
+		var startBuildFile = path.join(folderPath, '.build', startFile, GoalFileName);
+		if (fs.existsSync(startBuildFile)) {
+			// Read the file and determine the correct executable
+			let content = fs.readFileSync(startBuildFile, 'utf8');
+			runtimeExecutable = content.indexOf('"ModuleType": "PLang.Modules.WindowAppModule"') != -1 ? 'plangw.exe' : 'plang.exe';
+		}
+		
+		
+		args.push('--debug');
         // Define the debug configuration
         let debugConfiguration : vscode.DebugConfiguration = {
             type: 'goal',
             name: 'PLang Debug',
             request: 'launch',
-            program: 'plang.exe',
+            program: runtimeExecutable,
 			console: "integratedTerminal",
-            args: ['exec', lastRuntimeValue, '--debug'], 
-
+            args: args,
+			cwd: folderPath
         };
-
+		
         // Start the debugger with the custom configuration
-        let ble = await vscode.debug.startDebugging(folderPath, debugConfiguration).then(
+        await vscode.debug.startDebugging(folderPath, debugConfiguration).then(
 			(value) => {
 				console.log('value:', value)
 			}, (reason) => {
 				console.log('reason:', reason)
 			}
 		);
-		console.log(ble);
 	});
 
     context.subscriptions.push(disposable);
@@ -211,7 +252,7 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
 
 		codeProvider.data = [new Info(goal.GoalName, goal.GoalName, editor.document.fileName)];
 		codeProvider.data.push(new Info('Step count', goal.GoalSteps.length, ''));
-		codeProvider.data.push(new Info('Open pr file', 'Click to open', goal.RelativePrPath));
+		codeProvider.data.push(new Info('Open pr file', 'Click to open', goal.path));
 		if (goal.GoalApiInfo != null) {
 			codeProvider.data.push(new Info('-- Http Response Information --', '', ''));
 			codeProvider.data.push(new Info('Method', goal.GoalApiInfo.Method, ''));
@@ -388,10 +429,19 @@ function getStepAndGoal(editor: vscode.TextEditor, lineNumber: number): [any, an
 	if (!fs.existsSync(goalFilePath)) {
 		return [undefined, undefined, undefined, false];
 	}
-
-	const [stepText, lineNr2] = getStep(editor, lineNumber, goalLineNr);
-	const goalPrFileContent = fs.readFileSync(goalFilePath);
-	const goal = JSON.parse(goalPrFileContent.toString());
+	let goalPrFileContent = '';
+	let [stepText, lineNr2] = ['', 0];
+	let goal = null;
+	try {
+		[stepText, lineNr2] = getStep(editor, lineNumber, goalLineNr);
+		goalPrFileContent = fs.readFileSync(goalFilePath).toString();
+		if (goalPrFileContent != '') {
+			goal = JSON.parse(goalPrFileContent);
+		}
+	} catch (e) {
+		console.error(e);
+		console.info("content:'" + goalPrFileContent + "'");
+	}
 	if (goal == null || goal == '' ) {
 		return [null, null, undefined, false]
 	}
@@ -494,10 +544,11 @@ export function getRootPath(dir: any) {
 	if (stats != null && stats.isFile()) {
 		dir = path.dirname(dir)
 	}
-	if (fs.existsSync(path.join(dir, 'Start.goal'))) { return dir; }
 
 	var buildDir = path.join(dir, '.build');
 	if (fs.existsSync(buildDir)) return path.normalize(dir);
+
+	if (fs.existsSync(path.join(dir, 'Start.goal'))) { return dir; }
 
 	let parentDir = path.join(dir, '../');
 	if (parentDir == dir) return '';

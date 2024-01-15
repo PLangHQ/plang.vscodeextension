@@ -2,7 +2,7 @@
     "name": "plang-extension",
     "displayName": "plang-extension",
     "description": "Add support for plang programming language to VS Code",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "engines": {
         "vscode": "^1.79.0"
     },
@@ -44,86 +44,6 @@
                 "runtime": "node",
                 "languages": [
                     "goal"
-                ],
-                "configurationAttributes": {
-                    "launch": {
-                        "required": [
-                            "program"
-                        ],
-                        "properties": {
-                            "program": {
-                                "type": "string",
-                                "description": "Path to the PLang executable.",
-                                "default": "plang.exe"
-                            },
-                            "args": {
-                                "type": "array",
-                                "description": "Command line arguments to pass to the PLang executable.",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "default": [
-                                    "run",
-                                    "${input:parameterName}"
-                                ]
-                            },
-                            "runtimeExecutable": {
-                                "type": "string",
-                                "description": "Path to the runtime executable to be used. Default is the PLang executable."
-                            }
-                        }
-                    },
-                    "launchFile": {
-                        "required": [
-                            "program"
-                        ],
-                        "properties": {
-                            "program": {
-                                "type": "string",
-                                "description": "Path to the PLang executable.",
-                                "default": "plang.exe"
-                            },
-                            "args": {
-                                "type": "array",
-                                "description": "Command line arguments to pass to the PLang executable.",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "default": [
-                                    "exec",
-                                    "${input:parameterName}"
-                                ]
-                            }
-                        }
-                    }
-                },
-                "initialConfigurations": [
-                    {
-                        "type": "goal",
-                        "request": "launch",
-                        "name": "Debug with PLang",
-                        "program": "${file}",
-                        "args": [
-                            "run",
-                            "${input:parameterName}",
-                            "--debug"
-                        ],
-                        "runtimeExecutable": "plang.exe"
-                    },
-                    {
-                        "type": "goal",
-                        "request": "launchFile",
-                        "name": "Debug file with PLang",
-                        "program": "${file}",
-                        "args": [
-                            "run",
-                            "file",
-                            "${input:parameterName}",
-                            "--debug"
-                        ],
-                        "runtimeExecutable": "plang.exe",
-                        "customParameter": "${input:parameterName}"
-                    }
                 ]
             }
         ],

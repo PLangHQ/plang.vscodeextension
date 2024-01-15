@@ -1,11 +1,13 @@
-## PLang Extension
+# PLang Extension
 
-### Overview
+## Overview
 This extension enhances the development experience in plang by providing an improved overview and debugging capabilities. As this is the initial version, we appreciate your understanding regarding its current quality. Our goal is to eventually transition the entire IDE to be developed in plang.
 
-### Features
+Get the extension at the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=PlangHQ.plang-extension)
 
-#### Sidebar in .goal Files
+## Features
+
+### Sidebar in .goal Files
 When you open a `.goal` file in Visual Studio Code, a dedicated sidebar will be available, offering the following features:
 
 - **Documentation Link:** Quick access to plang documentation.
@@ -20,7 +22,7 @@ When you open a `.goal` file in Visual Studio Code, a dedicated sidebar will be 
 
 ![Screenshot of the VS Code plang extension](screenshot.jpg)
 
-#### Debugging .goal Files
+### Debugging .goal Files
 
 - **Start Debugging:** Press F5 to initiate debug mode.
 - **Parameter Input:** VS Code may prompt for parameters; this step is optional.

@@ -3,6 +3,7 @@ import { DebugProtocol } from '@vscode/debugprotocol';
 import * as child_process from 'child_process';
 import path = require('path');
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import { OutputEvent } from '@vscode/debugadapter';
 import { Response } from 'express';
 import { Range } from 'vscode';
@@ -82,24 +83,16 @@ export class GoalDebugSession extends DebugSession {
             }
         }
     }
-
+  
     protected launchRequest(response: DebugProtocol.LaunchResponse, args: DebugProtocol.LaunchRequestArguments): void {
-        const program = (args as any).program;
-
-        var goalName = 'Start.goal';
-        var editor = vscode.window.activeTextEditor;
-        var startGoalPath = getStartPath(editor?.document.fileName);
-        let params = [];
-        //vscode.commands.executeCommand('workbench.debug.action.toggleRepl');
-        
-        //for (let i=0;i<args)
-        this.plangProcess = child_process.spawn('plang.exe', (args as any).args, { cwd: startGoalPath });
+        const program = (args as any).program;		
+    
+        this.plangProcess = child_process.spawn(program, (args as any).args, { cwd: (args as any).cwd });
         this.plangProcess.stdin!.on('data', (data) => {
             console.log('answer');
             this.sendEvent(new OutputEvent(data.toString(), 'stdin'));
         });
-        
-        // If you need to handle the process's stdout/stderr, you can do so:
+
         this.plangProcess.stdout!.on('data', (data) => {
             console.log(`stdout: ${data}`);
             this.sendEvent(new OutputEvent(data.toString(), 'stdout'));
@@ -122,43 +115,6 @@ export class GoalDebugSession extends DebugSession {
 
     }
 
-    protected launchFileRequest(response: DebugProtocol.LaunchResponse, args: DebugProtocol.LaunchRequestArguments): void {
-        const program = (args as any).program;
-
-        var goalName = program;
-        var startPath = path.dirname(program);
-        var startGoalPath = getRootPath(startPath);
-        const options = {
-            cwd: startGoalPath
-        };
-        this.plangProcess = child_process.spawn('plang.exe', ['run', goalName], options);
-
-        // If you need to handle the process's stdout/stderr, you can do so:
-        this.plangProcess.stdout!.on('data', (data) => {
-            console.log(`stdout: ${data}`);
-            this.sendEvent(new OutputEvent(data.toString(), 'stdout'));
-        });
-
-        this.plangProcess.stderr!.on('data', (data) => {
-            console.error(`stderr: ${data}`);
-            this.httpResponse!.send('{"ok":true}');
-            this.httpResponse = null;
-            this.sendEvent(new OutputEvent(data.toString(), 'stdout'));
-        });
-
-        this.plangProcess.on('close', (code) => {
-
-            this.editor!.setDecorations(this.highlightDecorationType, []);
-
-            this.httpResponse!.send('{"ok":true}');
-            this.httpResponse = null;
-            this.sendEvent(new OutputEvent(`Exiting with code ${code}`, 'stdout'));
-            this.sendEvent(new TerminatedEvent());
-        });
-
-        this.sendResponse(response);
-
-    }
     public clearDecorations() {
         this.editor!.setDecorations(this.debugHighlightDecorationType, []);
         this.editor!.setDecorations(this.highlightDecorationType, []);
@@ -265,16 +221,25 @@ export class GoalDebugSession extends DebugSession {
         //this.httpResponse!.send('{"ok":true, "go_to":' + line + '}');
         this.sendResponse(response);
     }
-
+    protected addPropertyToObject(obj: any) {
+        var propertyNames = Object.getOwnPropertyNames(obj);
+        for (var i = 0; i < propertyNames.length; i++) {
+            let val = obj[propertyNames[i]];
+            this.addObject(val, propertyNames[i]);
+        }
+    }
     protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void {
         this.variables = [];
-        if (args.variablesReference === 1 && this.data && this.data.memoryStack) {
-            var propertyNames = Object.getOwnPropertyNames(this.data.memoryStack);
-            for (var i = 0; i < propertyNames.length; i++) {
-                let val = this.data.memoryStack[propertyNames[i]];
-                this.addObject(val, propertyNames[i]);
+
+        if (args.variablesReference === 1 && this.data) {
+            if (this.data.memoryStack) {
+                this.addPropertyToObject(this.data.memoryStack);
             }
 
+            if (this.data.exception) {
+                var exception = { exception: this.data.exception }
+                this.addPropertyToObject(exception);
+            }
             response.body = {
                 variables: this.variables
             };
@@ -313,7 +278,10 @@ export class GoalDebugSession extends DebugSession {
 
 
             var objectValue = this.variablesRefCache.find(p => p.VariableName == key);
-            if (objectValue) {
+            if (val.Type && val.Type.startsWith('System.String,')) {
+                val.Type = "String";
+            }
+            if (objectValue && objectValue.Type == val.Type) {
                 objectValue.Value = val.Value;
                 this.variables.push({
                     name: key,
@@ -322,7 +290,10 @@ export class GoalDebugSession extends DebugSession {
                     variablesReference: objectValue.ObjectReferenceId
                 });
                 return;
-            };
+            } else if (objectValue) {
+                this.variablesRefCache = this.variablesRefCache.filter(p => p.VariableName !== key);
+                this.variables = this.variables.filter(p => p.variablesReference !== objectValue?.ObjectReferenceId);
+            }
 
             if (!objectValue) objectValue = {} as ObjectValue;
 
@@ -336,7 +307,7 @@ export class GoalDebugSession extends DebugSession {
                     objectValue.Type = val.Type;
                 }
 
-                if (objectValue.Value?.toString() == '[object Object]') {
+                if (objectValue.Value?.toString().startsWith('[object Object]')) {
                     objectValue.ObjectReferenceId = ++this.currentVariablesRef;
                 } else {
                     objectValue.ObjectReferenceId = 0;
@@ -344,7 +315,7 @@ export class GoalDebugSession extends DebugSession {
             } else {
                 objectValue = val;
 
-                if (val.Type.startsWith('System.String,')) {
+                if (val.Type == 'String') {
                     objectValue.Type = "String";
                     objectValue.ObjectReferenceId = 0;
                 } else if (val.Type.startsWith('Newtonsoft.Json.Linq')) {
@@ -379,7 +350,7 @@ export class GoalDebugSession extends DebugSession {
 
     private cleanValue(val: any): string {
         if (!val || val == null) return '';
-        if (val.Type == 'String') {
+        if (val.Type == 'String' && val.Value.toString() != "[object Object]") {
             val = val.Value ?? '';
         } else if (typeof val == 'object') {
             val = (typeof val.Value == 'object') ? 'Object' : (val.Value ?? '');
@@ -477,57 +448,66 @@ export class GoalDebugSession extends DebugSession {
 
     public async checkBreakpoint(data: any, res: any) {
         try {
-        if (this.httpResponse != null) return;        
-        if (!data.absolutePath || !data.step) {
-            res.send('{"ok":true}');
-             return;
-        }
-        
-        const goalAbsolutePath = path.normalize(data.absolutePath).toLowerCase();
-
-        const breakpoints = vscode.debug.breakpoints;
-        const fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint) as vscode.SourceBreakpoint[];
-        const targetBreakpoints = fileBreakpoints.filter(bp =>
-            path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath);
-
-        let targetBreakpoint: any = null;
-        if (!this.stopOnNext) {
-            for (let i = 0; targetBreakpoints != undefined && i < targetBreakpoints.length; i++) {
-                if (!targetBreakpoints[i].enabled) continue;
-                if (targetBreakpoints[i].location.range.start.line == data.step.LineNumber) {
-                    targetBreakpoint = targetBreakpoints[i];
-                    i = targetBreakpoints.length;
-                }
-            }
-
-            if (targetBreakpoint == null) {
+            if (this.httpResponse != null) return;
+            if (!data.absolutePath || !data.step) {
                 res.send('{"ok":true}');
                 return;
             }
-        }
 
-        const document = await vscode.workspace.openTextDocument(data.absolutePath);
-        if (this.nextStepFile == '') this.nextStepFile = document.fileName;
+            const goalAbsolutePath = path.normalize(data.absolutePath).toLowerCase();
+
+            const breakpoints = vscode.debug.breakpoints;
+            const fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint) as vscode.SourceBreakpoint[];
+            let targetBreakpoints : any[] = [];
+            for (var i=0;i<fileBreakpoints.length;i++) {
+
+                var point = fileBreakpoints[i];
+                if (path.normalize(point.location.uri.fsPath).toLowerCase() === goalAbsolutePath) {
+                    targetBreakpoints.push(point);
+                }
+            }
+
+            let targetBreakpoint: any = null;
+            if (!this.stopOnNext) {
+                for (let i = 0; targetBreakpoints != undefined && i < targetBreakpoints.length; i++) {
+                    if (!targetBreakpoints[i].enabled) continue;
+                    if (targetBreakpoints[i].location.range.start.line == data.step.LineNumber) {
+                        targetBreakpoint = targetBreakpoints[i];
+                        i = targetBreakpoints.length;
+                    }
+                }
+
+                if (targetBreakpoint == null) {
+                    res.send('{"ok":true}');
+                    return;
+                }
+            }
+
+            const document = await vscode.workspace.openTextDocument(data.absolutePath);
+            if (this.nextStepFile == '') this.nextStepFile = document.fileName;
 
 
-        const editor = await vscode.window.showTextDocument(document);
-        const line = editor.document.lineAt(data.step.LineNumber);
-        editor.revealRange(line.range, vscode.TextEditorRevealType.InCenter);
+            const editor = await vscode.window.showTextDocument(document);
+            const line = editor.document.lineAt(data.step.LineNumber);
+            editor.revealRange(line.range, vscode.TextEditorRevealType.InCenter);
 
-        this.isSteppingInto = false;
-        this.editor = editor;
-        this.isPaused = true;
-        this.httpResponse = res;
-        this.data = data;
-        this.nextStepFile = document.fileName;
-        this.setDebugDecorations([line.range]);
-        this.sendEvent(new StoppedEvent('breakpoint', 1));
-        return true;
+            this.isSteppingInto = false;
+            this.editor = editor;
+            this.isPaused = true;
+            this.httpResponse = res;
+            this.data = data;
+            this.nextStepFile = document.fileName;
+            this.variablesRefCache = [];
+            this.setDebugDecorations([line.range]);
+            this.sendEvent(new StoppedEvent('breakpoint', 1));
+            return true;
 
         } catch (e) {
             console.error(e);
         }
     }
 }
+
+
 
 
