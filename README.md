@@ -5,6 +5,8 @@ This extension enhances the development experience in plang by providing an impr
 
 Get the extension at the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=PlangHQ.plang-extension)
 
+![plang logo](logo.png)
+
 ## Features
 
 ### Sidebar in .goal Files
