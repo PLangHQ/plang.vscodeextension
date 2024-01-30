@@ -232,14 +232,18 @@ export class GoalDebugSession extends DebugSession {
         this.variables = [];
 
         if (args.variablesReference === 1 && this.data) {
+            
+           
             if (this.data.memoryStack) {
                 this.addPropertyToObject(this.data.memoryStack);
+                this.data.memoryStack = null;
             }
-
+            this.addPropertyToObject(this.data);
+            /*
             if (this.data.exception) {
                 var exception = { exception: this.data.exception }
                 this.addPropertyToObject(exception);
-            }
+            }*/
             response.body = {
                 variables: this.variables
             };
@@ -252,7 +256,9 @@ export class GoalDebugSession extends DebugSession {
 
         for (const key of Object.getOwnPropertyNames(obj.Value)) {
             let val: any = (obj.Value as any)[key];
-            this.addObject(val, obj.VariableName + '.' + key);
+            if (val) {
+                this.addObject(val, obj.VariableName + '.' + key);
+            }
         }
 
         response.body = {
@@ -278,10 +284,10 @@ export class GoalDebugSession extends DebugSession {
 
 
             var objectValue = this.variablesRefCache.find(p => p.VariableName == key);
-            if (val.Type && val.Type.startsWith('System.String,')) {
+            if (val && val.Type && val.Type.startsWith('System.String,')) {
                 val.Type = "String";
             }
-            if (objectValue && objectValue.Type == val.Type) {
+            if (val && objectValue && objectValue.Type == val.Type) {
                 objectValue.Value = val.Value;
                 this.variables.push({
                     name: key,
@@ -306,8 +312,9 @@ export class GoalDebugSession extends DebugSession {
                 if (val.Type) {
                     objectValue.Type = val.Type;
                 }
-
-                if (objectValue.Value?.toString().startsWith('[object Object]')) {
+                if ((objectValue.Value as ObjectValue)?.Initiated == false) {
+                    objectValue.ObjectReferenceId = 0;
+                } else   if (objectValue.Value?.toString().startsWith('[object Object]')) {
                     objectValue.ObjectReferenceId = ++this.currentVariablesRef;
                 } else {
                     objectValue.ObjectReferenceId = 0;
@@ -329,7 +336,7 @@ export class GoalDebugSession extends DebugSession {
 
                 } else {
                     objectValue.ObjectReferenceId = ++this.currentVariablesRef;
-                    objectValue.Type = (val.Type ?? "Object");
+                    objectValue.Type = (val.Type ?? (val.Value as ObjectValue)?.Type ?? "Object");
                 }
             }
             objectValue.VariableName = key;
@@ -350,6 +357,22 @@ export class GoalDebugSession extends DebugSession {
 
     private cleanValue(val: any): string {
         if (!val || val == null) return '';
+
+        var objValue = null;
+        if (val.ObjectReferenceId && !val.Type) {
+            objValue = val.Value;
+        }
+        if (Array.isArray(val.Value)) {
+            return '[' + val.Value.length + ']';
+        }
+        if (!val.Initiated && objValue != null) {
+            if (objValue.Type != null) return ' (' + objValue.Type + ')';
+            return '';
+        }
+        if (!val.Type && val.Value && val.Value.Type === null) {
+            return 'null';
+        }
+        
         if (val.Type == 'String' && val.Value.toString() != "[object Object]") {
             val = val.Value ?? '';
         } else if (typeof val == 'object') {
@@ -457,32 +480,18 @@ export class GoalDebugSession extends DebugSession {
             const goalAbsolutePath = path.normalize(data.absolutePath).toLowerCase();
 
             const breakpoints = vscode.debug.breakpoints;
-            const fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint) as vscode.SourceBreakpoint[];
-            let targetBreakpoints : any[] = [];
-            for (var i=0;i<fileBreakpoints.length;i++) {
+            const fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint
+                 && bp.enabled && bp.location.range.start.line == data.step.LineNumber && 
+                path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath                
+                ) as vscode.SourceBreakpoint[];
 
-                var point = fileBreakpoints[i];
-                if (path.normalize(point.location.uri.fsPath).toLowerCase() === goalAbsolutePath) {
-                    targetBreakpoints.push(point);
-                }
+            if (!this.stopOnNext && fileBreakpoints.length == 0) {
+                res.send('{"ok":true}');
+                return;
             }
-
-            let targetBreakpoint: any = null;
-            if (!this.stopOnNext) {
-                for (let i = 0; targetBreakpoints != undefined && i < targetBreakpoints.length; i++) {
-                    if (!targetBreakpoints[i].enabled) continue;
-                    if (targetBreakpoints[i].location.range.start.line == data.step.LineNumber) {
-                        targetBreakpoint = targetBreakpoints[i];
-                        i = targetBreakpoints.length;
-                    }
-                }
-
-                if (targetBreakpoint == null) {
-                    res.send('{"ok":true}');
-                    return;
-                }
-            }
-
+            
+            this.data = data;
+            
             const document = await vscode.workspace.openTextDocument(data.absolutePath);
             if (this.nextStepFile == '') this.nextStepFile = document.fileName;
 
@@ -492,10 +501,11 @@ export class GoalDebugSession extends DebugSession {
             editor.revealRange(line.range, vscode.TextEditorRevealType.InCenter);
 
             this.isSteppingInto = false;
-            this.editor = editor;
+            
             this.isPaused = true;
+            this.editor = editor;
             this.httpResponse = res;
-            this.data = data;
+           
             this.nextStepFile = document.fileName;
             this.variablesRefCache = [];
             this.setDebugDecorations([line.range]);

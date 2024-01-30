@@ -28,7 +28,7 @@ When you open a `.goal` file in Visual Studio Code, a dedicated sidebar will be 
 
 - **Start Debugging:** Press F5 to initiate debug mode.
 - **Parameter Input:** VS Code may prompt for parameters; this step is optional.
-- **C# Debugging:** Add `--vs` to enable debugging of the C# code. Refer to the debug manual for guidance.
+- **C# Debugging:** Add `--csdebug` to enable debugging of the C# code. Refer to the debug manual for guidance.
 
 ![View of the VS Code plang extension in debug mode](debugmode.jpg)
 

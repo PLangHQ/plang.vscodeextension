@@ -42,7 +42,11 @@ export class Info extends vscode.TreeItem  {
 		} else if (Array.isArray(description)) {
 			for (let i=0;i<description.length;i++) {
 				if (description[i].Type) {
-					this.children.push(new Info(description[i].Name, description[i].Value, ''));
+					if (description[i].VariableName) {
+						this.children.push(new Info(description[i].Type, description[i].VariableName, ''));
+					} else {
+						this.children.push(new Info(description[i].Name, description[i].Value, ''));
+					}
 				} else {
 					this.children.push(new Info(description[i], description[i], ''));
 				}

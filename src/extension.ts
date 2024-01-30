@@ -141,7 +141,7 @@ function setupDebugger(context: vscode.ExtensionContext) {
             return;
         }
 		lastRuntimeValue = command;	
-		const regex = /(?<option>--\w+)|(?<param>\w+=["']?[\w\s]+["']?)|(?<file>\w+)/g;
+		const regex = /(?<option>--\w+)|(?<param>\w+=["']?[\w\s:\\_]+["']?)|(?<file>\w+)/g;
 
 		let match;
 		let options = '';
@@ -579,7 +579,7 @@ function setupServer() {
 	app.post('/', async (req, res) => {
 		try {
 			const data = req.body;
-			console.log((new Date()).toISOString() + ' - debugSession:', data)
+			
 			if (debugDescriptor.debugSession) {
 				await debugDescriptor.debugSession!.checkBreakpoint(data, res);
 			} else {
