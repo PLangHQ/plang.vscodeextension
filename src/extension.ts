@@ -15,6 +15,7 @@ import { GoalDebugSession } from './debugAdapter'
 import { GoalDebugAdapterDescriptorFactory } from './GoalDebugAdapterDescriptorFactory';
 import { PlangCompletionProvider } from './PlangCompletionProvider';
 import * as chokidar from 'chokidar';
+import { error } from 'console';
 
 let sourceProvider: SourceCodeProvider;
 let documentationProvider: DocumentationProvider;
@@ -141,7 +142,7 @@ function setupDebugger(context: vscode.ExtensionContext) {
             return;
         }
 		lastRuntimeValue = command;	
-		const regex = /(?<option>--\w+)|(?<param>\w+=["']?[\w\s:\\_]+["']?)|(?<file>\w+)/g;
+		const regex = /(?<option>--\w+(=\w+)?)|(?<param>\w+=["']?[\w\s:\\_]+["']?)|(?<file>[\w\/\\]+)/g;
 
 		let match;
 		let options = '';
@@ -241,7 +242,9 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
 		codeProvider.data = [new Info('Not built', Info.RebuildFile, editor.document.fileName)];
 		codeProvider.data.push(new Info('Win: Ctrl+shift+b', '', ''))
 		codeProvider.data.push(new Info('Mac: cmd+k', '', ''))
-		codeProvider.data.push(new Info('This may take few mins', '', ''))
+		codeProvider.data.push(new Info('This may take few mins', '', ''));
+		codeProvider.data.push(new Info('=========', '', ''));
+		codeProvider.data.push(new Info('Help to build steps', '', 'https://github.com/PLangHQ/plang/tree/main/Documentation/modules#writing-plang-code'));
 		codeProvider.refresh();
 		sourceProvider.refresh();
 		return;
@@ -274,6 +277,9 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
 
 		codeProvider.data.push(new Info('====', '======', ''));
 		codeProvider.data.push(new Info('Rebuild', Info.RebuildFile, goal.RelativePrPath));
+		
+		codeProvider.data.push(new Info('====', '======', ''));
+		codeProvider.data.push(new Info('Help to build steps', '', 'https://github.com/PLangHQ/plang/tree/main/Documentation/modules#writing-plang-code'));
 		codeProvider.refresh();
 		sourceProvider.refresh();
 		return;
@@ -535,7 +541,7 @@ export function deactivate() {
 	}
 
 }
-export function getRootPath(dir: any) {
+export function getRootPath(dir: any, counter : number = 0) {
 	var stats = null;
 	if (fs.existsSync(dir.toString())) {
 		stats = fs.statSync(dir.toString())
@@ -548,12 +554,15 @@ export function getRootPath(dir: any) {
 	var buildDir = path.join(dir, '.build');
 	if (fs.existsSync(buildDir)) return path.normalize(dir);
 
-	if (fs.existsSync(path.join(dir, 'Start.goal'))) { return dir; }
+	if (fs.existsSync(path.join(dir, 'Start.goal')) || fs.existsSync(path.join(dir, 'Setup.goal'))) { return dir; }
 
 	let parentDir = path.join(dir, '../');
 	if (parentDir == dir) return '';
-
-	return getRootPath(parentDir);
+	if (counter > 50) {
+		console.error('To deep call for dir:' + dir + " | parentDir:" + parentDir);
+		return '';
+	}
+	return getRootPath(parentDir, counter++);
 }
 export function getStartPath(dir: any) {
 	var stats = fs.statSync(dir.toString())
@@ -639,9 +648,28 @@ function regenerateStep(filePath: any) {
 	const watcher = chokidar.watch(folderPath, {
 		persistent: true, ignoreInitial: true,
 	});
+
+
 	watcher.on('change', (path) => {
-		var editor = vscode.window.activeTextEditor;
-		displayStep(editor, false);
+		if (path.indexOf('.db') != -1 || path.indexOf('.git') != -1) return;
+
+		if (lastFileChange == null) {
+			lastFileChange = new Date().getTime();
+			setTimeout(() => {
+				var editor = vscode.window.activeTextEditor;
+				callDisplayStep(editor);
+			}, 1000);
+		}
+
+
+		
 	});
+
+	
+}
+let lastFileChange : number | null = null;
+function callDisplayStep(editor : any) {
+	displayStep(editor, false);
+	lastFileChange = null;
 }
 

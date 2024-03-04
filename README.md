@@ -12,6 +12,8 @@ Get the extension at the [VS Code Marketplace](https://marketplace.visualstudio.
 ### Sidebar in .goal Files
 When you open a `.goal` file in Visual Studio Code, a dedicated sidebar will be available, offering the following features:
 
+If you cannot see the sidebar, go to "View" -> "Open View..." -> "PLang"
+
 - **Documentation Link:** Quick access to plang documentation.
 - **Module Information:** Displays the module used in the current step.
 - **.pr File:** Option to view the `.pr` file for deeper insights into the step's operations.

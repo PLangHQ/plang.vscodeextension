@@ -94,7 +94,7 @@ export class GoalDebugSession extends DebugSession {
         });
 
         this.plangProcess.stdout!.on('data', (data) => {
-            console.log(`stdout: ${data}`);
+            //console.log(`stdout: ${data}`);
             this.sendEvent(new OutputEvent(data.toString(), 'stdout'));
         });
 
