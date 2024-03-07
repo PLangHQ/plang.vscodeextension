@@ -2,7 +2,7 @@
     "name": "plang-extension",
     "displayName": "plang-extension",
     "description": "Add support for plang programming language to VS Code",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "icon": "logo.png",
     "engines": {
         "vscode": "^1.79.0"
@@ -113,16 +113,16 @@
         "views": {
             "PLang": [
                 {
-                    "id": "source",
-                    "name": "Source"
+                    "id": "code",
+                    "name": "Code"
                 },
                 {
                     "id": "documentation",
                     "name": "Documentation"
                 },
                 {
-                    "id": "code",
-                    "name": "Code"
+                    "id": "source",
+                    "name": "Source"
                 }
             ]
         }
