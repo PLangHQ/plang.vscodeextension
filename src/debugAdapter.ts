@@ -406,7 +406,7 @@ export class GoalDebugSession extends DebugSession {
         const frames: DebugProtocol.StackFrame[] = [];
 
         // For instance, to display a simple stack frame:
-        frames.push(new StackFrame(1, this.data!.goal.GoalName, new Source(this.data.step.Text, this.data.absolutePath), this.data!.step.LineNumber + 1, 0));
+        frames.push(new StackFrame(1, this.data!.goal.GoalName, new Source(this.data.step.Text, this.data.absolutePath), this.data!.step.LineNumber, 0));
 
         // ... populate with your data ...
 
@@ -481,7 +481,7 @@ export class GoalDebugSession extends DebugSession {
 
             const breakpoints = vscode.debug.breakpoints;
             const fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint
-                 && bp.enabled && bp.location.range.start.line == data.step.LineNumber && 
+                 && bp.enabled && bp.location.range.start.line == (data.step.LineNumber-1) && 
                 path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath                
                 ) as vscode.SourceBreakpoint[];
 
@@ -497,7 +497,7 @@ export class GoalDebugSession extends DebugSession {
 
 
             const editor = await vscode.window.showTextDocument(document);
-            const line = editor.document.lineAt(data.step.LineNumber);
+            const line = editor.document.lineAt(data.step.LineNumber - 1);
             editor.revealRange(line.range, vscode.TextEditorRevealType.InCenter);
 
             this.isSteppingInto = false;

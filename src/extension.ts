@@ -85,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidOpenTextDocument(document => {
 			if (document.fileName.endsWith('.goal')) {
 				// The id of the view container to reveal
-				const viewId = 'PLanguage'; // replace with the id of your view
+				const viewId = 'PLang'; // replace with the id of your view
 
 				// Reveal the view
 				vscode.commands.executeCommand('workbench.view.extension.' + viewId);
