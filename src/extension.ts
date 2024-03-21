@@ -134,8 +134,8 @@ function setupDebugger(context: vscode.ExtensionContext) {
 
 		let runtimeExecutable = 'plang.exe';
 		let command = await vscode.window.showInputBox({
-            prompt: "Please enter a parameter value",
-            placeHolder: "Enter parameter here", 
+            prompt: "Please enter a parameter value. By default you don't need a parameter, just press Enter",
+            placeHolder: "(Optional) Enter parameter here", 
 			value: lastRuntimeValue
         });
 		if (command === undefined) {
