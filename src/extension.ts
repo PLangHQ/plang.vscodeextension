@@ -16,6 +16,7 @@ import { GoalDebugAdapterDescriptorFactory } from './GoalDebugAdapterDescriptorF
 import { PlangCompletionProvider } from './PlangCompletionProvider';
 import * as chokidar from 'chokidar';
 import { error } from 'console';
+import * as os from 'os';
 
 let sourceProvider: SourceCodeProvider;
 let documentationProvider: DocumentationProvider;
@@ -132,7 +133,11 @@ function setupDebugger(context: vscode.ExtensionContext) {
 
 		if (debugDescriptor.debugSession && vscode.debug.activeDebugSession) return;
 
-		let runtimeExecutable = 'plang.exe';
+		let runtimeExecutable = 'plang';
+		const platform = os.platform();
+		if (platform.indexOf('win') != -1) {
+			runtimeExecutable += '.exe';
+		}
 		let command = await vscode.window.showInputBox({
             prompt: "Please enter a parameter value. By default you don't need a parameter, just press Enter",
             placeHolder: "(Optional) Enter parameter here", 
@@ -170,7 +175,11 @@ function setupDebugger(context: vscode.ExtensionContext) {
 		if (fs.existsSync(startBuildFile)) {
 			// Read the file and determine the correct executable
 			let content = fs.readFileSync(startBuildFile, 'utf8');
-			runtimeExecutable = content.indexOf('"ModuleType": "PLang.Modules.WindowAppModule"') != -1 ? 'plangw.exe' : 'plang.exe';
+			runtimeExecutable = content.indexOf('"ModuleType": "PLang.Modules.WindowAppModule"') != -1 ? 'plangw' : 'plang';
+			const platform = os.platform();
+			if (platform.indexOf('win') != -1) {
+				runtimeExecutable += '.exe';
+			}
 		}
 		
 		
