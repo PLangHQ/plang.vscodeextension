@@ -116,14 +116,18 @@ export class GoalDebugSession extends DebugSession {
     }
 
     public clearDecorations() {
+        if (!this.editor) return;
         this.editor!.setDecorations(this.debugHighlightDecorationType, []);
         this.editor!.setDecorations(this.highlightDecorationType, []);
     }
     public setDebugDecorations(range: Range[]) {
+        if (!this.editor) return;
         this.editor!.setDecorations(this.debugHighlightDecorationType, range);
         this.editor!.setDecorations(this.highlightDecorationType, []);
     }
     public setDecorations(range: Range[]) {
+        if (!this.editor) return;
+        
         this.editor!.setDecorations(this.debugHighlightDecorationType, []);
         this.editor!.setDecorations(this.highlightDecorationType, range);
     }

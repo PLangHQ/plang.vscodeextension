@@ -609,11 +609,14 @@ function setupServer() {
 
 
 	});
-
-	server = app.listen(60877, () => {
-		console.log('Server started on port 60877');
-	});
-	console.log('this is server', server);
+	try {
+		server = app.listen(60877, () => {
+			console.log('Server started on port 60877');
+		});
+		console.log('this is server', server);
+	}  catch (e) {
+		console.log('Port 60877 is being used')
+	}
 }
 
 function regenerateStep(filePath: any) {
