@@ -26,16 +26,35 @@ let runTerminal: vscode.Terminal;
 let buildTerminal: vscode.Terminal;
 let server: Server;
 let debugDescriptor: GoalDebugAdapterDescriptorFactory;
+export let llmService : string;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	
 
 	setupServer()
 	debugDescriptor = new GoalDebugAdapterDescriptorFactory();
 	context.subscriptions.push(vscode.languages.registerCompletionItemProvider('goal', new PlangCompletionProvider(debugDescriptor.debugSession!), '%'));
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('goal', debugDescriptor));
 	isBuilding = false;
+
+	let llmService = vscode.workspace.getConfiguration('plang').get<string>('llmservice') ?? 'plang';
+	Info.RebuildFile = Info.ClickToBuildStr + '(' + llmService + ')';
+
+	let disposable = vscode.commands.registerCommand('plang.selectLLMService', async () => {
+        const options = ['Plang', 'OpenAI'];
+        const selected = await vscode.window.showQuickPick(options, {
+            placeHolder: 'Choose LLM code builder service',
+        });
+
+        if (selected) {
+            await vscode.workspace.getConfiguration().update('plang.llmservice', selected, vscode.ConfigurationTarget.Global);
+			displayStep(vscode.window.activeTextEditor);
+        }
+    });
+	
+    context.subscriptions.push(disposable);
 
 	setupDebugger(context);
 
@@ -143,7 +162,12 @@ function setupDebugger(context: vscode.ExtensionContext) {
             placeHolder: "(Optional) Enter parameter here", 
 			value: lastRuntimeValue
         });
-		if (command === undefined) {
+		
+		let llmService = vscode.workspace.getConfiguration('plang').get<string>('llmservice') ?? 'Plang';
+		if (llmService != 'Plang') {
+			if (command === undefined) { command = ''; }
+			command += ' --llmservice=' + llmService;
+		} else if (command === undefined) {
             return;
         }
 		lastRuntimeValue = command;	
@@ -304,7 +328,7 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
 		documentationProvider.data = ['Step has changed'];
 		documentationProvider.refresh();
 
-		codeProvider.data = [new Info('Step has changed', Info.RebuildFile, editor.document.fileName)];
+		codeProvider.data = [new Info('Step has changed', Info.RebuildFile, editor.document.fileName)]
 		codeProvider.refresh();
 		sourceProvider.refresh();
 		return;
@@ -642,8 +666,6 @@ function regenerateStep(filePath: any) {
 		folderPath = path.dirname(fileOrFolderPath);
 	}
 
-
-
 	var editor = vscode.window.activeTextEditor;
 	var folderPath = getRootPath(editor?.document.fileName);
 	if (!buildTerminal || buildTerminal.exitStatus) {
@@ -652,10 +674,14 @@ function regenerateStep(filePath: any) {
 		buildTerminal.sendText('cd "' + folderPath + '"');
 		buildTerminal.sendText('clear');
 	}
-	
+	let llmServiceParam= '';
+	let llmService = vscode.workspace.getConfiguration('plang').get<string>('llmservice') ?? 'Plang';
+	if (llmService != 'Plang') {
+		llmServiceParam = '--llmservice=' + llmService;
+	}
 	editor?.document.save();
 	buildTerminal.show();
-	buildTerminal.sendText('plang build');
+	buildTerminal.sendText('plang build ' + llmServiceParam);
 
 	const watcher = chokidar.watch(folderPath, {
 		persistent: true, ignoreInitial: true,

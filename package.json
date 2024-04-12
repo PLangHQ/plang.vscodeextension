@@ -2,7 +2,7 @@
     "name": "plang-extension",
     "displayName": "plang-extension",
     "description": "Add support for plang programming language to VS Code",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "icon": "logo.png",
     "engines": {
         "vscode": "^1.79.0"
@@ -83,6 +83,10 @@
             {
                 "command": "extension.startPLangDebug",
                 "title": "Start PLang Debug"
+            },
+            {
+                "command": "plang.selectLLMService",
+                "title": "Select Plang LLM Service"
             }
         ],
         "keybindings": [
@@ -125,6 +129,21 @@
                     "name": "Source"
                 }
             ]
+        },
+        "configuration": {
+            "title": "Plang LLM Service",
+            "properties": {
+                "plang.llmservice": {
+                    "type": "string",
+                    "default": "plang",
+                    "enum": ["plang", "openai"],
+                    "enumDescriptions": [
+                        "Uses PLang LLM service",
+                        "Uses OpenAI service - You need OpenAI API key"
+                    ],
+                    "description": "Choose LLM service"
+                }
+            }
         }
     },
     "scripts": {

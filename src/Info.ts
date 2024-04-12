@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 
 export class Info extends vscode.TreeItem  {
+	public static ClickToBuildStr = 'Click to build';
 	public static RebuildFile = 'Click to build';
 	public children : any[] = [];
 	constructor(
@@ -13,18 +14,22 @@ export class Info extends vscode.TreeItem  {
 		const isNativeType = type == 'string' || type == 'number' || type == 'boolean';
 		if (isNativeType) {
 			label = label.toString().replaceAll('α', '.');
-		}
-		
+		}		
 		
 		super(label, isNativeType ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Expanded);
 
-		
 		if (fileToOpen != '') {
-			if (description == Info.RebuildFile) {
+			if (Info.IsToBuild(description)) {
+				let llmService = vscode.workspace.getConfiguration('plang').get<string>('llmservice') ?? 'Plang';
+
+				Info.RebuildFile = Info.ClickToBuildStr + ' (' + llmService + ' LLM service)';
+				description = Info.RebuildFile;
+
+				let args = [vscode.Uri.file(fileToOpen)]
 				this.command = {
 					command: 'extension.regenerateStep',
 					title: '',
-					arguments: [vscode.Uri.file(fileToOpen)]
+					arguments: args
 				};
 			} else {
 				var arg = (fileToOpen.indexOf('http') != -1) ? vscode.Uri.parse(fileToOpen) : vscode.Uri.file(fileToOpen); 
@@ -68,6 +73,12 @@ export class Info extends vscode.TreeItem  {
 				this.children.push(new Info(props[i], action, ''));
 			}
 		}
+	}
+
+	public static IsToBuild(str : string) : boolean {
+		if (!str || typeof str != 'string') return false;
+
+		return (str.indexOf(this.ClickToBuildStr) != -1);
 	}
 
 }
