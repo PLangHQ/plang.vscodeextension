@@ -328,7 +328,9 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
 		documentationProvider.data = ['Step has changed'];
 		documentationProvider.refresh();
 
-		codeProvider.data = [new Info('Step has changed', Info.RebuildFile, editor.document.fileName)]
+		codeProvider.data = [new Info('Step has changed', Info.RebuildFile, editor.document.fileName)];
+        codeProvider.data.push(new Info('====', '======', ''));
+		codeProvider.data.push(new Info('Help me to build steps', '', 'https://github.com/PLangHQ/plang/tree/main/Documentation/modules#writing-plang-code'));
 		codeProvider.refresh();
 		sourceProvider.refresh();
 		return;
