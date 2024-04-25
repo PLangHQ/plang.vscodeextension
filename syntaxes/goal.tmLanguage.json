@@ -1,0 +1,31 @@
+{
+    "name": "goal",
+    "scopeName": "source.goal",
+    "patterns": [
+        {
+            "name": "string.quoted.double.goal",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "name": "variable.parameter.goal",
+                    "match": "%[a-zA-Z0-9_\\[\\]]+%"
+                }
+            ]
+        },
+        {
+            "name": "variable.parameter.goal",
+            "match": "%[a-zA-Z0-9_\\[\\]]+%"
+        },
+        {
+            "name": "keyword.control.goal",
+            "match": "\\b(GE|ge|gE|Ge|PO|po|pO|Po|RE|re|Re|rE|SE|se|sE|Se|UP|up|Up|uP|DE|de|De|dE)T\\b|\\b(select|SELECT|Select|update|UPDATE|Update|delete|DELETE|Delete|foreach|write to|write into|create table)\\b"
+        },
+        {
+            "name": "markup.list.goal",
+            "match": "^\\- \\[.*\\]$"
+        }
+    ],
+    "repository": {},
+    "fileTypes": ["goal"]
+}

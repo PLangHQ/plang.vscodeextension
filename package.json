@@ -29,9 +29,15 @@
                 "id": "goal",
                 "extensions": [
                     ".goal"
-                ]
+                ],
+                "configuration": "./language-configuration.json"
             }
         ],
+        "grammars": [{
+            "language": "goal",
+            "scopeName": "source.goal",
+            "path": "./syntaxes/goal.tmLanguage.json"
+        }],
         "breakpoints": [
             {
                 "language": "goal"
