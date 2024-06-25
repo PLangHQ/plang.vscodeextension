@@ -28,6 +28,12 @@ export class GoalDebugSession extends DebugSession {
     public editor?: vscode.TextEditor;
     public httpResponse?: Response | null;
     public data: any;
+    
+    step : any;
+    goal : any;
+    memoryStack : any;
+    absolutePath : string = '';
+
     private debugHighlightDecorationType: vscode.TextEditorDecorationType;
     private highlightDecorationType: vscode.TextEditorDecorationType;
     private stopOnNext: boolean = false;
@@ -236,18 +242,13 @@ export class GoalDebugSession extends DebugSession {
         this.variables = [];
 
         if (args.variablesReference === 1 && this.data) {
-            
-           
-            if (this.data.memoryStack) {
-                this.addPropertyToObject(this.data.memoryStack);
-                this.data.memoryStack = null;
+          
+            if (this.memoryStack) {
+                this.addPropertyToObject(this.memoryStack);
+            } else {
+                this.addPropertyToObject(this.data);
             }
-            this.addPropertyToObject(this.data);
-            /*
-            if (this.data.exception) {
-                var exception = { exception: this.data.exception }
-                this.addPropertyToObject(exception);
-            }*/
+           
             response.body = {
                 variables: this.variables
             };
@@ -410,7 +411,7 @@ export class GoalDebugSession extends DebugSession {
         const frames: DebugProtocol.StackFrame[] = [];
 
         // For instance, to display a simple stack frame:
-        frames.push(new StackFrame(1, this.data!.goal.GoalName, new Source(this.data.step.Text, this.data.absolutePath), this.data!.step.LineNumber, 0));
+        frames.push(new StackFrame(1, this.goal.GoalName, new Source(this.step.Text, this.absolutePath), this.step.LineNumber, 0));
 
         // ... populate with your data ...
 
@@ -444,17 +445,6 @@ export class GoalDebugSession extends DebugSession {
                 objectValue = this.variablesRefCache.find(p => p.VariableName == keyToSearchFor);
             }
 
-            let variableName = args.expression;
-            /*
-                        let value = this.cleanVarValue(this.variables[i]);
-                        if (args.expression.indexOf('(') != -1) {
-                            variableName = variableName.substring(0, variableName.lastIndexOf('.'));
-                        } else if (variableName.indexOf('.') != -1) {
-            
-                            value = this.getValue(this.variables[i], variableName)
-                        } else if (value == 'Object') {
-                            value = JSON.stringify(this.variablesRefCache[this.variables[i].variablesReference]);
-                        }*/
             response.body = {
                 result: objectValue?.Value.toString() ?? '',
                 variablesReference: objectValue?.ObjectReferenceId ?? 0
@@ -476,16 +466,21 @@ export class GoalDebugSession extends DebugSession {
     public async checkBreakpoint(data: any, res: any) {
         try {
             if (this.httpResponse != null) return;
-            if (!data.absolutePath || !data.step) {
+            if (!data["AbsolutePath"] || !data["!Step"]) {
                 res.send('{"ok":true}');
                 return;
             }
 
-            const goalAbsolutePath = path.normalize(data.absolutePath).toLowerCase();
+            this.absolutePath = data["AbsolutePath"];
+            this.step = data["!Step"];
+            this.goal = data["!Goal"];
+            this.memoryStack = data["!MemoryStack"];
+
+            const goalAbsolutePath = path.normalize(this.absolutePath).toLowerCase();
 
             const breakpoints = vscode.debug.breakpoints;
             const fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint
-                 && bp.enabled && bp.location.range.start.line == (data.step.LineNumber-1) && 
+                 && bp.enabled && bp.location.range.start.line == (this.step.LineNumber-1) && 
                 path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath                
                 ) as vscode.SourceBreakpoint[];
 
@@ -496,12 +491,16 @@ export class GoalDebugSession extends DebugSession {
             
             this.data = data;
             
-            const document = await vscode.workspace.openTextDocument(data.absolutePath);
+            const document = await vscode.workspace.openTextDocument(this.absolutePath);
             if (this.nextStepFile == '') this.nextStepFile = document.fileName;
 
 
             const editor = await vscode.window.showTextDocument(document);
-            const line = editor.document.lineAt(data.step.LineNumber - 1);
+            const lineNr = this.step.LineNumber - 1;
+            let line = editor.document.lineAt(0);
+            if (editor.document.lineCount > lineNr) {
+                line = editor.document.lineAt(lineNr);
+            } 
             editor.revealRange(line.range, vscode.TextEditorRevealType.InCenter);
 
             this.isSteppingInto = false;

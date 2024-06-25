@@ -343,9 +343,10 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
 	if (refreshSourceView) ShowCode('');
 	codeProvider.treeView!.message = '';
 	if (prFile) {
-		codeProvider.data.push(new Info('Documentation', 'Click to open', 'https://github.com/PLangHQ/plang/blob/main/Documentation/modules/' + step.ModuleType + '.md'));
+		
 		codeProvider.data.push(new Info('Module', step.ModuleType, ''));
-		codeProvider.data.push(new Info('Open pr file', 'Click to open', prFile.path));
+		codeProvider.data.push(new Info('Documentation', 'Click to open', 'https://github.com/PLangHQ/plang/blob/main/Documentation/modules/' + step.ModuleType + '.md'));
+        codeProvider.data.push(new Info('Open pr file', 'Click to open', prFile.path));
 		if (prFile.Action) {
 			if (prFile.Action.Code) {
 				ShowCode(prFile.Action.Code);
@@ -527,7 +528,7 @@ function getStepAndGoal(editor: vscode.TextEditor, lineNumber: number): [any, an
 
 function getStep(editor: vscode.TextEditor, lineNumber: number, goalLineNr: number): [string, number] {
 	if (lineNumber < 0) return ['', 0];
-
+try {
 	var line: vscode.TextLine = editor.document.lineAt(lineNumber);
 	if (line.text.trim().startsWith('-')) {
 		return [line.text.replace('-', '').trim(), lineNumber];
@@ -541,6 +542,11 @@ function getStep(editor: vscode.TextEditor, lineNumber: number, goalLineNr: numb
 		return getStep(editor, lineNumber - 1, goalLineNr)
 	}
 	return ['', lineNumber];
+} catch (e) {
+    console.error('Illegal value for line: lineNumber is : ' + lineNumber);
+    console.error(e);
+    return ['', 0];
+}
 }
 
 function getGoal(editor: vscode.TextEditor, lineNumber: number): [string, number, boolean] {
@@ -593,11 +599,17 @@ export function getRootPath(dir: any, counter : number = 0) {
 
 	let parentDir = path.join(dir, '../');
 	if (parentDir == dir) return '';
-	if (counter > 50) {
+	if (counter > 50 || parentDir == '..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..') {
 		console.error('To deep call for dir:' + dir + " | parentDir:" + parentDir);
 		return '';
 	}
-	return getRootPath(parentDir, counter++);
+    try {
+	return getRootPath(parentDir, ++counter);
+    } catch (e) {
+        console.error("Max call stack, parentDir:" + parentDir + " | counter:" + counter);
+        console.error(e);
+        return '';
+    }
 }
 export function getStartPath(dir: any) {
 	var stats = fs.statSync(dir.toString())
