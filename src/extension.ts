@@ -171,7 +171,7 @@ function setupDebugger(context: vscode.ExtensionContext) {
             return;
         }
 		lastRuntimeValue = command;	
-		const regex = /(?<option>--\w+(=\w+)?)|(?<param>\w+=["']?[\w\s:\\_]+["']?)|(?<file>[\w\/\\]+)/g;
+		const regex = /(?<option>--\w+(=\w+)?)|(?<param>\w+=["']?[\w\s:\\_]+["']?)|(?<file>[\w\/\\\.]+)/g;
 
 		let match;
 		let options = '';
@@ -651,6 +651,15 @@ function setupServer() {
 		server = app.listen(60877, () => {
 			console.log('Server started on port 60877');
 		});
+        server.on('error', (err : any) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(`Port 60877 is already in use. Cannot start debug server. `);
+            } else {
+                console.error(`An error occurred: ${err.message}`);
+            }
+        });
+
+
 		console.log('this is server', server);
 	}  catch (e) {
 		console.log('Port 60877 is being used')
