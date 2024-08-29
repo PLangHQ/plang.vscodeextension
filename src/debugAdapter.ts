@@ -3,12 +3,10 @@ import { DebugProtocol } from '@vscode/debugprotocol';
 import * as child_process from 'child_process';
 import path = require('path');
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 import { OutputEvent } from '@vscode/debugadapter';
 import { Response } from 'express';
 import { Range } from 'vscode';
-import { getRootPath, getStartPath } from './extension';
-import { validateHeaderName } from 'http';
+
 
 type ObjectValue = {
     VariableName: string;
