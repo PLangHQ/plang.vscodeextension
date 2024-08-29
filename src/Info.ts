@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { StartDebugger } from './StartDebugger';
 
 
 export class Info extends vscode.TreeItem  {
@@ -8,7 +9,8 @@ export class Info extends vscode.TreeItem  {
 	constructor(
 		public readonly label: string,
 		public readonly description: any,
-		public readonly fileToOpen : string
+		public readonly fileToOpen : string,
+        runDebugger? : StartDebugger
 	) {
 		const type = typeof description;
 		const isNativeType = type == 'string' || type == 'number' || type == 'boolean';
@@ -31,6 +33,13 @@ export class Info extends vscode.TreeItem  {
 					title: '',
 					arguments: args
 				};
+            } else if (fileToOpen.indexOf('prompt:') != -1) {
+                let fileName = fileToOpen.replace('prompt:', '');
+                this.command = {
+                    command: 'extension.startPLangDebug', 
+                    title: 'Start debugging file',
+                    arguments: [fileName]
+                };       
 			} else {
 				var arg = (fileToOpen.indexOf('http') != -1) ? vscode.Uri.parse(fileToOpen) : vscode.Uri.file(fileToOpen); 
 				this.command = {

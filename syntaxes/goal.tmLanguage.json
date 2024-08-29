@@ -9,17 +9,17 @@
             "patterns": [
                 {
                     "name": "variable.parameter.goal",
-                    "match": "%[a-zA-Z0-9_\\[\\]]+%"
+                    "match": "%[a-zA-Z0-9\\._\\[\\]\\(\\)'\"]+%"
                 }
             ]
         },
         {
             "name": "variable.parameter.goal",
-            "match": "%[a-zA-Z0-9_\\[\\]]+%"
+            "match": "%[a-zA-Z0-9\\._\\[\\]\\(\\)'\"]+%"
         },
         {
             "name": "keyword.control.goal",
-            "match": "\\b(GE|ge|gE|Ge|PO|po|pO|Po|RE|re|Re|rE|SE|se|sE|Se|UP|up|Up|uP|DE|de|De|dE)T\\b|\\b(select|SELECT|Select|update|UPDATE|Update|delete|DELETE|Delete|foreach|write to|write into|create table)\\b"
+            "match": "\\b(GE|ge|gE|Ge|PO|po|pO|Po|RE|re|Re|rE|SE|se|sE|Se|UP|up|Up|uP|DE|de|De|dE)T\\b|\\b(select|SELECT|Select|update|UPDATE|Update|delete|DELETE|Delete|foreach|write to|write into|create table|log info|log warning|log error|log debug|log trace|write out|on error|error|begin transaction|end transaction|call goal|call|read file|write)\\b"
         },
         {
             "name": "markup.list.goal",

@@ -80,7 +80,7 @@ export class GoalDebugSession extends DebugSession {
 
         if (msg.type === 'request') {
             const request = msg as DebugProtocol.Request;
-            if (request.command === 'evaluate') {
+            if (request.command === 'evaluate' && request.arguments?.context === 'repl') {
                 const evaluateRequest = request as DebugProtocol.EvaluateRequest;
                 const userInput = evaluateRequest.arguments.expression;
 
@@ -94,11 +94,6 @@ export class GoalDebugSession extends DebugSession {
         const program = (args as any).program;		
     
         this.plangProcess = child_process.spawn(program, (args as any).args, { cwd: (args as any).cwd });
-        this.plangProcess.stdin!.on('data', (data) => {
-            console.log('answer');
-            this.sendEvent(new OutputEvent(data.toString(), 'stdin'));
-        });
-
         this.plangProcess.stdout!.on('data', (data) => {
             //console.log(`stdout: ${data}`);
             this.sendEvent(new OutputEvent(data.toString(), 'stdout'));
