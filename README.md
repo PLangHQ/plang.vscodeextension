@@ -24,16 +24,33 @@ If you cannot see the sidebar, go to "View" -> "Open View..." -> "PLang"
 - **Step Documentation:** Specific documentation related to the step.
 - **Generated Source Code:** View the source code for generated C# code, applicable only to CodeModule and ConditionModule.
 
-![Screenshot of the VS Code plang extension](screenshot.jpg)
-
+![Screenshot of the VS Code plang extension](./IDE.png)
 ### Debugging .goal Files
 
 - **Start Debugging:** Press F5 to initiate debug mode.
 - **Parameter Input:** VS Code may prompt for parameters; this step is optional.
 - **C# Debugging:** Add `--csdebug` to enable debugging of the C# code. Refer to the debug manual for guidance.
 
-![View of the VS Code plang extension in debug mode](debugmode.jpg)
+### Screen shots
 
+### Variables
+View the variables at runtime
+
+![View the variables at runtime](variable_view.png)
+### Debugger:
+Step through your code 
+
+![Debugger](Debugger.png)
+### What actually happens:
+You can confirm what will happen before executing your code. The details 
+
+![The details](functionDetails.png)
+
+### IDE
+
+Your overview.
+
+![IDE](IDE.png)
 ## Visit us
 - [Offical website](https://plang.is)
 - [On Github](https://github.com/PLangHQ/)
