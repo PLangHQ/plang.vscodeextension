@@ -298,13 +298,14 @@ export class GoalDebugSession extends DebugSession {
     }
     addObject(val: ObjectValue, key: string) {
         try {
-
+            
 
             var objectValue = this.variablesRefCache.find(p => p.VariableName == key);
+            
             if (val && val.Type && val.Type.startsWith('System.String,')) {
                 val.Type = "String";
             }
-            if (val && objectValue && objectValue.Type == val.Type) {
+            if (val && objectValue && objectValue.Type == val.Type && val.Value) {
                 objectValue.Value = val.Value;
                 this.variables.push({
                     name: key,
@@ -314,8 +315,8 @@ export class GoalDebugSession extends DebugSession {
                 });
                 return;
             } else if (objectValue) {
-                this.variablesRefCache = this.variablesRefCache.filter(p => p.VariableName !== key);
-                this.variables = this.variables.filter(p => p.variablesReference !== objectValue?.ObjectReferenceId);
+                //this.variablesRefCache = this.variablesRefCache.filter(p => p.VariableName !== key);
+                //this.variables = this.variables.filter(p => p.variablesReference !== objectValue?.ObjectReferenceId);
             }
 
             if (!objectValue) objectValue = {} as ObjectValue;
@@ -328,6 +329,8 @@ export class GoalDebugSession extends DebugSession {
                 objectValue.Value = val ?? null;
                 if (val.Type) {
                     objectValue.Type = val.Type;
+                } else {
+                    objectValue.Type = typeof val;
                 }
                 if ((objectValue.Value as ObjectValue)?.Initiated == false) {
                     objectValue.ObjectReferenceId = 0;
