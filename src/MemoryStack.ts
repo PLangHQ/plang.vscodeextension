@@ -60,6 +60,10 @@ export class MemoryStackProvider implements vscode.TreeDataProvider<MemoryStackI
 			if (typeof element.description == 'string') {
 				treeItem.description = element.description;
 			} else {
+                if (!element || !element.description) {
+                    return new vscode.TreeItem("");
+                }
+
 				var props = Object.getOwnPropertyNames(element.description);
 				for (var i = 0; i < props.length; i++) {
 					let action = element.description[props[i]];

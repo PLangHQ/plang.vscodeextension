@@ -379,6 +379,9 @@ function DisplayEventHandlers(eventHandlers : any, filePath : string) {
 }
 
 function DisplayAction(action: any, filePath: string) {
+    if (!action) {
+        return;
+    }
     var props = Object.getOwnPropertyNames(action);
     for (let b = 0; b < props.length; b++) {
         let property = action[props[b]];

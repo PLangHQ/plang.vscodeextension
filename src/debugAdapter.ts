@@ -26,11 +26,11 @@ export class GoalDebugSession extends DebugSession {
     public editor?: vscode.TextEditor;
     public httpResponse?: Response | null;
     public data: any;
-    
-    step : any;
-    goal : any;
-    memoryStack : any;
-    absolutePath : string = '';
+
+    step: any;
+    goal: any;
+    memoryStack: any;
+    absolutePath: string = '';
 
     private debugHighlightDecorationType: vscode.TextEditorDecorationType;
     private highlightDecorationType: vscode.TextEditorDecorationType;
@@ -87,10 +87,10 @@ export class GoalDebugSession extends DebugSession {
             }
         }
     }
-  
+
     protected launchRequest(response: DebugProtocol.LaunchResponse, args: DebugProtocol.LaunchRequestArguments): void {
-        const program = (args as any).program;		
-    
+        const program = (args as any).program;
+
         this.plangProcess = child_process.spawn(program, (args as any).args, { cwd: (args as any).cwd });
         this.plangProcess.stdout!.on('data', (data) => {
             //console.log(`stdout: ${data}`);
@@ -126,7 +126,7 @@ export class GoalDebugSession extends DebugSession {
     }
     public setDecorations(range: Range[]) {
         if (!this.editor) return;
-        
+
         this.editor!.setDecorations(this.debugHighlightDecorationType, []);
         this.editor!.setDecorations(this.highlightDecorationType, range);
     }
@@ -225,6 +225,9 @@ export class GoalDebugSession extends DebugSession {
         this.sendResponse(response);
     }
     protected addPropertyToObject(obj: any) {
+        if (!obj) {
+            return;
+        }
         var propertyNames = Object.getOwnPropertyNames(obj);
         for (var i = 0; i < propertyNames.length; i++) {
             let val = obj[propertyNames[i]];
@@ -235,13 +238,13 @@ export class GoalDebugSession extends DebugSession {
         this.variables = [];
 
         if (args.variablesReference === 1 && this.data) {
-          
+
             if (this.memoryStack) {
                 this.addPropertyToObject(this.memoryStack);
             } else {
                 this.addPropertyToObject(this.data);
             }
-           
+
             response.body = {
                 variables: this.variables
             };
@@ -252,10 +255,16 @@ export class GoalDebugSession extends DebugSession {
         var obj = this.variablesRefCache.find(p => p.ObjectReferenceId == args.variablesReference);
         if (!obj) return;
 
-        for (const key of Object.getOwnPropertyNames(obj.Value)) {
+        let names = Object.getOwnPropertyNames(obj);
+        if (obj.Value) {
+            names = Object.getOwnPropertyNames(obj.Value);
+        }
+        for (const key of names) {
             let val: any = (obj.Value as any)[key];
             if (val) {
                 this.addObject(val, obj.VariableName + '.' + key);
+            } else {
+                this.addNull(obj.VariableName + '.' + key);
             }
         }
 
@@ -277,6 +286,16 @@ export class GoalDebugSession extends DebugSession {
             variable.value = String(this.cleanValue(val));
         }
     }*/
+
+    addNull(key: string) {
+        this.variables.push({
+            name: key,
+            type: 'null',
+            value: 'null',
+            variablesReference: 0
+        });
+
+    }
     addObject(val: ObjectValue, key: string) {
         try {
 
@@ -312,7 +331,7 @@ export class GoalDebugSession extends DebugSession {
                 }
                 if ((objectValue.Value as ObjectValue)?.Initiated == false) {
                     objectValue.ObjectReferenceId = 0;
-                } else   if (objectValue.Value?.toString().startsWith('[object Object]')) {
+                } else if (objectValue.Value?.toString().startsWith('[object Object]')) {
                     objectValue.ObjectReferenceId = ++this.currentVariablesRef;
                 } else {
                     objectValue.ObjectReferenceId = 0;
@@ -370,7 +389,7 @@ export class GoalDebugSession extends DebugSession {
         if (!val.Type && val.Value && val.Value.Type === null) {
             return 'null';
         }
-        
+
         if (val.Type == 'String' && val.Value.toString() != "[object Object]") {
             val = val.Value ?? '';
         } else if (typeof val == 'object') {
@@ -473,17 +492,17 @@ export class GoalDebugSession extends DebugSession {
 
             const breakpoints = vscode.debug.breakpoints;
             const fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint
-                 && bp.enabled && bp.location.range.start.line == (this.step.LineNumber-1) && 
-                path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath                
-                ) as vscode.SourceBreakpoint[];
+                && bp.enabled && bp.location.range.start.line == (this.step.LineNumber - 1) &&
+                path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath
+            ) as vscode.SourceBreakpoint[];
 
             if (!this.stopOnNext && fileBreakpoints.length == 0) {
                 res.send('{"ok":true}');
                 return;
             }
-            
+
             this.data = data;
-            
+
             const document = await vscode.workspace.openTextDocument(this.absolutePath);
             if (this.nextStepFile == '') this.nextStepFile = document.fileName;
 
@@ -493,15 +512,15 @@ export class GoalDebugSession extends DebugSession {
             let line = editor.document.lineAt(0);
             if (editor.document.lineCount > lineNr) {
                 line = editor.document.lineAt(lineNr);
-            } 
+            }
             editor.revealRange(line.range, vscode.TextEditorRevealType.InCenter);
 
             this.isSteppingInto = false;
-            
+
             this.isPaused = true;
             this.editor = editor;
             this.httpResponse = res;
-           
+
             this.nextStepFile = document.fileName;
             this.variablesRefCache = [];
             this.setDebugDecorations([line.range]);

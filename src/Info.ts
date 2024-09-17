@@ -75,7 +75,9 @@ export class Info extends vscode.TreeItem  {
 				this.children.push(new Info('Not written to variable', 'Not written to variable', ''));
 				return;
 			};
-
+            if (!description) {
+                return;
+            }
 			var props = Object.getOwnPropertyNames(description);
 			for (var i = 0; i < props.length; i++) {
 				let action = description[props[i]];
