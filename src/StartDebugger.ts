@@ -64,7 +64,7 @@ export class StartDebugger {
             return;
         }
         this.lastRuntimeValue = command;
-        const regex = /(?<option>--\w+(=\w+)?)|(?<param>\w+=["']?[\p{L}\p{N}\s:\\_\\.]+["']?)|(?<file>[\w\/\\\.]+)/gu;
+        const regex = /(?<option>--\w+(=\w+)?)|(?<param>\w+=["']?[\p{L}\p{N}\s:\\_\\.\\-]+["']?)|(?<file>[\w\/\\\.]+)/gu;
 
         let match;
         let options = '';
