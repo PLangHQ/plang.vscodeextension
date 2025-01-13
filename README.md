@@ -46,6 +46,13 @@ You can confirm what will happen before executing your code. The details
 
 ![The details](functionDetails.png)
 
+### Run from step
+
+You can modify the plang code, build it and run it from specific line of code without restaring the app you are developing.
+[View video](https://www.youtube.com/watch?v=fCxol8AxdKE)
+
+![Run from step](./RunFromStep.png)
+
 ### IDE
 
 Your overview.
