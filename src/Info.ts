@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { StartDebugger } from './StartDebugger';
+import fetch from 'node-fetch';
 
 
 export class Info extends vscode.TreeItem  {
@@ -39,7 +40,16 @@ export class Info extends vscode.TreeItem  {
                     command: 'extension.startPLangDebug', 
                     title: 'Start debugging file',
                     arguments: [fileName]
-                };       
+                };  
+            } else if (fileToOpen.indexOf('line:') != -1) {    
+                var i = 0;
+                let prFileName = fileToOpen.substring(fileToOpen.indexOf(':')+1);
+                this.command = {
+                    command: 'extension.runFromStep', 
+                    title: 'Run step',
+                    arguments: [prFileName]
+                }; 
+                
 			} else {
 				var arg = (fileToOpen.indexOf('http') != -1) ? vscode.Uri.parse(fileToOpen) : vscode.Uri.file(fileToOpen); 
 				this.command = {

@@ -2,7 +2,7 @@
     "name": "plang-extension",
     "displayName": "plang-extension",
     "description": "Add support for plang programming language to VS Code",
-    "version": "0.1.21",
+    "version": "0.1.22",
     "icon": "logo.png",
     "engines": {
         "vscode": "^1.79.0"
@@ -74,7 +74,7 @@
                     "when": "resourceExtname == .goal"
                 },
                 {
-                    "command": "extension.findUsage",
+                    "command": "extension.runFromStep",
                     "group": "navigation",
                     "when": "resourceExtname == .goal"
                 }
@@ -97,8 +97,8 @@
                 "title": "Regenerate step"
             },
             {
-                "command": "extension.findUsage",
-                "title": "Find usage of goal"
+                "command": "extension.runFromStep",
+                "title": "Run from step"
             },
             {
                 "command": "extension.startPLangDebug",

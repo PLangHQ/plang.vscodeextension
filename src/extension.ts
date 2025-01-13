@@ -21,6 +21,7 @@ import { TextDecoration } from './TextDecoration';
 import { StartDebugger } from './StartDebugger';
 import { PathHelper } from './PathHelper';
 import { Constants } from './Constants';
+import fetch from 'node-fetch';
 
 let sourceProvider: SourceCodeProvider;
 let documentationProvider: DocumentationProvider;
@@ -177,8 +178,32 @@ function setupDebugger(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('extension.startPLangDebug', async (fileName : string) => {
         startDebugger.start(fileName);        
     });
+    let disposable2 = vscode.commands.registerCommand('extension.runFromStep', async (prFileName : any) => {
+        if (prFileName.path && prFileName.path.indexOf('.goal') != -1) {
+            var editor = vscode.window.activeTextEditor;
+            if (!editor) return;
 
+            const lineNumber = editor.selection.start.line;
+            const [goal, step, prFile, fullMatch] = getStepAndGoal(editor, lineNumber);
+            prFileName = step.RelativePrPath;
+        } 
+        try {
+            var response = await fetch('http://localhost:60878/events/external/plang/Runtime/RunStep?prFileName=' + prFileName, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log(response); 
+        } catch (e : any) {
+            if (e.code == 'ECONNREFUSED') {
+                vscode.window.showErrorMessage("You must start your app before running the step.")
+            }
+            console.log(e);
+        }  
+    });
     context.subscriptions.push(disposable);
+    context.subscriptions.push(disposable2);
 }
 
 function goToGoal(a: any) {
@@ -319,6 +344,7 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
             DisplayGoalInfo(codeProvider, goal, step);
             codeProvider.data.push(new Info('====', '======', ''));
             codeProvider.data.push(new Info('Run this file', "Run " + goal.GoalName, 'prompt:' + goal.RelativeGoalPath));
+            codeProvider.data.push(new Info('Run from step', "Run " + step.Text, 'line:' + step.RelativePrPath, startDebugger));
             codeProvider.data.push(new Info('Rebuild', Info.RebuildFile, prFile.path));
         } else if (step.ErrorHandlers && step.ErrorHandlers) {
             codeProvider.data.push(new Info('Module', step.ModuleType, goal.path));
