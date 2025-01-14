@@ -72,6 +72,14 @@ export class StartDebugger {
         let startFile = 'Start';
 
         var args = ['exec'];
+/*
+        args.push('watch');
+        args.push('--project');
+        args.push("C:\\Users\\Ingi Gauti\\source\\repos\\plang\\PlangConsole\\PlangConsole.csproj")
+        args.push('exec');
+        //args.push('plang.exe')
+*/
+
         while ((match = regex.exec(command)) !== null && match.groups) {
             if (match.groups.option) {
                 options = match.groups.option;
@@ -101,8 +109,7 @@ export class StartDebugger {
                 runtimeExecutable += '.exe';
             }
         }
-
-
+        
         args.push('--debug');
         let debugConfiguration: vscode.DebugConfiguration = {
             type: 'goal',

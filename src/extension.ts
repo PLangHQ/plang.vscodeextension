@@ -323,7 +323,7 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
         }
         documentationProvider.refresh();
 
-        if (refreshSourceView) ShowCode('');
+        if (refreshSourceView) ShowCode('', goal, step, prFile);
         codeProvider.treeView!.message = '';
         if (prFile) {
 
@@ -332,7 +332,7 @@ function displayStep(editor?: vscode.TextEditor, refreshSourceView = true) {
             codeProvider.data.push(new Info('Open pr file', 'Click to open', prFile.path));
             if (prFile.Action) {
                 if (prFile.Action.Code) {
-                    ShowCode(prFile.Action.Code);
+                    ShowCode(prFile.Action.Code, goal, step, prFile);
                 }
 
                 DisplayAction(prFile.Action, prFile.path);
@@ -392,8 +392,23 @@ function DisplayGoalInfo(codeProvider: any, goal: any, step: any) {
     }
 }
 
-function ShowCode(code: string) {
+function ShowCode(code: string, goal : any, step : any, prFile : any) {
 
+    if (step.ModuleType == "PLang.Modules.FileModule" && prFile.Action.FunctionName == "ReadTextFile") {
+        var filePath = path.join(goal.AbsoluteGoalFolderPath.toString(), prFile.Action.Parameters[0].Value.toString());
+        var stats = fs.statSync(filePath); // Get file stats
+        const fileSizeInBytes = stats.size;
+        const maxFileSizeInBytes = 1 * 1024 * 1024;
+        if (fileSizeInBytes < maxFileSizeInBytes) {
+            var content = fs.readFileSync(filePath);
+            sourceProvider.treeView!.message = prFile.Action.Parameters[0].Value.toString() + ": " + content.toString();
+            sourceProvider.refresh();            
+        } else {
+            sourceProvider.treeView!.message = "File to large to display";
+            sourceProvider.refresh();
+        }
+        return;
+    }
     sourceProvider.treeView!.message = code.replaceAll('α', '.');
     sourceProvider.refresh();
 }
@@ -479,6 +494,7 @@ function getStepAndGoal(editor: vscode.TextEditor, lineNumber: number): [any, an
     if (goal == null || goal == '') {
         return [null, null, undefined, false]
     }
+    goal.AbsoluteGoalFolderPath = baseAppPath;
     goal.path = goalFilePath;
     let step;
     let nr;
