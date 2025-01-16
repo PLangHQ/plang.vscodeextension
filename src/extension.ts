@@ -501,7 +501,8 @@ function getStepAndGoal(editor: vscode.TextEditor, lineNumber: number): [any, an
     let fullMatch = false;
     for (let i = 0; stepText != '' && i < goal.GoalSteps.length; i++) {
         try {
-            if (goal.GoalSteps[i].Text.trim() == stepText.trim()) {
+
+            if (matchStep(goal.GoalSteps[i].Text, stepText.trim())) {
                 nr = (i + 1).toString().padStart(2, '0');
                 step = goal.GoalSteps[i];
                 fullMatch = true;
@@ -534,12 +535,27 @@ function getStepAndGoal(editor: vscode.TextEditor, lineNumber: number): [any, an
     return [goal, step, prFile, fullMatch]
 }
 
+function matchStep(step : string, stepText : string) {
+    let cleanStep = step.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll(' ', '').trim();
+    let cleanStepText = stepText.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", "").replaceAll(' ', '').trim();
+    return cleanStep == cleanStepText;
+}
+
 function getStep(editor: vscode.TextEditor, lineNumber: number, goalLineNr: number): [string, number] {
     if (lineNumber < 0 || editor.document.lineCount < lineNumber) return ['', 0];
     try {
         var line: vscode.TextLine = editor.document.lineAt(lineNumber);
         if (line.text.trim().startsWith('-')) {
-            return [line.text.replace('-', '').trim(), lineNumber];
+            let stepText = line.text.trim();
+            for (let i = lineNumber+1;i<editor.document.lineCount;i++) {
+                line = editor.document.lineAt(i);
+                if (line.text.trim().startsWith('-')) {
+                    i = editor.document.lineCount;
+                } else {
+                    stepText += '\n' + line.text.trim();
+                }
+            }
+            return [stepText.replace('-', '').trim(), lineNumber];
         }
 
         if (line.text.trim().startsWith('/')) {
@@ -586,7 +602,10 @@ function isFirstGoal(editor: vscode.TextEditor, lineNumber: number) {
 // This method is called when your extension is deactivated
 export function deactivate() {
     if (server) {
+        console.error(`Closing webserver`);
         server.close();
+    } else {
+        console.error(`Server instance could not be found to shutdown`);
     }
 
 }
