@@ -396,6 +396,7 @@ function ShowCode(code: string, goal : any, step : any, prFile : any) {
 
     if (step.ModuleType == "PLang.Modules.FileModule" && prFile.Action.FunctionName == "ReadTextFile") {
         var filePath = path.join(goal.AbsoluteGoalFolderPath.toString(), prFile.Action.Parameters[0].Value.toString());
+        if (!fs.existsSync(filePath)) return;
         var stats = fs.statSync(filePath); // Get file stats
         const fileSizeInBytes = stats.size;
         const maxFileSizeInBytes = 1 * 1024 * 1024;
@@ -550,6 +551,8 @@ function getStep(editor: vscode.TextEditor, lineNumber: number, goalLineNr: numb
             for (let i = lineNumber+1;i<editor.document.lineCount;i++) {
                 line = editor.document.lineAt(i);
                 if (line.text.trim().startsWith('-')) {
+                    i = editor.document.lineCount;
+                } else if (line.text.match('[^\w]+')) {
                     i = editor.document.lineCount;
                 } else {
                     stepText += '\n' + line.text.trim();
