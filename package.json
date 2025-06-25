@@ -33,6 +33,15 @@
     ],
     "main": "./dist/extension.js",
     "contributes": {
+        "customEditors": [
+            {
+                "viewType": "goal.guiCustomEditor",
+                "displayName": "GUI Custom Editor",
+                "selector": [
+                    { "filenamePattern": "*.gui" }
+                ]
+            }
+        ],
         "viewsContainers": {
             "activitybar": [
                 {
@@ -43,6 +52,11 @@
                 {
                     "id": "plangChatSidebar",
                     "title": "Plang Chat",
+                    "icon": "media/logo.png"
+                }, 
+                {
+                    "id": "plangExecutionSidebar",
+                    "title": "Plang Execution",
                     "icon": "media/logo.png"
                 }
             ]
@@ -59,6 +73,13 @@
             "plangChatSidebar" :[ {
                     "id": "plangWebviewChat",
                     "name": "Plang Chat",
+                    "icon": "media/logo.svg",
+                    "type": "webview"
+                }
+            ],
+            "plangExecutionSidebar" :[ {
+                    "id": "plangWebviewExec",
+                    "name": "Plang Execution",
                     "icon": "media/logo.svg",
                     "type": "webview"
                 }

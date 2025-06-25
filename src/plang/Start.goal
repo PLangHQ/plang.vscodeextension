@@ -6,6 +6,9 @@ Start
 - add route "/CodePanel", POST, call CodePanel
 - add route "/ChatPanel", POST, call ChatPanel
 - add route "/GoalNotFound", POST, call GoalNotFound
+- add route "/ExecutionPath", POST, call ExecutionPath
+- add route "/RenderLlm", POST, call RenderLlm
+- add route "/Gui", POST, call Gui
 - write out "plang server started at 60878"
 
 Diagnostics

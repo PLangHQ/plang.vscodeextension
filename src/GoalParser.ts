@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { PathHelper } from './PathHelper';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Constants } from './Constants';
+import { Constants } from './depricated/Constants';
 
 export class GoalParser {
 
@@ -49,9 +49,19 @@ export class GoalParser {
         let step;
         let nr;
         let fullMatch = false;
+        /*
         for (let i = 0; stepText != '' && i < goal.GoalSteps.length; i++) {
+            if (goal.GoalSteps[i].LineNumber <= lineNumber + 1) {
+                nr = (i + 1).toString().padStart(2, '0');
+                step = goal.GoalSteps[i];
+                fullMatch = true;
+            } else {
+                i =  goal.GoalSteps.length;
+            }
+        }*/
+        for (let i = 0; !step && stepText != '' && i < goal.GoalSteps.length; i++) {
             try {
-
+                
                 if (this.matchStep(goal.GoalSteps[i].Text, stepText.trim())) {
                     nr = (i + 1).toString().padStart(2, '0');
                     step = goal.GoalSteps[i];
@@ -130,10 +140,10 @@ export class GoalParser {
                     line = editor.document.lineAt(i);
                     if (line.text.trim().startsWith('-')) {
                         i = editor.document.lineCount;
-                    } else if (line.text.match('[^\w]+')) {
+                    } else if (!line.text.match('[^\w]+')) {
                         i = editor.document.lineCount;
                     } else {
-                        stepText += '\n' + line.text.trim();
+                        stepText += '\n' + line.text;
                     }
                 }
                 return [stepText.replace('-', '').trim(), lineNumber];

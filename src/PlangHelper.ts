@@ -1,9 +1,16 @@
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import { ChildProcess, ChildProcessWithoutNullStreams, spawn } from "child_process";
 import fetch from "node-fetch";
 import { PathHelper } from "./PathHelper";
 import * as vscode from 'vscode';
+import { execFile } from 'child_process';
+import { ProcessManager } from "./ProcessManager";
 
 export class PlangHelper {
+
+    processManager = new ProcessManager();
+    static outputChannel: vscode.OutputChannel;
+    static plangProcess: ChildProcessWithoutNullStreams;
+
 
     public static async Call(path: string, body: any, method: string = 'POST'): Promise<string> {
         try {
@@ -12,7 +19,7 @@ export class PlangHelper {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-            var text = response.text();
+            var text = await response.text();
             return text;
         } catch (e) {
             console.error('Error in PlangHelper.Call:', e);
@@ -21,8 +28,39 @@ export class PlangHelper {
 
     }
 
-    static outputChannel: vscode.OutputChannel;
-    static plangProcess: ChildProcessWithoutNullStreams;
+    public async runApp(
+        processName: string,
+        outputFunc: (data: string) => void,
+        errorFunc: (err: string) => void,
+        onAskFunc: (question: string, processName: string) => void,
+        args: string[] = []
+    ): Promise<void> {
+
+        let process = await this.processManager.getProcess(processName);
+
+        if (!process) {
+            var result = await this.processManager.run(
+                processName,
+                'plang',
+                args,
+                (type, msg) => {
+                    if (type === 'ask') onAskFunc(msg, processName);
+                    else outputFunc(msg);
+                },
+                errorFunc
+            );
+
+            let i = 0;
+        }
+    }
+
+    public async sendInput(processName: string, input: string): Promise<boolean> {
+        return await this.processManager.sendInput(processName, input);
+    }
+
+
+
+
 
     public static async spawnPlang(app: string, parameters: any[], projectFolderPath: string): Promise<ChildProcessWithoutNullStreams> {
         var args = [app, 'output=html'];

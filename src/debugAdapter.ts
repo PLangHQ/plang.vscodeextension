@@ -10,18 +10,30 @@ import * as fs from 'fs';
 import fetch from 'node-fetch';
 import { PlangHelper } from './PlangHelper';
 import { Util } from './Util';
+import { findVariableRanges } from './extension';
 
-type ObjectValue = {
-    VariableName: string;
-    Value: object;
+type VariableEvent = any;
+type SimpleValue = {
+    Name: string;
     Type: string;
+    Value: any;
+    ObjectReferenceId?: number | undefined;
+};
+type ObjectValue = SimpleValue &  {
+    Events: VariableEvent[];
+    IsSystemVariable: boolean;
     Initiated: boolean;
-    ObjectReferenceId: number;
-    Events: any[];
+    Properties: any[];
+    IsProperty: boolean;
+    Created: Date;
+    Updated: Date;
+    Path: string;
+    PathAsVariable: string;
 };
 
 
 export class GoalDebugSession extends DebugSession {
+
 
     private readonly DEBUGGER_THREAD_ID = 1;
     private plangProcess?: child_process.ChildProcess;
@@ -33,14 +45,17 @@ export class GoalDebugSession extends DebugSession {
     diagnosticCollection = vscode.languages.createDiagnosticCollection('goal');
     step: any;
     goal: any;
+    goalVars: any;
     memoryStack: any;
     absolutePath: string = '';
     stepAbsolutePath: string = '';
 
+    private StringType = 'string';
+    private hoverFunction: vscode.Disposable | undefined;
     private debugHighlightDecorationType: vscode.TextEditorDecorationType;
     private highlightDecorationType: vscode.TextEditorDecorationType;
     private stopOnNext: boolean = false;
-    private variablesRefCache: ObjectValue[] = [];
+    private variablesRefCache: SimpleValue[] = [];
     private currentVariablesRef = 2;
     public variables: DebugProtocol.Variable[] = [];
     private nextStepFile: string | undefined = '';
@@ -77,6 +92,9 @@ export class GoalDebugSession extends DebugSession {
         response.body.supportsEvaluateForHovers = true;
 
         response.body.supportsClipboardContext = true;
+
+
+
         this.sendResponse(response);
     }
 
@@ -87,7 +105,7 @@ export class GoalDebugSession extends DebugSession {
             this.sendResponse(response);
             return;
         }
-    
+
         super.customRequest(command, response, args);
     }
     protected override dispatchRequest(request: DebugProtocol.Request): void {
@@ -96,14 +114,14 @@ export class GoalDebugSession extends DebugSession {
         }
         if (request.command === 'copy') {
             const valueToCopy = (request.arguments as { value: string }).value;
-            
+
             vscode.env.clipboard.writeText(valueToCopy).then(() => {
                 this.sendResponse({ request_seq: request.seq, success: true } as DebugProtocol.Response);
             });
-    
+
             return;
         }
-    
+
         super.dispatchRequest(request);
     }
     protected configurationDoneRequest(response: DebugProtocol.ConfigurationDoneResponse, args: DebugProtocol.ConfigurationDoneArguments): void {
@@ -147,6 +165,7 @@ export class GoalDebugSession extends DebugSession {
             this.sendEvent(new TerminatedEvent());
         });
 
+
         this.sendResponse(response);
 
     }
@@ -174,6 +193,8 @@ export class GoalDebugSession extends DebugSession {
         }
         this.httpResponse = null;
         this.diagnosticCollection.clear();
+        this.hoverFunction?.dispose();
+
         super.disconnectRequest(response, args);
     }
 
@@ -182,21 +203,24 @@ export class GoalDebugSession extends DebugSession {
             this.plangProcess.kill();
             this.plangProcess = undefined;
         }
+
+        this.hoverFunction?.dispose();
+
         this.httpResponse = null;
         super.terminateRequest(response, args);
     }
-/*
-    protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void {
-
-        const newBreakpoints = args.breakpoints?.map(bp => ({
-            line: bp.line,
-            verified: true // Mark as verified
-        })) || [];
-
-        // Send only the currently valid breakpoints
-        response.body = { breakpoints: newBreakpoints };
-        this.sendResponse(response);
-    }*/
+    /*
+        protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void {
+    
+            const newBreakpoints = args.breakpoints?.map(bp => ({
+                line: bp.line,
+                verified: true // Mark as verified
+            })) || [];
+    
+            // Send only the currently valid breakpoints
+            response.body = { breakpoints: newBreakpoints };
+            this.sendResponse(response);
+        }*/
     protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {
         // Return the single thread
         response.body = {
@@ -251,17 +275,30 @@ export class GoalDebugSession extends DebugSession {
 
     }
 
-    protected stepInRequest(response: DebugProtocol.StepInResponse, args: DebugProtocol.StepInArguments): void {
-        this.isSteppingInto = true;
+    protected stepOutRequest(response: DebugProtocol.StepOutResponse, args: DebugProtocol.StepOutArguments, request?: DebugProtocol.Request): void {
+        this.isSteppingInto = false;
         this.clearDecorations();
-        this.stopOnNext = true;
-        
+        this.stopOnNext = false;
+
         this.sendEvent(new ContinuedEvent(this.DEBUGGER_THREAD_ID));
         this.sendResponse(response);
 
         this.httpResponse!.send('{"ok":true}');
         this.httpResponse = null;
-        
+
+    }
+
+    protected stepInRequest(response: DebugProtocol.StepInResponse, args: DebugProtocol.StepInArguments): void {
+        this.isSteppingInto = true;
+        this.clearDecorations();
+        this.stopOnNext = true;
+
+        this.sendEvent(new ContinuedEvent(this.DEBUGGER_THREAD_ID));
+        this.sendResponse(response);
+
+        this.httpResponse!.send('{"ok":true}');
+        this.httpResponse = null;
+
 
     }
 
@@ -314,11 +351,14 @@ export class GoalDebugSession extends DebugSession {
         return name.substring(0, name.indexOf('.'));
     }
 
-   
+
 
     public async checkBreakpoint(data: any, res: any) {
         try {
-            if (this.httpResponse != null) return;
+            if (this.httpResponse != null) {
+                console.log('response not null')
+                return;
+            }
             if (this.stopOnNext && !data["!Step"]) {
                 res.send('{"continue":true}');
                 return;
@@ -344,11 +384,17 @@ export class GoalDebugSession extends DebugSession {
             this.stepAbsolutePath = data["StepAbsolutePath"];
             this.step = data["!Step"];
             this.goal = data["!Goal"];
+            this.goalVars = data["!GoalVariables"];
             this.memoryStack = data["!MemoryStack"];
             let error = data["!Error"];
             if (error != null && error != '') {
-                if (typeof (error) == 'string') {
-                    error = JSON.parse(error);
+                if (typeof (error) == this.StringType) {
+                    try {
+                        error = JSON.parse(error);
+                    } catch (e) {
+                        console.error('json parse on error', error)
+                        console.error(e)
+                    }
                 }
                 if (this.step.Hash != error.Step.Hash) {
                     error = null;
@@ -358,11 +404,11 @@ export class GoalDebugSession extends DebugSession {
             }
             this.diagnosticCollection.clear()
             if (!this.step) return;
-            
+
             const goalAbsolutePath = path.normalize(this.absolutePath).toLowerCase();
             let fileBreakpoints: vscode.SourceBreakpoint[] = [];
             let breakpoints = vscode.debug.breakpoints;
-            
+
             fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint
                 && bp.enabled && bp.location.range.start.line == (this.step.LineNumber - 1) &&
                 path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath
@@ -370,7 +416,7 @@ export class GoalDebugSession extends DebugSession {
 
 
             if (error != null && error != '') {
-                
+
                 error = await this.setupErrorBreakpoint(error, fileBreakpoints);
             }
 
@@ -400,9 +446,10 @@ export class GoalDebugSession extends DebugSession {
             this.httpResponse = res;
 
             this.nextStepFile = document.fileName;
-            this.variablesRefCache = [];
+            //this.variablesRefCache = [];
             this.setDebugDecorations([line.range]);
             this.sendEvent(new StoppedEvent('breakpoint', 1));
+
             return true;
 
         } catch (e) {
@@ -412,7 +459,7 @@ export class GoalDebugSession extends DebugSession {
     }
 
     private async setupErrorBreakpoint(error: any, fileBreakpoints: vscode.SourceBreakpoint[]) {
-        if (typeof (error) == 'string') {
+        if (typeof (error) == this.StringType) {
             error = JSON.parse(error);
         }
         const document = await vscode.workspace.openTextDocument(this.absolutePath);
@@ -484,7 +531,7 @@ export class GoalDebugSession extends DebugSession {
                 let diagnosticMessage = diagnostic[0].message;
                 diagnosticMessage += diagnostic[0].relatedInformation?.map(d => d.message).join("\n");
                 if (!this.stepAbsolutePath) return;
-                
+
                 const data = fs.readFileSync(this.stepAbsolutePath).toString();
                 let prFile = JSON.parse(data) as any;
 
@@ -495,24 +542,34 @@ export class GoalDebugSession extends DebugSession {
                 };
                 this.sendResponse(response);
 
-            } else {
+            } else if (args.expression != '') {
 
-                let objectValue = this.variablesRefCache.find(p => p.VariableName == args.expression);
+                let variableName = `%${args.expression}%`;
+
+                let objectValue = this.getObjectValue(variableName)
                 if (!objectValue) {
                     var keyToSearchFor = this.getKey(args.expression);
-                    objectValue = this.variablesRefCache.find(p => p.VariableName == keyToSearchFor);
+                    objectValue = this.getObjectValue(keyToSearchFor)
                 }
+                if (!objectValue) return;
 
-                response.body = {
-                    result: objectValue?.Value.toString() ?? '',
-                    variablesReference: objectValue?.ObjectReferenceId ?? 0
-                };
+                let responseBody = this.getResponseBody(objectValue) as any;
+
+                response.body = responseBody;
                 this.sendResponse(response);
             }
 
         }
 
     }
+
+    getResponseBody(ov: SimpleValue) {
+        if (ov.Type == this.StringType) {
+            return { result: ov.Value, variablesReference: 0 }
+        }
+        return { result: ov.Name, variablesReference: ov.ObjectReferenceId ?? 0 };
+    }
+
 
     getValue(variable: DebugProtocol.Variable, variableName: string): string {
         for (const valueKey of Object.keys(variable.value)) {
@@ -522,18 +579,34 @@ export class GoalDebugSession extends DebugSession {
 
     }
 
-    protected addPropertyToObject(obj: any) {
+    protected addPropertyToObject(obj: any, key: string) {
         if (!obj) {
             return;
         }
-        if (typeof (obj) == 'string') {
+        if (typeof (obj) == this.StringType) {
             obj = JSON.parse(obj);
         }
 
-        var propertyNames = Object.getOwnPropertyNames(obj);
-        for (var i = 0; i < propertyNames.length; i++) {
-            let val = obj[propertyNames[i]];
-            this.addObject(val, propertyNames[i]);
+        if (obj.length) {
+            for (let i = 0; i < obj.length; i++) {
+                let value : SimpleValue = { Name : key, Type : typeof(obj[i]), Value : obj[i]};
+                this.addObject(value);
+            }
+        } else {
+            var propertyNames = Object.getOwnPropertyNames(obj);
+            for (var i = 0; i < propertyNames.length; i++) {
+                let val = obj[propertyNames[i]];
+
+                let value : SimpleValue = { Name : propertyNames[i], Type : typeof(val), Value : val};
+                this.addObject(value);
+            }
+        }
+    }
+
+
+    protected addMemoryStack(memoryStack: any) {
+        for (let i = 0; i < memoryStack.length; i++) {
+            this.addObject(memoryStack[i] as ObjectValue);
         }
     }
     protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void {
@@ -541,10 +614,32 @@ export class GoalDebugSession extends DebugSession {
 
         if (args.variablesReference === 1 && this.data) {
 
-            if (this.memoryStack) {
-                this.addPropertyToObject(this.memoryStack);
-            } else {
-                this.addPropertyToObject(this.data);
+            var memoryStack = this.data["!MemoryStack"];
+            this.addMemoryStack(memoryStack);
+
+            var error = this.data["!Error"];
+            if (error) {
+                this.addObject(error);
+            }
+            var event = this.data["!Event"];
+            if (event) {
+                event.Name = "!Event";
+
+                this.addObject(event);
+            }
+            var step = this.data["!Step"];
+            if (step) this.addObject(step);
+            var goal = this.data["!Goal"];
+            if (goal) this.addObject(goal);
+            //this.addPropertyToObject(this.data);
+
+            if (typeof this.goalVars == this.StringType) {
+                this.goalVars = JSON.parse(this.goalVars);
+            }
+            for (let i = 0; i < this.goalVars.length; i++) {
+                let value : SimpleValue = { Name : this.goalVars[i].VariableName, Type : typeof(this.goalVars[i].Value), Value : this.goalVars[i].Value};
+
+                this.addObject(value);
             }
 
             response.body = {
@@ -554,28 +649,99 @@ export class GoalDebugSession extends DebugSession {
             return;
         }
 
-        var obj = this.variablesRefCache.find(p => p.ObjectReferenceId == args.variablesReference);
+        var obj = this.getObjectValueById(args.variablesReference)
         if (!obj) return;
 
-        let names = Object.getOwnPropertyNames(obj);
-        if (obj.Value) {
-            names = Object.getOwnPropertyNames(obj.Value);
-        }
-        for (const key of names) {
-            let val: any = (obj.Value as any)[key];
-            if (val) {
-                this.addObject(val, key);
-            } else {
-                this.addNull(key);
+
+        if (obj && obj.Type != this.StringType) {
+            if (obj.Type == "!Properties") {
+                var values = obj.Value as any;
+                for (const key in values) {
+                    if (values.hasOwnProperty(key)) {
+                        const item = values[key] as any;
+                        if (item) {
+                             let value : SimpleValue = { Name : item.PathAsVariable, Type : typeof(item.Value), Value : item.Value};
+
+                            this.addObject(value);
+                        }
+                    }
+                }
+            } else if (obj.Value && typeof(obj.Value) != 'string') {
+                let values = Object.getOwnPropertyNames(obj.Value);
+                for (const key of values) {
+                    let val: any = (obj.Value as any)[key];
+                    if (val) {
+                        let value : SimpleValue = { Name : key, Type : typeof(val), Value : val};
+                        this.addObject(value);
+                    } else {
+                        this.addNull(key);
+                    }
+                }
+            } else if (!obj.Value) {
+                let values = Object.getOwnPropertyNames(obj);
+                for (const key of values) {
+                    let val: any = (obj as any)[key];
+                    if (val) {
+                        let value : SimpleValue = { Name : key, Type : typeof(val), Value : val};
+                        this.addObject(value);
+                    } else {
+                        this.addNull(key);
+                    }
+                }
             }
-            //obj.VariableName + '.' + 
         }
+        if (obj.Type != '!Properties' && obj.Properties && obj.Properties.length > 0) {
+
+            var objectValue = {} as ObjectValue
+            objectValue.Name = "!Properties";
+            objectValue.Type = "!Properties"
+            objectValue.PathAsVariable = "%!Properties%"
+            objectValue.ObjectReferenceId = ++this.currentVariablesRef;
+            const { ...objWithoutProperties } = obj.Properties;
+
+            objectValue.Value = objWithoutProperties;
+
+            this.addObject(objectValue);
+        }
+
+        if (obj.Type != '!ObjectValue') {
+            let objectProperties = Object.getOwnPropertyNames(obj);
+            var objectValue = {} as ObjectValue
+            objectValue.Name = "!ObjectValue";
+            objectValue.Type = "!ObjectValue"
+            objectValue.PathAsVariable = "!ObjectValue"
+            objectValue.ObjectReferenceId = ++this.currentVariablesRef;
+            if (obj.Properties) {
+                const { ObjectReferenceId, Value, Properties, ...objWithoutProperties } = obj;
+                objectValue.Value = objWithoutProperties;
+            } else {
+                objectValue.Value = obj;
+            }
+            this.addObject(objectValue);
+
+        }
+
+
+        /*if (obj.Type == "!ObjectValue") {
+            let objectProperties = Object.getOwnPropertyNames(obj);
+           
+                var objectValue = {} as ObjectValue
+                objectValue.VariableName = "ObjectValue";
+                objectValue.Type = "!ObjectValue"
+                objectValue.ObjectReferenceId = ++this.currentVariablesRef;            
+            
+                this.addObject(objectValue, '!ObjectValue');
+            
+        }*/
+
+
 
         response.body = {
             variables: this.variables
         };
         this.sendResponse(response);
     }
+
     /*
     addStringVariable(key: string, val: any) {
         var variable = this.variables.find(p => p.name == key);
@@ -599,14 +765,38 @@ export class GoalDebugSession extends DebugSession {
         });
 
     }
-    addObject(val: ObjectValue, key: string) {
+
+    getObjectValueById(id: number): ObjectValue {
+        return this.variablesRefCache.find(p => p.ObjectReferenceId == id) as ObjectValue;
+    }
+
+    getObjectValue(name: string): SimpleValue {
+        return this.variablesRefCache.find(p => p.Name.toLowerCase() == name.toLowerCase()) as ObjectValue;
+    }
+
+    isObjectValue(val: SimpleValue | ObjectValue): val is ObjectValue {
+        return 'Events' in val;
+    }
+
+    addObject(value: SimpleValue) {
+
         try {
+            var valueInReference = this.getObjectValue(value.Name);
 
 
-            var objectValue = this.variablesRefCache.find(p => p.VariableName == key);
+            if (this.isObjectValue(value)) {
 
+            } else {
+            }
+           
+            if (valueInReference) {
+                value.ObjectReferenceId = valueInReference.ObjectReferenceId;
+            } else {
+                value.ObjectReferenceId = ++this.currentVariablesRef;
+            }
+            /*
             if (val && val.Type && val.Type.startsWith('System.String,')) {
-                val.Type = "String";
+                val.Type = this.StringType;
             }
             if (val && objectValue && objectValue.Type == val.Type && val.Value) {
                 objectValue.Value = val.Value;
@@ -622,12 +812,11 @@ export class GoalDebugSession extends DebugSession {
                 //this.variables = this.variables.filter(p => p.variablesReference !== objectValue?.ObjectReferenceId);
             }
 
-            if (!objectValue) objectValue = {} as ObjectValue;
 
             if (!val) {
                 objectValue.Value = new String('');
                 objectValue.ObjectReferenceId = 0;
-                objectValue.Type = 'String';
+                objectValue.Type = this.StringType;
             } else if (!val.Value && !val.Type) {
                 objectValue.Value = val ?? null;
                 if (val.Type) {
@@ -645,13 +834,14 @@ export class GoalDebugSession extends DebugSession {
             } else {
                 objectValue = val;
 
-                if (val.Type == 'String') {
-                    objectValue.Type = "String";
+                if (val.Type == this.StringType) {
+                    objectValue.Type = this.StringType;
                     objectValue.ObjectReferenceId = 0;
                 } else if (val.Type.startsWith('Newtonsoft.Json.Linq')) {
                     objectValue.Type = val.Type;
-                    if (val.Value.toString() != '[object Object]') {
-                        val.Value = val.Value
+                    if (val.Value.toString().indexOf('[object Object]') == -1) {
+                        val.Value = val.Value;
+                        objectValue.ObjectReferenceId = 0;
                     } else {
                         objectValue.Value = val.Value;
                         objectValue.ObjectReferenceId = ++this.currentVariablesRef;
@@ -662,19 +852,50 @@ export class GoalDebugSession extends DebugSession {
                     objectValue.Type = (val.Type ?? (val.Value as ObjectValue)?.Type ?? "Object");
                 }
             }
-            objectValue.VariableName = key;
+            objectValue.Name = key;
 
-
+            if (!objectValue.ObjectReferenceId) {
+                objectValue.ObjectReferenceId = ++this.currentVariablesRef;
+            }
+            */
+            this.addValue(value);
+            /*
             this.variablesRefCache.push(objectValue);
-            this.variables.push({
+            let item = {
                 name: key,
                 type: objectValue.Type,
                 value: this.cleanValue(objectValue),
-                variablesReference: objectValue.ObjectReferenceId
-            });
+                variablesReference: objectValue.ObjectReferenceId,
+            };
+            this.variables.push(item);*/
         } catch (e) {
             console.log(e);
         }
+
+    }
+
+    addValue(value: SimpleValue) {
+        let i = this.variablesRefCache.findIndex(v => v.ObjectReferenceId === value.ObjectReferenceId);
+        if (i >= 0) {
+            this.variablesRefCache[i] = value;
+        } else {
+            this.variablesRefCache.push(value);
+        }
+
+        let item = {
+            name: value.Name,
+            type: value.Type,
+            value: this.cleanValue(value),
+            variablesReference: value.ObjectReferenceId
+        } as DebugProtocol.Variable;
+
+        i = this.variables.findIndex(v => v.name === item.name);
+        if (i >= 0) {
+            this.variables[i] = item;
+        } else {
+            this.variables.push(item);
+        }
+
 
     }
 
@@ -696,7 +917,7 @@ export class GoalDebugSession extends DebugSession {
             return 'null';
         }
 
-        if (val.Type == 'String' && val.Value.toString() != "[object Object]") {
+        if (val.Type == this.StringType && val.Value.toString() != "[object Object]") {
             val = val.Value ?? '';
         } else if (typeof val == 'object') {
             val = (typeof val.Value == 'object') ? 'Object' : (val.Value ?? '');
@@ -716,7 +937,6 @@ export class GoalDebugSession extends DebugSession {
     }
 
 }
-
 
 
 

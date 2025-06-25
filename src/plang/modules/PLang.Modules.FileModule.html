@@ -1,5 +1,6 @@
 <h4>File: {{ path.Value }}
     | <a href="#" onclick="openFile('{{ path.Value | string.replace "\\" "/" }}');">Open file</a></h4>
-<div class="uk-overflow-auto uk-width-1-1">
-<pre>{{ content }}</pre>
-</div>
+
+<pre>
+{{ content | html.escape }}
+</pre>

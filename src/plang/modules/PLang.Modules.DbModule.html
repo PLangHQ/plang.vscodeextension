@@ -1,4 +1,54 @@
-<h4>Table info</h4>
+
 <div>
-Not ready
+
+    {{ if instruction.Function.Parameters && instruction.Function.Parameters.size > 0 }}
+    
+    <h4>Sql</h4>
+   <code class="language-sql">{{ instruction.Function.Parameters[0].Value }}</code>
+    {{ if instruction.Function.Parameters[1] != null && instruction.Function.Parameters[1].Value != null && instruction.Function.Parameters[1].Value != '' }}
+   <h4>Parameters</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ for parameter in instruction.Function.Parameters[1].Value }}
+            <tr>
+                <td>{{ parameter.ParameterName }}</td>
+                <td>{{ parameter.VariableNameOrValue }}</td>
+                <td>{{ parameter.TypeFullName }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+    {{ end }}
+    {{ end }}
+
+
+    {{ if instruction.Function.Name == "Select" }}
+    <h4>Example usage</h4>    
+    You can use {{ instruction.Function.ReturnValues[0].VariableName }} in the following way
+    <br />
+        <code>
+            - write out {{ instruction.Function.ReturnValues[0].VariableName }}
+        </code>
+        <br> or loop through {{ instruction.Function.ReturnValues[0].VariableName }}<br>
+        <code>
+            
+            - go through  {{ instruction.Function.ReturnValues[0].VariableName }} call ProcessItem
+        </code>
+    {{ end }}
+    {{ if instruction.Function.FunctionName == "SelectOneRow" }}
+    <h4>Example usage</h4>    
+    You can write out {{ instruction.Function.ReturnValues[0].VariableName }} to the user in the following way
+    <br /><br />
+        <code>
+            - write out {{ instruction.Function.ReturnValues[0].VariableName }}
+        </code>
+        
+    {{ end }}
 </div>

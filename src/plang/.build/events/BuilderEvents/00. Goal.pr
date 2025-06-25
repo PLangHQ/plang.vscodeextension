@@ -9,29 +9,32 @@
       "ModuleType": null,
       "Name": null,
       "Description": null,
-      "PrFileName": null,
-      "RelativePrPath": null,
+      "PrFileName": "Events.pr",
+      "RelativePrPath": ".build\\events\\BuilderEvents\\Events.pr",
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Generated": "2025-04-01T16:32:50.685552+00:00",
+      "Confidence": null,
+      "Inconsistency": null,
+      "Generated": "2025-06-24T10:26:31.0971015+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
+      "Retry": false,
       "CacheHandler": null,
       "CancellationHandler": null,
-      "Custom": {},
       "Number": 0,
       "LineNumber": 2,
       "LlmRequest": null,
       "EventBinding": {
         "EventType": "Before",
-        "EventScope": "EndOfApp",
+        "EventScope": "Goal",
         "GoalToBindTo": {
-          "Value": "*"
+          "Name": "builder"
         },
         "GoalToCall": {
-          "Value": "CopyFiles"
+          "Name": "CopyFiles",
+          "Parameters": {}
         },
         "IncludePrivate": false,
         "StepNumber": null,
@@ -45,12 +48,20 @@
         "ExceptionType": null,
         "IsLocal": false,
         "IncludeOsGoals": false,
-        "Id": "Before_EndOfApp_*_CopyFiles_False___True__False_____False"
+        "IsOnStep": false,
+        "Id": "Before_Goal_builder_CopyFiles_False___True__False_____False",
+        "UniqueId": "7c9ccbab-1606-4492-9df9-aefe55def890",
+        "Goal": null,
+        "GoalStep": null,
+        "Stopwatch": null
       },
       "IsEvent": true,
       "Hash": null,
       "BuilderVersion": null,
-      "RelativeGoalPath": "\\events\\BuilderEvents.goal"
+      "RelativeGoalPath": "\\events\\BuilderEvents.goal",
+      "Stopwatch": null,
+      "UserIntent": null,
+      "Variables": []
     }
   ],
   "SubGoals": [],
@@ -65,6 +76,13 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
+  "FileHash": "5c875b88fa63ffd68a47b22150323c64bf48b0a926c5a3d514316afcebe1d050",
   "Hash": null,
-  "IncomingVariablesRequired": null
+  "IsOS": false,
+  "CurrentStepIndex": 0,
+  "IncomingVariablesRequired": null,
+  "DataSourceName": null,
+  "IsSetup": false,
+  "Stopwatch": null,
+  "Variables": []
 }

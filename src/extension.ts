@@ -2,44 +2,44 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { DocumentationProvider } from './DocumentationProvider';
-import { CodeProvider } from './CodeProvider';
-import { SourceCodeProvider } from './SourceCodeProvider';
-import { Info, RunPlangCode } from './Info';
 import * as path from 'path';
 import * as express from 'express';
 import { Server } from 'http';
-import { DebugSession, InitializedEvent, TerminatedEvent, StoppedEvent, ContinuedEvent } from '@vscode/debugadapter';
 import { GoalDebugSession } from './debugAdapter'
 import { GoalDebugAdapterDescriptorFactory } from './GoalDebugAdapterDescriptorFactory';
-import { PlangCompletionProvider } from './PlangCompletionProvider';
-import * as chokidar from 'chokidar';
+import { PlangCompletionProvider } from './providers/PlangCompletionProvider';
 import 'source-map-support/register';
-
 import { TextDecoration } from './TextDecoration';
 import { StartDebugger } from './StartDebugger';
 import { PathHelper } from './PathHelper';
-import { Constants } from './Constants';
+import { Constants } from './depricated/Constants';
 import * as child_process from 'child_process';
 import { PlangHelper } from './PlangHelper';
-import { DebugVariableHighlighter } from './DebugVariableHighlighter';
+import { DebugVariableHighlighter } from './depricated/DebugVariableHighlighter';
 import { GoalParser } from './GoalParser';
 import { Util } from './Util';
-import { PlangWebviewViewProvider } from './PlangWebviewViewProvider';
-import { PlangWebviewChatViewProvider } from './PlangWebviewChatViewProvider';
+import { PlangWebviewViewProvider } from './providers/PlangWebviewViewProvider';
+import { PlangWebviewChatViewProvider } from './providers/PlangWebviewChatViewProvider';
+import { PlangWebviewExecViewProvider } from './providers//PlangWebviewExecViewProvider';
+import { GuiCustomEditorProvider } from './providers/GuiCustomEditorProvider';
+
 
 
 let server: Server;
 let startDebugger: StartDebugger;
-let debugVariableHighligher: DebugVariableHighlighter
+let debugVariableHighlighter: DebugVariableHighlighter
 
-let debugDescriptor: GoalDebugAdapterDescriptorFactory;
+let debugFactory: GoalDebugAdapterDescriptorFactory;
+let debugSession : GoalDebugSession;
 export let llmService: string;
 let extContext: vscode.ExtensionContext;
 let textDecoration: TextDecoration;
 let goalParser: GoalParser;
 let plangWebview: PlangWebviewViewProvider;
 let plangWebviewChat: PlangWebviewChatViewProvider;
+let plangWebviewExecPath: PlangWebviewExecViewProvider;
+let guiEditor: GuiCustomEditorProvider;
+let llmDecoratorType: vscode.TextEditorDecorationType;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -48,24 +48,28 @@ export function activate(context: vscode.ExtensionContext) {
     extContext = context;
     goalParser = new GoalParser();
 
-    debugVariableHighligher = new DebugVariableHighlighter();
-    context.subscriptions.push(debugVariableHighligher);
+    debugVariableHighlighter = new DebugVariableHighlighter();
+    context.subscriptions.push(debugVariableHighlighter);
 
     startDebugger = new StartDebugger(context);
 
+    debugFactory = startDebugger.getDebugFactory();
+    debugSession = debugFactory.debugSession!;
 
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('goal', new PlangCompletionProvider(debugSession), '%'));
 
-    debugDescriptor = startDebugger.getDebugDescriptor();
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('goal', new PlangCompletionProvider(debugDescriptor.debugSession!), '%'));
-
-
+    guiEditor = new GuiCustomEditorProvider(context);
+    context.subscriptions.push(vscode.window.registerCustomEditorProvider(GuiCustomEditorProvider.viewType, guiEditor, {
+        webviewOptions: { retainContextWhenHidden: true },
+        supportsMultipleEditorsPerDocument: false
+    }));
 
 
     setupServer().then(() => {
         console.log('I am here');
         let portNumber = (server.address() as any).port ?? 60788;
 
-        plangWebview = new PlangWebviewViewProvider(context, startDebugger, portNumber);
+        plangWebview = new PlangWebviewViewProvider(context, startDebugger, portNumber, guiEditor);
         let plangWebviewProvider = vscode.window.registerWebviewViewProvider(PlangWebviewViewProvider.viewType, plangWebview, { webviewOptions: { retainContextWhenHidden: true } });
         context.subscriptions.push(plangWebviewProvider);
 
@@ -73,6 +77,16 @@ export function activate(context: vscode.ExtensionContext) {
         plangWebviewChat = new PlangWebviewChatViewProvider(context);
         let plangWebviewChatProvider = vscode.window.registerWebviewViewProvider(PlangWebviewChatViewProvider.viewType, plangWebviewChat, { webviewOptions: { retainContextWhenHidden: true } });
         context.subscriptions.push(plangWebviewChatProvider);
+
+
+
+        plangWebviewExecPath = new PlangWebviewExecViewProvider(context, startDebugger, portNumber);
+        let plangWebviewExecProvider = vscode.window.registerWebviewViewProvider(PlangWebviewExecViewProvider.viewType, plangWebviewExecPath, { webviewOptions: { retainContextWhenHidden: true } });
+        context.subscriptions.push(plangWebviewExecProvider);
+        startDebugger.setExecPathPanel(plangWebviewExecPath);
+
+        vscode.commands.executeCommand('workbench.view.extension.plangInfoSidebar');
+
     }).catch((e) => {
         console.error('I had error');
         console.error(e);
@@ -109,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.goToLine', (a, b, c) => {
-        debugDescriptor.debugSession?.goToLine(a)
+        debugSession.goToLine(a)
         console.log(a, b, c);
     }));
 
@@ -121,7 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
         console.log(result);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('extension.build', () => {
-        plangWebview.build();
+        plangWebview.build(false);
     }));
     context.subscriptions.push(vscode.commands.registerCommand('extension.runApp', async (app: string, parameters: any) => {
         await runApp(app, parameters);
@@ -131,6 +145,38 @@ export function activate(context: vscode.ExtensionContext) {
 
     }));
 
+
+    
+
+    /*
+    llmDecoratorType = vscode.window.createTextEditorDecorationType({
+        gutterIconPath: vscode.Uri.file('/media/icon.svg'),
+        gutterIconSize: 'contain'
+    });
+
+    vscode.languages.registerCodeLensProvider('goal', {
+        async provideCodeLenses(document, token) {
+            const lenses: vscode.CodeLens[] = [];
+            var ranges = await findVariableRanges();
+            // Return an array of CodeLens objects where you find 'LlmModel'
+            for (var i = 0; i < ranges.length; i++) {
+                lenses.push(
+                    new vscode.CodeLens(ranges[i], {
+                        title: "Llm request",
+                        command: "yourExtension.doX",
+                        arguments: []
+                    })
+                );
+
+                
+    var editor = await Util.getEditor();
+    if (!editor) return;
+
+    editor.setDecorations(llmDecoratorType, ranges);
+            }
+            return lenses;
+        }
+    });*/
 
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.goToGoal', (a, b, c, d) => {
@@ -145,7 +191,11 @@ export function activate(context: vscode.ExtensionContext) {
                 const viewId = 'PLang'; // replace with the id of your view
 
                 // Reveal the view
-                vscode.commands.executeCommand('workbench.view.extension.' + viewId);
+                //vscode.commands.executeCommand('workbench.view.extension.' + viewId);
+            }
+
+            if (document.fileName.endsWith('.llm')) {
+                var i = 0;
             }
         })
     );
@@ -162,10 +212,12 @@ export function activate(context: vscode.ExtensionContext) {
             if (editor.document.fileName.endsWith('.goal')) {
                 plangWebview.DisplayCodePanel();
                 plangWebviewChat.DisplayChatPanel();
+                plangWebviewExecPath.DisplayExecutionPanel();
+            } else if (editor.document.fileName.endsWith('.llm')) {
+                plangWebview.DisplayCodePanel('llm');
             }
         })
     );
-
 
 }
 
@@ -174,13 +226,14 @@ function setupDebugger(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.debug.onDidTerminateDebugSession((debugSession) => {
         // Check if the terminated session is the one we're interested in
-        var ds = debugDescriptor.debugSession as GoalDebugSession;
+        var ds = debugFactory.debugSession as GoalDebugSession;
         //if (debugSession === ds) {
-        // Debug session has ended, reset debugDescriptor.debugSession
-        debugDescriptor.debugSession?.clearDecorations();
-        debugDescriptor.debugSession = undefined;
+        // Debug session has ended, reset debugFactory.debugSession
+        debugFactory.debugSession?.clearDecorations();
+        debugFactory.debugSession = undefined;
 
         console.log('Debug session ended');
+        plangWebviewExecPath.Clear();
         //}
     }));
 
@@ -223,7 +276,7 @@ function setupDebugger(context: vscode.ExtensionContext) {
             // Add breakpoint to the debug session
             vscode.debug.addBreakpoints([breakpoint]);
         }
-        debugDescriptor.debugSession!.continueWithRequest(currentResponse, undefined, { prFileName: step.RelativePrPath, csharpDebugger: csharpDebugger });
+        debugFactory.debugSession!.continueWithRequest(currentResponse, undefined, { prFileName: step.RelativePrPath, csharpDebugger: csharpDebugger });
     };
     context.subscriptions.push(disposable);
     context.subscriptions.push(disposable2);
@@ -258,29 +311,40 @@ async function setupServer() {
         try {
             currentResponse = res;
             const data = req.body;
-
-            if (debugDescriptor.debugSession) {
-                await debugDescriptor.debugSession!.checkBreakpoint(data, res);
+            if (data.type && data.type == 'execution') {
+                await plangWebviewExecPath.executeFunc(data);
+                res.send('{"ok":true}');
+            } else if (debugFactory.debugSession) {
+                let result = await debugFactory.debugSession!.checkBreakpoint(data, res);
+                console.log('result', result);
             } else {
                 res.send('{"ok":true}');
             }
+
             //currentResponse = null;
         } catch (e) {
             console.error(e);
+            res.send('{"ok":true}');
         } finally {
             //currentResponse = null;
+
         }
     });
 
     server = await startListening(app);
 
     return new Promise((resolve, reject) => {
-        var plangProcess = process.env.PlangCSharpDev ?? "";
+        // set csdebug on codepanel => args = ['--csdebug'], it will then point to PATH plang instance
+        let args: any[] = [];
+        let plangProcess = "";
+        if (!args.includes('--csdebug')) {
+            plangProcess = process.env.PlangCSharpDev ?? '';
+        }
         plangProcess = path.join(plangProcess, "plang");
         const plangPath = path.join(extContext.extensionPath, "src", "plang");
         const plangServerPath = path.join(__dirname, "plang");
 
-        var args = [''];
+
 
         let plangServer = child_process.spawn(plangProcess, args, { cwd: plangServerPath });
         plangServer.stdout!.on('data', (data: any) => {
@@ -383,4 +447,35 @@ async function findPrFilesAtPath(dir: string): Promise<string[]> {
 
     await recurse(dir);
     return results;
+}
+
+export async function findVariableRanges(variableName: string | undefined = undefined): Promise<vscode.Range[]> {
+    let editor = await Util.getEditor();
+    if (!editor) return [];
+
+    var document = editor.document;
+
+    const ranges: vscode.Range[] = [];
+    const text = document.getText();
+    const regex = /%[a-zA-Z0-9_]+%/g;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+        if (variableName && variableName != match[0]) continue;
+
+        const start = document.positionAt(match.index);
+        const end = document.positionAt(match.index + match[0].length);
+        ranges.push(new vscode.Range(start, end));
+    }
+    return ranges;
+}
+
+export async function setLlmRequest(variableName: string) {
+    var ranges = await findVariableRanges(variableName);
+
+    var editor = await Util.getEditor();
+    if (!editor) return;
+
+    //editor.setDecorations(llmDecoratorType, ranges);
+
 }

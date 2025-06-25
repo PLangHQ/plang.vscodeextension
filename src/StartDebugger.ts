@@ -4,20 +4,22 @@ import { GoalDebugAdapterDescriptorFactory } from './GoalDebugAdapterDescriptorF
 import { PathHelper } from './PathHelper';
 import * as path from 'path';
 import * as fs from 'fs'
-import { Constants } from './Constants';
+import { Constants } from './depricated/Constants';
+import { PlangWebviewExecViewProvider } from './providers/PlangWebviewExecViewProvider';
 
 export class StartDebugger {
+   
 
     lastRuntimeValue: string | undefined = undefined;
-    debugDescriptor: GoalDebugAdapterDescriptorFactory;
+    debugFactory: GoalDebugAdapterDescriptorFactory;
     context: vscode.ExtensionContext
+    plangWebviewExecPath : PlangWebviewExecViewProvider | undefined;
 
     public constructor(context: vscode.ExtensionContext) {
-        this.debugDescriptor = new GoalDebugAdapterDescriptorFactory();
+        this.debugFactory = new GoalDebugAdapterDescriptorFactory();
         this.context = context;
-
         
-        context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('goal', this.debugDescriptor));
+        context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('goal', this.debugFactory));
 /*
         const stopDebuggerCommand = vscode.commands.registerCommand('extension.stopDebugger', () => {
             vscode.debug.stopDebugging();
@@ -25,8 +27,8 @@ export class StartDebugger {
         });*/
     }
 
-    public getDebugDescriptor() {
-        return this.debugDescriptor;
+    public getDebugFactory() : GoalDebugAdapterDescriptorFactory {
+        return this.debugFactory;
     }
 
     public async start(fileName:string | null, debugPort : number, csdebug : boolean) {
@@ -43,7 +45,7 @@ export class StartDebugger {
             this.lastRuntimeValue += ' --csdebug';
         }
 
-        if (this.debugDescriptor.debugSession && vscode.debug.activeDebugSession) return;
+        if (this.debugFactory.debugSession && vscode.debug.activeDebugSession) return;
 
         let runtimeExecutable = 'plang';
         const platform = os.platform();
@@ -140,11 +142,26 @@ export class StartDebugger {
         } as vscode.WorkspaceFolder;
 
         await vscode.debug.startDebugging(workspaceFolder, debugConfiguration).then(
-            (value) => {
-                console.log('value:', value)
+            async (value) => {
+                
+                if (this.plangWebviewExecPath) {
+                    //await vscode.commands.executeCommand('workbench.view.extension.plangExecutionSidebar');
+                    //vscode.commands.executeCommand('plangWebviewExec.focus');
+                    
+                    //this.plangWebviewExecPath.debuggerStarting();
+                    
+                }
+                
+
+
             }, (reason) => {
                 console.log('reason:', reason)
             }
         );
+    }
+
+
+    setExecPathPanel(plangWebviewExecPath: PlangWebviewExecViewProvider) {
+        this.plangWebviewExecPath = plangWebviewExecPath;
     }
 }

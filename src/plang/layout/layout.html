@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.4/dist/css/uikit.min.css" />
     <style>
         @media (prefers-color-scheme: dark) {
-            body {
+            body, pre {
                 background-color: #1e1e1e;
                 color: #e0e0e0;
             }
@@ -79,6 +79,7 @@
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
     <script>
         const vscode = acquireVsCodeApi();
     </script>
@@ -87,7 +88,7 @@
 <body>
 
     <div class="uk-card uk-card-default uk-card-body uk-width-1-1">
-        {{ content }}
+{{ content }}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.4/dist/js/uikit.min.js"></script>
