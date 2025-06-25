@@ -1,17 +1,13 @@
 import * as vscode from 'vscode';
-import { Info } from './Info';
+import { Info, IPlangIDETreeItem } from './Info';
 
-vscode.commands.registerCommand('myExtension.runMyCommand', () => {
-	/**/
-});
+export class CodeProvider implements vscode.TreeDataProvider<IPlangIDETreeItem> {
 
-export class CodeProvider implements vscode.TreeDataProvider<Info> {
+	private _onDidChangeTreeData: vscode.EventEmitter<IPlangIDETreeItem | undefined | null | void> = new vscode.EventEmitter<IPlangIDETreeItem | undefined | null | void>();
+	readonly onDidChangeTreeData: vscode.Event<IPlangIDETreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
+	public treeView?: vscode.TreeView<IPlangIDETreeItem>;
 
-	private _onDidChangeTreeData: vscode.EventEmitter<Info | undefined | null | void> = new vscode.EventEmitter<Info | undefined | null | void>();
-	readonly onDidChangeTreeData: vscode.Event<Info | undefined | null | void> = this._onDidChangeTreeData.event;
-	public treeView?: vscode.TreeView<Info>;
-
-	data: Info[];
+	data: IPlangIDETreeItem[];
 
 	constructor() {
 		this.data = [];
@@ -21,12 +17,12 @@ export class CodeProvider implements vscode.TreeDataProvider<Info> {
 		this._onDidChangeTreeData.fire();
 	}
 
-	getTreeItem(element: Info): vscode.TreeItem | Thenable<vscode.TreeItem> {
-		return element;
+	getTreeItem(element: IPlangIDETreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
+		return element as vscode.TreeItem;
 	
 	}
 
-	getChildren(element?: Info | undefined): vscode.ProviderResult<Info[]> {
+	getChildren(element?: IPlangIDETreeItem | undefined): vscode.ProviderResult<IPlangIDETreeItem[]> {
 		if (element === undefined) {
 			return this.data;
 		}

@@ -1,0 +1,28 @@
+CodePanel
+- give access to %request.appPath%
+- read file %request.goalBuildPath%, write to %goal%
+- if %request.lineNumber% != -1 then
+    - filter %goal% where "LineNumber" = %request.lineNumber%, extract parent, first item, write to %step%
+    - read file %request.appPath%/%step.RelativePrPath%, into %instruction%
+    - call goal %step.ModuleType%
+        on error key:'GoalNotFound' call WriteOut
+- render template "CodePanel.html", write to %content%
+- call goal HtmlOut
+
+WriteOut
+- write out system "Not found: %step.ModuleType%"
+
+PLang.Modules.CodeModule
+- render template "/modules/%step.ModuleType%.html", write to %module%
+
+PLang.Modules.ConditionalModule
+- render template "/modules/PLang.Modules.CodeModule.html", write to %module%
+
+PLang.Modules.DbModule
+- render template "/modules/%step.ModuleType%.html", write to %module%
+
+PLang.Modules.FileModule
+- filter %instruction% where "Name"="path", get parent, first entry, write to %path%
+- set %absoluteFilePath% = %request.appPath%/%goal.RelativeGoalFolderPath%/%path.Value%
+- read file %absoluteFilePath%, write to %content%
+- render template "/modules/%step.ModuleType%.html", write to %module%

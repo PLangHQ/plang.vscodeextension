@@ -1,0 +1,77 @@
+{{ if instruction.Action.Code }}
+{{ if instruction.Action.InputParameters && instruction.Action.InputParameters.size > 0 }}
+
+<div class="uk-overflow-auto uk-width-1-1">
+    <h4>Input parameters</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Variable name</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ for item in instruction.Action.InputParameters }}
+            <tr>
+                <td>{{ item.VariableName }}</td>
+                <td>{{ item.ParameterType }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+</div>
+{{ end }}
+{{ if instruction.Action.OutParameters && instruction.Action.OutParameters.size > 0 }}
+
+
+<div class="uk-overflow-auto uk-width-1-1">
+    <h4>Output parameters:</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Variable name</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ for item in instruction.Action.OutParameters }}
+            <tr>
+                <td>{{ item.VariableName }}</td>
+                <td>{{ item.ParameterType }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+</div>
+{{ end }}
+
+{{ if step.ModuleType == 'PLang.Modules.ConditionalModule' }}
+<div class="uk-overflow-auto uk-width-1-1">
+    <h4>Return from condition</h4>
+    <ul>
+        {{ if instruction.Action.GoalToCallOnTrue != '' && instruction.Action.GoalToCallOnTrue.Value != '' }}
+        <li>Call <strong>{{ instruction.Action.GoalToCallOnTrue.Value }}</strong> when <em
+                class="uk-text-success">true</em>
+            {{ if instruction.Action.GoalToCallOnTrueParameters != null }}
+            {{ instruction.Action.GoalToCallOnTrueParameters }}
+            {{ end}}
+        </li>
+        {{ end }}
+
+        {{ if instruction.Action.GoalToCallOnFalse != '' && instruction.Action.GoalToCallOnFalse.Value != '' }}
+        <li>Call <strong>{{ instruction.Action.GoalToCallOnFalse.Value }}</strong> when <em>false</em>
+            {{ if instruction.Action.GoalToCallOnFalseParameters != null }}
+            {{ instruction.Action.GoalToCallOnFalseParameters }}
+            {{ end}}
+        </li>
+        {{ end }}
+        {{ if instruction.Action.GoalToCallOnTrue == '' && instruction.Action.GoalToCallOnFalse == '' }}
+        <li>Will run next step on <em class="uk-text-success">true</li>
+        {{ end }}
+    </ul>
+</div>
+{{ end }}
+<div class="uk-overflow-auto uk-width-1-1">
+<pre class="line-numbers"><code class="language-csharp">{{ instruction.Action.Code | string.replace "α" "." | html.escape }}</code></pre>
+</div>
+{{ end }}

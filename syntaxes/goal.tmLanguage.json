@@ -3,19 +3,22 @@
     "scopeName": "source.goal",
     "patterns": [
         {
+            "include": "#comments"
+        },
+        {
             "name": "string.quoted.double.goal",
             "begin": "\"",
             "end": "\"",
             "patterns": [
                 {
                     "name": "variable.parameter.goal",
-                    "match": "%[a-zA-Z0-9\\._\\[\\]\\(\\)'\"]+%"
+                    "match": "%[a-zA-Z0-9\\._\\[\\]\\(\\)\\!'\"]+%"
                 }
             ]
         },
         {
             "name": "variable.parameter.goal",
-            "match": "%[a-zA-Z0-9\\._\\[\\]\\(\\)'\"]+%"
+            "match": "%[a-zA-Z0-9\\!,\\s\\._\\[\\]\\(\\)'\\\"]+%"
         },
         {
             "name": "keyword.control.goal",
@@ -26,6 +29,34 @@
             "match": "^\\- \\[.*\\]$"
         }
     ],
-    "repository": {},
-    "fileTypes": ["goal"]
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.block.goal",
+                    "begin": "/\\*",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.goal"
+                        }
+                    },
+                    "end": "\\*/",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.goal"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "name": "comment.block.documentation.goal",
+                            "match": "\\*\\*.*"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "fileTypes": [
+        "goal"
+    ]
 }

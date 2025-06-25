@@ -1,3 +1,4 @@
 vsce package
+vsce publish
 
 https://marketplace.visualstudio.com/manage/publishers/planghq

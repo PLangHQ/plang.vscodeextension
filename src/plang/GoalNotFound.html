@@ -1,0 +1,21 @@
+
+<h3>Step Information</h3>
+<div class="uk-flex uk-margin">
+    <div>
+        <button class="uk-button uk-button-default" onclick="build();">🏗️ Build</button>   
+    </div>
+    <div>
+        <a class="uk-button uk-button-default" href="https://github.com/PLangHQ/plang/blob/main/Documentation/modules/README.md">❓ Help create goal file</a>
+    </div>
+</div>
+<script>
+     function build() {
+        vscode.postMessage({
+            command: 'build'
+        });
+    }
+</script>
+<h2>Writing plang code</h2>
+<p>
+Plang provides many tools to build your application on. Your <a href="https://github.com/PLangHQ/plang/blob/main/Documentation/modules/README.md">best option is to read what is available in the documentation</a>.
+</p>

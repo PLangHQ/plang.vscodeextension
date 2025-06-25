@@ -1,9 +1,25 @@
 import * as vscode from 'vscode';
 import { StartDebugger } from './StartDebugger';
-import fetch from 'node-fetch';
 
 
-export class Info extends vscode.TreeItem  {
+export interface IPlangIDETreeItem {
+    children : any[];   
+}
+
+export class RunPlangCode extends vscode.TreeItem implements IPlangIDETreeItem {
+    constructor(label: string, app : string, parameters: any[]) {
+        super(label, vscode.TreeItemCollapsibleState.None);        
+        
+        this.command = {
+            command: 'extension.runApp', 
+            title: 'Run app',
+            arguments: [app, parameters]
+        }; 
+    }
+    children: any;
+}
+
+export class Info extends vscode.TreeItem implements IPlangIDETreeItem  {
 	public static ClickToBuildStr = 'Click to build';
 	public static RebuildFile = 'Click to build';
 	public children : any[] = [];
@@ -65,7 +81,7 @@ export class Info extends vscode.TreeItem  {
 			this.description = description;
 		} else if (Array.isArray(description)) {
 			for (let i=0;i<description.length;i++) {
-				if (description[i].Type) {
+				if (description[i] && description[i].Type) {
 					if (description[i].VariableName) {
 						this.children.push(new Info(description[i].Type, description[i].VariableName, ''));
 					} else {

@@ -29,7 +29,7 @@ export class StartDebugger {
         return this.debugDescriptor;
     }
 
-    public async start(fileName:string | null) {
+    public async start(fileName:string | null, debugPort : number, csdebug : boolean) {
         if (vscode.debug.activeDebugSession) {
             // Continue the current debug session
             vscode.commands.executeCommand('workbench.action.debug.continue');
@@ -38,6 +38,9 @@ export class StartDebugger {
 
         if (fileName && fileName != null) {
             this.lastRuntimeValue = fileName;
+        }
+        if (csdebug) {
+            this.lastRuntimeValue += ' --csdebug';
         }
 
         if (this.debugDescriptor.debugSession && vscode.debug.activeDebugSession) return;
@@ -64,7 +67,7 @@ export class StartDebugger {
             return;
         }
         this.lastRuntimeValue = command;
-        const regex = /(?<option>--\w+(=\w+)?)|(?<param>\w+=[\p{L}\p{N}:\\_\\.\\-]+)|(?<param2>\w+=["']+[\p{L}\p{N}:\s\\_\\.\\-]+["']+)|(?<file>[\w\/\\\.]+)/gu;
+        const regex = /(?<option>--\w+(=\w+)?)|(?<param>(?:\w+\.)*\w+=[\p{L}\p{N}:\\_\.\\-]+)|(?<param2>(?:\w+\.)*\w+=[""']+[\p{L}\p{N}:\s\\_\.\\-]+[""']+)|(?<file>[\w\/\\\.]+)/gu;
 
         let match;
         let options = '';
@@ -111,6 +114,7 @@ export class StartDebugger {
         }
         
         args.push('--debug');
+        args.push('plang.debugPort=' + debugPort);
         let debugConfiguration: vscode.DebugConfiguration = {
             type: 'goal',
             name: 'PLang Debug',

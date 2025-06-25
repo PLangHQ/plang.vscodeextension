@@ -15,7 +15,8 @@
 			],
 			"outFiles": ["${workspaceFolder}/dist/**/*.js"],
 			"preLaunchTask": "${defaultBuildTask}",
-			"sourceMaps": true
+			"sourceMaps": true,
+            "trace": true
 		},
 		{
 			"name": "Extension Tests",
@@ -25,7 +26,9 @@
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
 			],
-			"preLaunchTask": "tasks: watch-tests"
+			"preLaunchTask": "tasks: watch-tests",
+			"sourceMaps": true,
+            "trace": true
 		}
 	]
 }

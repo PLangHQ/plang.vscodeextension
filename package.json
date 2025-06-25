@@ -11,22 +11,62 @@
         "url": "https://github.com/PLangHQ/plang.vscodeextension"
     },
     "publisher": "PlangHQ",
-    "author": { "name": "Ingi Gauti"},
-    "bugs": { "url": "https://github.com/PLangHQ/plang.vscodeextension/issues"},
+    "author": {
+        "name": "Ingi Gauti"
+    },
+    "bugs": {
+        "url": "https://github.com/PLangHQ/plang.vscodeextension/issues"
+    },
     "homepage": "https://plang.is",
-    "keywords": ["plang", "ide"],
+    "keywords": [
+        "plang",
+        "ide"
+    ],
     "categories": [
-        "Programming Languages", "Debuggers" 
+        "Programming Languages",
+        "Debuggers"
     ],
     "activationEvents": [
         "onLanguage:goal",
-        "onDebug:goal"
+        "onDebug:goal", 
+        "onView:plangWebview"
     ],
     "main": "./dist/extension.js",
     "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "plangInfoSidebar",
+                    "title": "Plang Info",
+                    "icon": "media/logo.png"
+                }, 
+                {
+                    "id": "plangChatSidebar",
+                    "title": "Plang Chat",
+                    "icon": "media/logo.png"
+                }
+            ]
+        },
+        "views": {
+            "plangInfoSidebar": [
+                {
+                    "id": "plangWebview",
+                    "name": "Plang Info",
+                    "icon": "media/logo.svg",
+                    "type": "webview"
+                }
+            ],
+            "plangChatSidebar" :[ {
+                    "id": "plangWebviewChat",
+                    "name": "Plang Chat",
+                    "icon": "media/logo.svg",
+                    "type": "webview"
+                }
+            ]
+        },
         "configurationDefaults": {
-          "editor.hover.sticky": true,
-          "editor.hover.delay": 500
+            "editor.hover.sticky": true,
+            "editor.hover.delay": 500
         },
         "languages": [
             {
@@ -37,11 +77,14 @@
                 "configuration": "./language-configuration.json"
             }
         ],
-        "grammars": [{
-            "language": "goal",
-            "scopeName": "source.goal",
-            "path": "./syntaxes/goal.tmLanguage.json"
-        }],
+        
+        "grammars": [
+            {
+                "language": "goal",
+                "scopeName": "source.goal",
+                "path": "./syntaxes/goal.tmLanguage.json"
+            }
+        ],
         "breakpoints": [
             {
                 "language": "goal"
@@ -70,16 +113,25 @@
             "editor/context": [
                 {
                     "command": "extension.regenerateStep",
-                    "group": "navigation",
+                    "group": "0_builder",
                     "when": "resourceExtname == .goal"
                 },
                 {
+                    "command": "extension.createStepTest",
+                    "group": "01_builder",
+                    "when": "resourceExtname == .goal"                    
+                },
+                {
                     "command": "extension.runFromStep",
-                    "group": "navigation",
-                    "when": "resourceExtname == .goal"
+                    "group": "2_debugger",
+                    "when": "resourceExtname == .goal && inDebugMode"
+                },
+                {
+                    "command": "extension.runFromStepCSharpDebugger",
+                    "group": "2_debugger",
+                    "when": "resourceExtname == .goal && inDebugMode"
                 }
             ],
-            
             "editor/lineNumber/context": [
                 {
                     "command": "extension.goToLine",
@@ -90,15 +142,23 @@
         "commands": [
             {
                 "command": "extension.goToLine",
-                "title": "Run from here"
+                "title": "▶️ Run from here", "category": "builder"
             },
             {
                 "command": "extension.regenerateStep",
-                "title": "Regenerate step"
+                "title": "🔄 Regenerate step", "category": "builder"
+            },
+            {
+                "command": "extension.createStepTest",
+                "title": "🧪 Create test for step", "category": "tests"
             },
             {
                 "command": "extension.runFromStep",
-                "title": "Run from step"
+                "title": "🏃‍♂️ Run from step"
+            },
+            {
+                "command": "extension.runFromStepCSharpDebugger",
+                "title": "🐞🏃‍♂️ Run from step & start C# debugger"
             },
             {
                 "command": "extension.startPLangDebug",
@@ -111,7 +171,7 @@
         ],
         "keybindings": [
             {
-                "command": "extension.regenerateStep",
+                "command": "extension.build",
                 "key": "ctrl+shift+b",
                 "mac": "cmd+k",
                 "when": "editorLangId == 'goal'"
@@ -127,38 +187,16 @@
                 "when": "editorLangId == 'goal'"
             }
         ],
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "PLang",
-                    "title": "PLang",
-                    "icon": "media/icon.svg"
-                }
-            ]
-        },
-        "views": {
-            "PLang": [
-                {
-                    "id": "code",
-                    "name": "Code"
-                },
-                {
-                    "id": "documentation",
-                    "name": "Documentation"
-                },
-                {
-                    "id": "source",
-                    "name": "Source"
-                }
-            ]
-        },
         "configuration": {
             "title": "Plang Settings",
             "properties": {
                 "plang.llmservice": {
                     "type": "string",
                     "default": "plang",
-                    "enum": ["plang", "openai"],
+                    "enum": [
+                        "plang",
+                        "openai"
+                    ],
                     "enumDescriptions": [
                         "Uses PLang LLM service",
                         "Uses OpenAI service - You need OpenAI API key"
@@ -190,6 +228,7 @@
         "@typescript-eslint/parser": "^5.59.1",
         "@vscode/debugadapter": "^1.63.0",
         "@vscode/test-electron": "^2.3.0",
+        "copy-webpack-plugin": "^12.0.2",
         "eslint": "^8.39.0",
         "glob": "^8.1.0",
         "mocha": "^10.2.0",
@@ -205,6 +244,7 @@
         "chokidar": "^3.5.3",
         "express": "^4.18.2",
         "jsonpath": "^1.1.1",
-        "node-fetch": "^3.3.2"
+        "node-fetch": "^3.3.2",
+        "source-map-support": "^0.5.21"
     }
 }
