@@ -8,7 +8,8 @@
                 uk-icon="icon: chevron-down"></span></button>
         <div uk-dropdown>
             <ul class="uk-list">
-                <li><a href="#" onclick="rebuildStep();">Rebuild step</a></li>
+                <li><a href="#" onclick="rebuildStep(false);">Rebuild step</a></li>
+                <li><a href="#" onclick="rebuildStep(true);">Rebuild step in c# debug mode</a></li>
             </ul>
         </div>
     </div>
@@ -50,20 +51,16 @@
     </tr>
     <tr>
         <th>GoalToBindTo</th>
-        <td>{{ step.EventBinding.GoalToBindTo.Value }}</td>
+        <td>{{ step.EventBinding.GoalToBindTo.Name }}</td>
     </tr>
     <tr>
         <th>GoalToCall</th>
-        <td>{{ step.EventBinding.GoalToCall.Value }}</td>
+        <td>{{ step.EventBinding.GoalToCall.Name }}</td>
     </tr>
     <tr>
         <th>GoalToCallParameters</th>
         <td>
-            {{ step.EventBinding.GoalToCallParameters | json true }}
-       
-          
-          
-          
+            {{ step.EventBinding.GoalToCall.Parameters | json true }}
         </td>
     </tr>
     <tr>

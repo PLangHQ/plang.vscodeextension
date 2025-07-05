@@ -58,6 +58,8 @@
       outline: none;
       white-space: pre-wrap;
     }
+
+    pre {height:auto;min-height: auto;}
     @media (prefers-color-scheme: dark) {
       html, body { background: #121212; color: #fff; }
       #chat-container { background: #121212; }
@@ -70,7 +72,19 @@
 </head>
 <body>
 
-<div id="chat-container"></div>
+    
+<div id="chat-container">
+
+{{ if request.llm }}    
+    {{ for message in request.llm.Value.promptMessage }}
+        <strong>{{ message.role }}</strong>
+        {{ for content in message.content }}
+        <div>{{ content.text | html.escape | string.replace "\n" "<br>" | goalToCall "DoStuff" }}</div>
+        {{ end }}
+        <hr>
+    {{ end }}
+{{ end }}
+</div>
 
 <div id="input-area">
   <div id="message-input" contenteditable="true" placeholder="Type a message..."></div>

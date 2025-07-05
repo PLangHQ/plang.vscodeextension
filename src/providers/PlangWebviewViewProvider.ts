@@ -8,6 +8,8 @@ import { Util } from '../Util';
 import { StartDebugger } from '../StartDebugger';
 import { PlangWebviewExecViewProvider } from './PlangWebviewExecViewProvider';
 import { GuiCustomEditorProvider } from './GuiCustomEditorProvider';
+import { PlangWebviewChatViewProvider } from './PlangWebviewChatViewProvider';
+import { GoalDebugAdapterDescriptorFactory } from '../GoalDebugAdapterDescriptorFactory';
 
 export class PlangWebviewViewProvider implements vscode.WebviewViewProvider {
 
@@ -21,13 +23,18 @@ export class PlangWebviewViewProvider implements vscode.WebviewViewProvider {
     private context: vscode.ExtensionContext;
     private debugServerPort: number;
     private guiEditor : GuiCustomEditorProvider;
+    private chatProvider : PlangWebviewChatViewProvider;
+    private debugFactory : GoalDebugAdapterDescriptorFactory;
 
-    constructor(context: vscode.ExtensionContext, startDebugger: StartDebugger, debugServerPort: number, guiEditor : GuiCustomEditorProvider) {
+    constructor(context: vscode.ExtensionContext, startDebugger: StartDebugger, debugServerPort: number, guiEditor : GuiCustomEditorProvider, 
+        chatProvider : PlangWebviewChatViewProvider, debugFactory : GoalDebugAdapterDescriptorFactory) {
         this.goalParser = new GoalParser();
         this.startDebugger = startDebugger;
         this.context = context;
         this.debugServerPort = debugServerPort;
         this.guiEditor = guiEditor;
+        this.chatProvider = chatProvider;
+        this.debugFactory = debugFactory;
     }
 
     resolveWebviewView(
@@ -88,6 +95,13 @@ export class PlangWebviewViewProvider implements vscode.WebviewViewProvider {
             html = await PlangHelper.Call('GoalNotFound', { appPath: '' });
         } else {
             html = await PlangHelper.Call('CodePanel', { appPath: goal.AbsoluteGoalFolderPath, goalBuildPath: goal.path, lineNumber: lineNumber });
+        }
+
+        if (step && step.ModuleType == 'PLang.Modules.LlmModule') {
+            if (this.debugFactory.debugSession) {
+                let variableName = instruction.Function.ReturnValues[0].VariableName;
+               // this.chatProvider.loadChat(variableName);
+            }            
         }
 
         this._view!.webview.html = html;

@@ -91,8 +91,8 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "d74d035def81795987af8b338d732d1a7804df8eae28728f563e1849c0a41f57",
-  "Hash": "8dc151bef21cafe93bc2e89f96488c7d1fc5efee692ac291bc4a2026bc10089c",
+  "FileHash": "7ce62f6369075b3a47bbea6653b92bbca35b2ab5210967f0728442664343abcd",
+  "Hash": "ae6df46a549c3efec28e1cae31d79d88522b347adc9c3af02b76eabb7268fe82",
   "IncomingVariablesRequired": {
     "content": "A variable to store the rendered HTML content of the 'EventPanel.html' template."
   },

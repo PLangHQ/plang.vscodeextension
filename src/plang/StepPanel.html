@@ -1,6 +1,6 @@
 
 <h3>Step Information</h3>
-<p><em>{{ step.LineNumber }}:</em> {{ step.Text | string.slice 0 100 }}{{ if step.Text | string.size > 100 }}...{{ end }}</p>
+<p><em>{{ step.LineNumber }}:</em> {{ step.Text | html.escape | string.slice 0 100 }}{{ if step.Text | string.size > 100 }}...{{ end }}</p>
 <div class="uk-flex uk-margin">
     <div>
         <button class="uk-button uk-button-default" onclick="build();">🏗️ Build <span
@@ -89,10 +89,10 @@
 {{ end }}
 📕 <a href="https://github.com/PLangHQ/plang/blob/main/Documentation/modules/{{ step.ModuleType }}.md">More info
     {{ step.ModuleType }}</a>
-<p>{{ step.Description }}</p>
+<p>{{ step.Description | html.escape }}</p>
 {{ if instruction.Function.Explanation }}
     <h5>LLM Explanation</h5>
-    {{ instruction.Function.Explanation }}
+    {{ instruction.Function.Explanation | html.escape }}
 {{ end }}
 {{ module }}
 
@@ -111,7 +111,7 @@
         {{ for parameter in instruction.Function.Parameters }}
         <tr>
             <td>{{ parameter.Name }}</td>
-            <td>{{ parameter.Value | json true }}</td>
+            <td>{{ parameter.Value | json true | html.escape }}</td>
             <td>{{ parameter.Type | html.escape }}</td>
         </tr>
         {{ end }}

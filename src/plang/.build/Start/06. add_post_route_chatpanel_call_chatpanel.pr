@@ -1,15 +1,15 @@
 {
-  "Text": "add route \"/ExecutionPath\", POST, call ExecutionPath",
+  "Text": "add route \"/ChatPanel\", POST, call ChatPanel",
   "ModuleType": "PLang.Modules.WebserverModule",
   "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
   "Function": {
-    "Reasoning": "The user wants to add a new HTTP POST route '/ExecutionPath' that triggers the 'ExecutionPath' goal. The AddRoute function is suitable for defining routes with HTTP methods and linking them to a goal to call.",
+    "Reasoning": "The user wants to add a new HTTP POST route '/ChatPanel' that calls the ChatPanel goal. The AddRoute function is suitable for defining routes with HTTP methods and linking them to a goal to call.",
     "Name": "AddRoute",
     "Parameters": [
       {
         "Type": "System.String",
         "Name": "path",
-        "Value": "/ExecutionPath"
+        "Value": "/ChatPanel"
       },
       {
         "Type": "System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]",
@@ -20,7 +20,7 @@
         "Type": "PLang.Models.GoalToCallInfo",
         "Name": "goalToCall",
         "Value": {
-          "Name": "ExecutionPath",
+          "Name": "ChatPanel",
           "Parameters": {}
         }
       },
@@ -124,7 +124,7 @@
           "content": [
             {
               "type": "text",
-              "text": "## Canonical User Intent (already disambiguated by LLM)\r\nDefine a new HTTP POST route '/ExecutionPath' that triggers the ExecutionPath goal or function\n\r\n## functions details ##\r\n{\"Methods\":[{\"Description\":\"When path is /api, ContentType=application/json unless defined by user. When user defines a variable in path, it should be defined in GoalToCallInfo, /product/%id% => Parameters: id=%id%\",\"MethodName\":\"AddRoute\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"path\",\"IsRequired\":true},{\"Type\":\"System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]\",\"Name\":\"PathParameters\",\"Description\":\"(see Type information in SupportingObjects)\",\"IsRequired\":true},{\"Type\":\"PLang.Models.GoalToCallInfo\",\"Name\":\"goalToCall\",\"Description\":\"(see Type information in SupportingObjects)\",\"IsRequired\":false},{\"Type\":\"System.String[]\",\"Name\":\"method\",\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"ContentType\",\"DefaultValue\":\"text/html\",\"IsRequired\":false},{\"Type\":\"System.Nullable`1[System.Int64]\",\"Name\":\"MaxContentLength\",\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"DefaultResponseContentEncoding\",\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"webserverName\",\"DefaultValue\":\"default\",\"IsRequired\":false}]}],\"SupportingObjects\":[{\"Type\":\"System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]\",\"Name\":\"PathParameters\",\"TypeProperties\":[{\"Type\":\"System.String\",\"Name\":\"Name\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"VariableOrValue\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"Type\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"RegexValidation\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"ErrorMessage\",\"IsRequired\":true},{\"Type\":\"System.Object\",\"Name\":\"DefaultValue\",\"IsRequired\":true}],\"IsRequired\":false},{\"Type\":\"PLang.Models.GoalToCallInfo\",\"Name\":\"goalToCall\",\"Description\":\"Name of goal and parameters that is called, e.g. in condition, loops, run goal\",\"TypeProperties\":[{\"Type\":\"System.String\",\"Name\":\"Name\",\"IsRequired\":true},{\"Type\":\"Dictionary<String, Object>\",\"Name\":\"Parameters\",\"Description\":\"Name of goal and parameters that is called, e.g. in condition, loops, run goal\",\"IsRequired\":true}],\"IsRequired\":false}]}\r\n## functions details ##"
+              "text": "## Canonical User Intent (already disambiguated by LLM)\r\nDefine a new HTTP POST route '/ChatPanel' that triggers the ChatPanel goal or function\n\r\n## functions details ##\r\n{\"Methods\":[{\"Description\":\"When path is /api, ContentType=application/json unless defined by user. When user defines a variable in path, it should be defined in GoalToCallInfo, /product/%id% => Parameters: id=%id%\",\"MethodName\":\"AddRoute\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"path\",\"IsRequired\":true},{\"Type\":\"System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]\",\"Name\":\"PathParameters\",\"Description\":\"(see Type information in SupportingObjects)\",\"IsRequired\":true},{\"Type\":\"PLang.Models.GoalToCallInfo\",\"Name\":\"goalToCall\",\"Description\":\"(see Type information in SupportingObjects)\",\"IsRequired\":false},{\"Type\":\"System.String[]\",\"Name\":\"method\",\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"ContentType\",\"DefaultValue\":\"text/html\",\"IsRequired\":false},{\"Type\":\"System.Nullable`1[System.Int64]\",\"Name\":\"MaxContentLength\",\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"DefaultResponseContentEncoding\",\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"webserverName\",\"DefaultValue\":\"default\",\"IsRequired\":false}]}],\"SupportingObjects\":[{\"Type\":\"System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]\",\"Name\":\"PathParameters\",\"TypeProperties\":[{\"Type\":\"System.String\",\"Name\":\"Name\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"VariableOrValue\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"Type\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"RegexValidation\",\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"ErrorMessage\",\"IsRequired\":true},{\"Type\":\"System.Object\",\"Name\":\"DefaultValue\",\"IsRequired\":true}],\"IsRequired\":false},{\"Type\":\"PLang.Models.GoalToCallInfo\",\"Name\":\"goalToCall\",\"Description\":\"Name of goal and parameters that is called, e.g. in condition, loops, run goal\",\"TypeProperties\":[{\"Type\":\"System.String\",\"Name\":\"Name\",\"IsRequired\":true},{\"Type\":\"Dictionary<String, Object>\",\"Name\":\"Parameters\",\"Description\":\"Name of goal and parameters that is called, e.g. in condition, loops, run goal\",\"IsRequired\":true}],\"IsRequired\":false}]}\r\n## functions details ##"
             }
           ]
         },
@@ -133,14 +133,14 @@
           "content": [
             {
               "type": "text",
-              "text": "add route \"/ExecutionPath\", POST, call ExecutionPath"
+              "text": "add route \"/ChatPanel\", POST, call ChatPanel"
             }
           ]
         }
       ],
       "type": "PLang.Modules.WebserverModule.Builder",
       "caching": true,
-      "RawResponse": "{\n  \"Reasoning\": \"The user wants to add a new HTTP POST route '/ExecutionPath' that triggers the 'ExecutionPath' goal. The AddRoute function is suitable for defining routes with HTTP methods and linking them to a goal to call.\",\n  \"Name\": \"AddRoute\",\n  \"Parameters\": [\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"path\",\n      \"Value\": \"/ExecutionPath\"\n    },\n    {\n      \"Type\": \"System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]\",\n      \"Name\": \"PathParameters\",\n      \"Value\": []\n    },\n    {\n      \"Type\": \"PLang.Models.GoalToCallInfo\",\n      \"Name\": \"goalToCall\",\n      \"Value\": {\n        \"Name\": \"ExecutionPath\",\n        \"Parameters\": {}\n      }\n    },\n    {\n      \"Type\": \"System.String[]\",\n      \"Name\": \"method\",\n      \"Value\": [\"POST\"]\n    }\n  ]\n}"
+      "RawResponse": "{\n  \"Reasoning\": \"The user wants to add a new HTTP POST route '/ChatPanel' that calls the ChatPanel goal. The AddRoute function is suitable for defining routes with HTTP methods and linking them to a goal to call.\",\n  \"Name\": \"AddRoute\",\n  \"Parameters\": [\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"path\",\n      \"Value\": \"/ChatPanel\"\n    },\n    {\n      \"Type\": \"System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]\",\n      \"Name\": \"PathParameters\",\n      \"Value\": []\n    },\n    {\n      \"Type\": \"PLang.Models.GoalToCallInfo\",\n      \"Name\": \"goalToCall\",\n      \"Value\": {\n        \"Name\": \"ChatPanel\",\n        \"Parameters\": {}\n      }\n    },\n    {\n      \"Type\": \"System.String[]\",\n      \"Name\": \"method\",\n      \"Value\": [\"POST\"]\n    }\n  ]\n}"
     }
   ]
 }

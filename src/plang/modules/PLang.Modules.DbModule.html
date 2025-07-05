@@ -1,11 +1,16 @@
 
 <div>
+    {{ 
+        sqlObj = instruction.Function | goalToCall "GetSqlObject"
+    }}
 
     {{ if instruction.Function.Parameters && instruction.Function.Parameters.size > 0 }}
     
     <h4>Sql</h4>
-   <code class="language-sql">{{ instruction.Function.Parameters[0].Value }}</code>
-    {{ if instruction.Function.Parameters[1] != null && instruction.Function.Parameters[1].Value != null && instruction.Function.Parameters[1].Value != '' }}
+   <code class="language-sql">{{ sqlObj.sql }}</code>
+
+   
+    {{ if sqlObj.parameters }}
    <h4>Parameters</h4>
     <table>
         <thead>
@@ -16,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            {{ for parameter in instruction.Function.Parameters[1].Value }}
+            {{ for parameter in sqlObj.parameters }}
             <tr>
                 <td>{{ parameter.ParameterName }}</td>
                 <td>{{ parameter.VariableNameOrValue }}</td>
@@ -29,9 +34,9 @@
     {{ end }}
 
 
-    {{ if instruction.Function.Name == "Select" }}
-    <h4>Example usage</h4>    
-    You can use {{ instruction.Function.ReturnValues[0].VariableName }} in the following way
+    {{ if instruction.Function.Name == "Select" && sqlObj.returnvalues.size > 0 }}
+    <h4>Example usage</h4>   
+    You can use {{ sqlObj.returnvalues[0].VariableName }} in the following way
     <br />
         <code>
             - write out {{ instruction.Function.ReturnValues[0].VariableName }}
@@ -42,12 +47,12 @@
             - go through  {{ instruction.Function.ReturnValues[0].VariableName }} call ProcessItem
         </code>
     {{ end }}
-    {{ if instruction.Function.FunctionName == "SelectOneRow" }}
+    {{ if instruction.Function.Name == "SelectOneRow" && sqlObj.returnvalues.size > 0 }}
     <h4>Example usage</h4>    
-    You can write out {{ instruction.Function.ReturnValues[0].VariableName }} to the user in the following way
+    You can write out {{ sqlObj.returnvalues.VariableName }} to the user in the following way
     <br /><br />
         <code>
-            - write out {{ instruction.Function.ReturnValues[0].VariableName }}
+            - write out {{ sqlObj.returnvalues.VariableName }}
         </code>
         
     {{ end }}

@@ -3,18 +3,23 @@ import * as fs from 'fs';
 import { GoalParser } from '../GoalParser';
 import { PlangHelper } from '../PlangHelper';
 import { Util } from '../Util';
+import { GoalDebugAdapterDescriptorFactory } from '../GoalDebugAdapterDescriptorFactory';
+import { ObjectValue } from '../models/Models';
+import { PlangProcess } from '../PlangProcess';
 
 export class PlangWebviewChatViewProvider implements vscode.WebviewViewProvider {
 
     public static readonly viewType = 'plangWebviewChat';
     private _view?: vscode.WebviewView;
     private goalParser : GoalParser;
-
+    private debugFactory : GoalDebugAdapterDescriptorFactory;
     private context: vscode.ExtensionContext;
+    private plangProcess : any;
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor(context: vscode.ExtensionContext, debugFactory : GoalDebugAdapterDescriptorFactory) {
         this.goalParser = new GoalParser();
         this.context = context;
+        this.debugFactory = debugFactory;
     }
 
     resolveWebviewView(
@@ -28,7 +33,6 @@ export class PlangWebviewChatViewProvider implements vscode.WebviewViewProvider 
             enableScripts: true
         };
 
-
         webviewView.webview.onDidReceiveMessage(
             message => {
                 switch (message.command) {
@@ -41,7 +45,38 @@ export class PlangWebviewChatViewProvider implements vscode.WebviewViewProvider 
             this.context.subscriptions
         );
         webviewView.webview.html = "Loading..."
-        this.DisplayChatPanel();            
+        this.DisplayChatPanel();      
+        
+       // this.loadChat(null);
+    }
+
+    public async loadChat(objectValue : any) {
+        await vscode.commands.executeCommand('workbench.view.extension.plangChatSidebar');
+        /*
+        if (this.plangProcess == null) {
+            this.plangProcess = new PlangProcess('/apps/Plang/apps/Ide/');
+        }
+
+        let args = [ 'content=hello', '--csdebug' ];
+        this.plangProcess.callGoal('HtmlOut', args, (content : string) => {
+            this._view!.webview.html = content;
+            vscode.commands.executeCommand(PlangWebviewChatViewProvider.viewType + '.focus');
+        }, (error : string) => {
+
+            console.error(error);
+        }, (delta : string) => {
+            console.log(delta);
+        });
+        */
+
+
+        var html = await PlangHelper.Call('ChatPanel', {llm: objectValue.Properties[0] });
+        
+        this._view!.webview.html = html;
+        vscode.commands.executeCommand(PlangWebviewChatViewProvider.viewType + '.focus');
+        
+        
+
     }
 
     public async DisplayChatPanel(): Promise<void> {

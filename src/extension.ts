@@ -22,6 +22,8 @@ import { PlangWebviewViewProvider } from './providers/PlangWebviewViewProvider';
 import { PlangWebviewChatViewProvider } from './providers/PlangWebviewChatViewProvider';
 import { PlangWebviewExecViewProvider } from './providers//PlangWebviewExecViewProvider';
 import { GuiCustomEditorProvider } from './providers/GuiCustomEditorProvider';
+import { DebugAwareCodeLensProvider } from './providers/DebugAwareCodeLensProvider';
+import { ObjectValue } from './models/Models';
 
 
 
@@ -40,10 +42,14 @@ let plangWebviewChat: PlangWebviewChatViewProvider;
 let plangWebviewExecPath: PlangWebviewExecViewProvider;
 let guiEditor: GuiCustomEditorProvider;
 let llmDecoratorType: vscode.TextEditorDecorationType;
-
+let plangFolderPath : string;
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+    
+    // set csdebug on codepanel => args = ['--csdebug'], it will then point to PATH plang instance
+    let args: any[] = [];
+    plangFolderPath = await PathHelper.getPlangPath(args)
 
     extContext = context;
     goalParser = new GoalParser();
@@ -64,21 +70,36 @@ export function activate(context: vscode.ExtensionContext) {
         supportsMultipleEditorsPerDocument: false
     }));
 
+    const lensProvider = new DebugAwareCodeLensProvider();
+    context.subscriptions.push(
+        vscode.languages.registerCodeLensProvider('goal', lensProvider)
+    );
 
-    setupServer().then(() => {
+
+     vscode.debug.onDidReceiveDebugSessionCustomEvent((e) => {
+        if (e.event === 'showLens') {
+            lensProvider.setShowLens(e.body.objectValue);
+        }
+    });
+
+  
+
+    await setupServer();
+    setupPlangServer().then(() => {
         console.log('I am here');
         let portNumber = (server.address() as any).port ?? 60788;
 
-        plangWebview = new PlangWebviewViewProvider(context, startDebugger, portNumber, guiEditor);
+        plangWebviewChat = new PlangWebviewChatViewProvider(context, debugFactory);
+        plangWebview = new PlangWebviewViewProvider(context, startDebugger, portNumber, guiEditor, plangWebviewChat, debugFactory);
         let plangWebviewProvider = vscode.window.registerWebviewViewProvider(PlangWebviewViewProvider.viewType, plangWebview, { webviewOptions: { retainContextWhenHidden: true } });
         context.subscriptions.push(plangWebviewProvider);
-
-
-        plangWebviewChat = new PlangWebviewChatViewProvider(context);
+        
         let plangWebviewChatProvider = vscode.window.registerWebviewViewProvider(PlangWebviewChatViewProvider.viewType, plangWebviewChat, { webviewOptions: { retainContextWhenHidden: true } });
         context.subscriptions.push(plangWebviewChatProvider);
 
-
+        vscode.commands.registerCommand('loadChat', (objectValue : ObjectValue) => {
+            plangWebviewChat.loadChat(objectValue);
+        })
 
         plangWebviewExecPath = new PlangWebviewExecViewProvider(context, startDebugger, portNumber);
         let plangWebviewExecProvider = vscode.window.registerWebviewViewProvider(PlangWebviewExecViewProvider.viewType, plangWebviewExecPath, { webviewOptions: { retainContextWhenHidden: true } });
@@ -148,35 +169,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     
 
-    /*
+   
     llmDecoratorType = vscode.window.createTextEditorDecorationType({
         gutterIconPath: vscode.Uri.file('/media/icon.svg'),
         gutterIconSize: 'contain'
     });
 
-    vscode.languages.registerCodeLensProvider('goal', {
-        async provideCodeLenses(document, token) {
-            const lenses: vscode.CodeLens[] = [];
-            var ranges = await findVariableRanges();
-            // Return an array of CodeLens objects where you find 'LlmModel'
-            for (var i = 0; i < ranges.length; i++) {
-                lenses.push(
-                    new vscode.CodeLens(ranges[i], {
-                        title: "Llm request",
-                        command: "yourExtension.doX",
-                        arguments: []
-                    })
-                );
 
-                
-    var editor = await Util.getEditor();
-    if (!editor) return;
 
-    editor.setDecorations(llmDecoratorType, ranges);
-            }
-            return lenses;
-        }
-    });*/
 
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.goToGoal', (a, b, c, d) => {
@@ -332,21 +332,15 @@ async function setupServer() {
     });
 
     server = await startListening(app);
+}
 
-    return new Promise((resolve, reject) => {
-        // set csdebug on codepanel => args = ['--csdebug'], it will then point to PATH plang instance
-        let args: any[] = [];
-        let plangProcess = "";
-        if (!args.includes('--csdebug')) {
-            plangProcess = process.env.PlangCSharpDev ?? '';
-        }
-        plangProcess = path.join(plangProcess, "plang");
-        const plangPath = path.join(extContext.extensionPath, "src", "plang");
+async function setupPlangServer() {
+    return new Promise(async (resolve, reject) => {
         const plangServerPath = path.join(__dirname, "plang");
+        let plangExec = PathHelper.PlangExecutable;
+        let plangArgs = PathHelper.PlangExecutableArgs;
 
-
-
-        let plangServer = child_process.spawn(plangProcess, args, { cwd: plangServerPath });
+        let plangServer = child_process.spawn(plangExec, plangArgs, { cwd: plangServerPath });
         plangServer.stdout!.on('data', (data: any) => {
             console.log(`plangSever stdout: ${data}`);
 

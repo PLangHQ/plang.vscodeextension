@@ -14,7 +14,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-06-24T10:26:45.1414242+00:00",
       "WaitForExecution": true,
@@ -73,10 +73,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "d055f3b94ed6870ff1c0f9a15b6efdd3b8b83e18af24067258032fa29d4fcb4e",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "9a3238fa342c904a9b85a0ebcea9b839c6a9cf4d2c901179b191ebd69d552d5a",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Output a message to the system indicating that a specific module type was not found"
+      "UserIntent": null
     }
   ],
   "SubGoals": [],
@@ -91,8 +91,8 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "d74d035def81795987af8b338d732d1a7804df8eae28728f563e1849c0a41f57",
-  "Hash": "2ef5e5dcbf1d4f2a264e8760670540b6a901ad6ab2e9435ab91c890d4101ad8e",
+  "FileHash": "7ce62f6369075b3a47bbea6653b92bbca35b2ab5210967f0728442664343abcd",
+  "Hash": "0a12c472f3eeee2746a519f877f4a8837c3e8307ed1de950266ecff6609ce0e7",
   "IncomingVariablesRequired": {
     "step.ModuleType": "The type of module that was not found, which will be included in the output message."
   },

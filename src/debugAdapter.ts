@@ -10,26 +10,7 @@ import * as fs from 'fs';
 import fetch from 'node-fetch';
 import { PlangHelper } from './PlangHelper';
 import { Util } from './Util';
-import { findVariableRanges } from './extension';
-
-type VariableEvent = any;
-type SimpleValue = {
-    Name: string;
-    Type: string;
-    Value: any;
-    ObjectReferenceId?: number | undefined;
-};
-type ObjectValue = SimpleValue &  {
-    Events: VariableEvent[];
-    IsSystemVariable: boolean;
-    Initiated: boolean;
-    Properties: any[];
-    IsProperty: boolean;
-    Created: Date;
-    Updated: Date;
-    Path: string;
-    PathAsVariable: string;
-};
+import { ObjectValue, SimpleValue } from './models/Models';
 
 
 export class GoalDebugSession extends DebugSession {
@@ -45,6 +26,7 @@ export class GoalDebugSession extends DebugSession {
     diagnosticCollection = vscode.languages.createDiagnosticCollection('goal');
     step: any;
     goal: any;
+    instruction: any;
     goalVars: any;
     memoryStack: any;
     absolutePath: string = '';
@@ -97,6 +79,7 @@ export class GoalDebugSession extends DebugSession {
 
         this.sendResponse(response);
     }
+
 
     protected override customRequest(command: string, response: DebugProtocol.Response, args: any): void {
         if (command === 'copy') {
@@ -209,18 +192,7 @@ export class GoalDebugSession extends DebugSession {
         this.httpResponse = null;
         super.terminateRequest(response, args);
     }
-    /*
-        protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void {
-    
-            const newBreakpoints = args.breakpoints?.map(bp => ({
-                line: bp.line,
-                verified: true // Mark as verified
-            })) || [];
-    
-            // Send only the currently valid breakpoints
-            response.body = { breakpoints: newBreakpoints };
-            this.sendResponse(response);
-        }*/
+   
     protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {
         // Return the single thread
         response.body = {
@@ -235,9 +207,7 @@ export class GoalDebugSession extends DebugSession {
     }
 
     protected continueRequest(response: DebugProtocol.ContinueResponse, args: DebugProtocol.ContinueArguments): void {
-        this.continueWithRequest(response, args, undefined)
-
-        // You can send your HTTP response here or set some flag to indicate your POST handler to respond
+        this.continueWithRequest(response, args, undefined);
     }
 
     public continueWithRequest(response: DebugProtocol.ContinueResponse, args: DebugProtocol.ContinueArguments | undefined, obj: any): void {
@@ -386,6 +356,7 @@ export class GoalDebugSession extends DebugSession {
             this.goal = data["!Goal"];
             this.goalVars = data["!GoalVariables"];
             this.memoryStack = data["!MemoryStack"];
+            this.instruction = data["!Instruction"];
             let error = data["!Error"];
             if (error != null && error != '') {
                 if (typeof (error) == this.StringType) {
@@ -444,9 +415,8 @@ export class GoalDebugSession extends DebugSession {
             this.isPaused = true;
             this.editor = editor;
             this.httpResponse = res;
-
             this.nextStepFile = document.fileName;
-            //this.variablesRefCache = [];
+
             this.setDebugDecorations([line.range]);
             this.sendEvent(new StoppedEvent('breakpoint', 1));
 
@@ -457,6 +427,8 @@ export class GoalDebugSession extends DebugSession {
             res.send('{"ok":true}');
         }
     }
+
+
 
     private async setupErrorBreakpoint(error: any, fileBreakpoints: vscode.SourceBreakpoint[]) {
         if (typeof (error) == this.StringType) {
@@ -564,10 +536,10 @@ export class GoalDebugSession extends DebugSession {
     }
 
     getResponseBody(ov: SimpleValue) {
-        if (ov.Type == this.StringType) {
+        if (this.UseValue(ov.Type, ov)) {
             return { result: ov.Value, variablesReference: 0 }
         }
-        return { result: ov.Name, variablesReference: ov.ObjectReferenceId ?? 0 };
+        return { result: ov.Type, variablesReference: ov.ObjectReferenceId ?? 0 };
     }
 
 
@@ -589,7 +561,7 @@ export class GoalDebugSession extends DebugSession {
 
         if (obj.length) {
             for (let i = 0; i < obj.length; i++) {
-                let value : SimpleValue = { Name : key, Type : typeof(obj[i]), Value : obj[i]};
+                let value: SimpleValue = { Name: key, Type: typeof (obj[i]), Value: obj[i] };
                 this.addObject(value);
             }
         } else {
@@ -597,7 +569,7 @@ export class GoalDebugSession extends DebugSession {
             for (var i = 0; i < propertyNames.length; i++) {
                 let val = obj[propertyNames[i]];
 
-                let value : SimpleValue = { Name : propertyNames[i], Type : typeof(val), Value : val};
+                let value: SimpleValue = { Name: propertyNames[i], Type: typeof (val), Value: val };
                 this.addObject(value);
             }
         }
@@ -609,38 +581,14 @@ export class GoalDebugSession extends DebugSession {
             this.addObject(memoryStack[i] as ObjectValue);
         }
     }
+
+
     protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void {
         this.variables = [];
 
         if (args.variablesReference === 1 && this.data) {
-
-            var memoryStack = this.data["!MemoryStack"];
-            this.addMemoryStack(memoryStack);
-
-            var error = this.data["!Error"];
-            if (error) {
-                this.addObject(error);
-            }
-            var event = this.data["!Event"];
-            if (event) {
-                event.Name = "!Event";
-
-                this.addObject(event);
-            }
-            var step = this.data["!Step"];
-            if (step) this.addObject(step);
-            var goal = this.data["!Goal"];
-            if (goal) this.addObject(goal);
-            //this.addPropertyToObject(this.data);
-
-            if (typeof this.goalVars == this.StringType) {
-                this.goalVars = JSON.parse(this.goalVars);
-            }
-            for (let i = 0; i < this.goalVars.length; i++) {
-                let value : SimpleValue = { Name : this.goalVars[i].VariableName, Type : typeof(this.goalVars[i].Value), Value : this.goalVars[i].Value};
-
-                this.addObject(value);
-            }
+            this.loadVariableReferences();
+            this.checkForModule();
 
             response.body = {
                 variables: this.variables
@@ -649,9 +597,19 @@ export class GoalDebugSession extends DebugSession {
             return;
         }
 
-        var obj = this.getObjectValueById(args.variablesReference)
-        if (!obj) return;
+        this.loadVariablePanel(args.variablesReference);        
 
+        response.body = {
+            variables: this.variables
+        };
+        this.sendResponse(response);
+    }
+
+    loadVariablePanel(variablesReference: number) {
+        
+        var obj = this.getObjectValueById(variablesReference);
+        if (!obj) return;
+        
 
         if (obj && obj.Type != this.StringType) {
             if (obj.Type == "!Properties") {
@@ -660,21 +618,21 @@ export class GoalDebugSession extends DebugSession {
                     if (values.hasOwnProperty(key)) {
                         const item = values[key] as any;
                         if (item) {
-                             let value : SimpleValue = { Name : item.PathAsVariable, Type : typeof(item.Value), Value : item.Value};
+                            let value: SimpleValue = { Name: item.PathAsVariable, Type: typeof (item.Value), Value: item.Value };
 
                             this.addObject(value);
                         }
                     }
                 }
-            } else if (obj.Value && typeof(obj.Value) != 'string') {
+            } else if (obj.Value && typeof (obj.Value) != 'string') {
                 let values = Object.getOwnPropertyNames(obj.Value);
                 for (const key of values) {
                     let val: any = (obj.Value as any)[key];
-                    if (val) {
-                        let value : SimpleValue = { Name : key, Type : typeof(val), Value : val};
-                        this.addObject(value);
-                    } else {
+                    if (val == undefined) {
                         this.addNull(key);
+                    } else {
+                        let value: SimpleValue = { Name: key, Type: typeof (val), Value: val };
+                        this.addObject(value);
                     }
                 }
             } else if (!obj.Value) {
@@ -682,7 +640,7 @@ export class GoalDebugSession extends DebugSession {
                 for (const key of values) {
                     let val: any = (obj as any)[key];
                     if (val) {
-                        let value : SimpleValue = { Name : key, Type : typeof(val), Value : val};
+                        let value: SimpleValue = { Name: key, Type: typeof (val), Value: val };
                         this.addObject(value);
                     } else {
                         this.addNull(key);
@@ -720,41 +678,71 @@ export class GoalDebugSession extends DebugSession {
             this.addObject(objectValue);
 
         }
-
-
-        /*if (obj.Type == "!ObjectValue") {
-            let objectProperties = Object.getOwnPropertyNames(obj);
-           
-                var objectValue = {} as ObjectValue
-                objectValue.VariableName = "ObjectValue";
-                objectValue.Type = "!ObjectValue"
-                objectValue.ObjectReferenceId = ++this.currentVariablesRef;            
-            
-                this.addObject(objectValue, '!ObjectValue');
-            
-        }*/
-
-
-
-        response.body = {
-            variables: this.variables
-        };
-        this.sendResponse(response);
     }
 
-    /*
-    addStringVariable(key: string, val: any) {
-        var variable = this.variables.find(p => p.name == key);
-        if (!variable) {
-            this.variables.push({
-                name: key,
-                value: String(this.cleanValue(val)),
-                variablesReference: 0
-            });
-        } else {
-            variable.value = String(this.cleanValue(val));
+    loadVariableReferences() {
+        
+        var memoryStack = this.data["!MemoryStack"];
+        this.addMemoryStack(memoryStack);
+
+        var error = this.data["!Error"];
+        if (error) {
+            this.addObject(error);
         }
-    }*/
+        var event = this.data["!Event"];
+        if (event) {
+            event.Name = "!Event";
+
+            this.addObject(event);
+        }
+        var step = this.data["!Step"];
+        if (step) {
+            step.Name = "!Step";
+            this.addObject(step);
+        }
+        var goal = this.data["!Goal"];
+        if (goal) {
+            goal.Name = "!Goal";
+            this.addObject(goal);
+        }
+        //this.addPropertyToObject(this.data);
+
+        if (typeof this.goalVars == this.StringType) {
+            this.goalVars = JSON.parse(this.goalVars);
+        }
+        for (let i = 0; i < this.goalVars.length; i++) {
+            let value: SimpleValue = { Name: this.goalVars[i].VariableName, Type: typeof (this.goalVars[i].Value), Value: this.goalVars[i].Value };
+
+            this.addObject(value);
+        }
+    }
+
+    private showLens : any;
+
+    checkForModule() {
+        if (this.showLens) {
+            let variableName = this.showLens.instruction.Function.ReturnValues[0].VariableName;
+            let objectValue = this.getObjectValue(variableName);
+            if (!objectValue) return;
+            
+            this.sendEvent({
+                event: 'showLens',
+                body: { objectValue },
+                type: 'event',
+                seq: 0 // (VS Code fills this in)
+            });
+            this.showLens = undefined;
+        }
+
+        if (this.step.ModuleType.indexOf("LlmModule") == -1) return;
+
+        if (!this.instruction || !this.instruction.Function || !this.instruction.Function.ReturnValues || this.instruction.Function.ReturnValues.length == 0) return;
+
+        this.showLens = { step: this.step, instruction: this.instruction};
+        /* = (instr) => {
+            
+        }*/
+    }
 
     addNull(key: string) {
         this.variables.push({
@@ -770,8 +758,15 @@ export class GoalDebugSession extends DebugSession {
         return this.variablesRefCache.find(p => p.ObjectReferenceId == id) as ObjectValue;
     }
 
-    getObjectValue(name: string): SimpleValue {
-        return this.variablesRefCache.find(p => p.Name.toLowerCase() == name.toLowerCase()) as ObjectValue;
+    getObjectValue(name: string): SimpleValue | undefined {
+        try {
+            var value = this.variablesRefCache.find(p => p.Name.toLowerCase() == name.toLowerCase());
+            if (value) return value;
+        } catch (e) {
+            console.log(e);
+        }
+        var value = this.variablesRefCache.find(p => (p as ObjectValue).PathAsVariable && (p as ObjectValue).PathAsVariable.toLowerCase() == name.toLowerCase());
+        return value;
     }
 
     isObjectValue(val: SimpleValue | ObjectValue): val is ObjectValue {
@@ -788,7 +783,7 @@ export class GoalDebugSession extends DebugSession {
 
             } else {
             }
-           
+
             if (valueInReference) {
                 value.ObjectReferenceId = valueInReference.ObjectReferenceId;
             } else {
@@ -811,8 +806,8 @@ export class GoalDebugSession extends DebugSession {
                 //this.variablesRefCache = this.variablesRefCache.filter(p => p.VariableName !== key);
                 //this.variables = this.variables.filter(p => p.variablesReference !== objectValue?.ObjectReferenceId);
             }
-
-
+    
+    
             if (!val) {
                 objectValue.Value = new String('');
                 objectValue.ObjectReferenceId = 0;
@@ -833,7 +828,7 @@ export class GoalDebugSession extends DebugSession {
                 }
             } else {
                 objectValue = val;
-
+    
                 if (val.Type == this.StringType) {
                     objectValue.Type = this.StringType;
                     objectValue.ObjectReferenceId = 0;
@@ -846,14 +841,14 @@ export class GoalDebugSession extends DebugSession {
                         objectValue.Value = val.Value;
                         objectValue.ObjectReferenceId = ++this.currentVariablesRef;
                     }
-
+    
                 } else {
                     objectValue.ObjectReferenceId = ++this.currentVariablesRef;
                     objectValue.Type = (val.Type ?? (val.Value as ObjectValue)?.Type ?? "Object");
                 }
             }
             objectValue.Name = key;
-
+    
             if (!objectValue.ObjectReferenceId) {
                 objectValue.ObjectReferenceId = ++this.currentVariablesRef;
             }
@@ -920,22 +915,24 @@ export class GoalDebugSession extends DebugSession {
         if (val.Type == this.StringType && val.Value.toString() != "[object Object]") {
             val = val.Value ?? '';
         } else if (typeof val == 'object') {
-            val = (typeof val.Value == 'object') ? 'Object' : (val.Value ?? '');
+            val = (this.UseValue(val.Type, val)) ? val.Value : 'Object';
         }
+        if (val == null) val = 'null';
+
         val = val.toString().replaceAll('\n', '').replaceAll('\r', '').replaceAll('\t', '');
+
         return val;
     }
 
-    private cleanVarValue(val: any): string {
-        if (!val || val == null) return '';
+    private UseValue(type : any, val : any) {
+        if (!type) return true;
 
-        if (typeof val == 'object') {
-            val = (val.value && typeof val.value != 'object') ? val.value : 'BObject';
-        }
-        val = val.toString().replaceAll('\n', '').replaceAll('\r', '').replaceAll('\t', '');
-        return val;
+        const allowed = ["number", 'bool', "System.String", "System.Double", "System.Int", "System.Bool", "System.Date", "System.Guid"];
+        
+        let useValue = allowed.some(prefix => type.startsWith(prefix));
+        console.log(useValue + ' | type:', type, val);
+        return useValue;
     }
-
 }
 
 

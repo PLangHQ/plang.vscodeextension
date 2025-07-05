@@ -58,7 +58,7 @@ HandleError
 
 
 LoadGoalsCalled
-- foreach %goal.GoalSteps% call FindGoalsToCall item=%step%
+/- foreach %goal.GoalSteps% call FindGoalsToCall item=%step%
 
 FindGoalsToCall
 - filter %step% on property "GoalToCall", write to %goalsToCall%

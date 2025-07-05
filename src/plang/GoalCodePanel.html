@@ -77,7 +77,7 @@
 
 {{ end }}
 
-{{ if goalsCouldBeCalled.size > 0 }}
+{{ if goalsCouldBeCalled && goalsCouldBeCalled.size > 0 }}
     <h3>Goals called</h3>
     {{ for obj in goalsCouldBeCalled }}
         {{ if obj[0].Value != '' && obj[0].Value != null }}

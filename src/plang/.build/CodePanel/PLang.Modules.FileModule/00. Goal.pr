@@ -89,7 +89,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-06-24T10:26:52.6513941+00:00",
       "WaitForExecution": true,
@@ -148,10 +148,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "c4eed88aa9860846507b0144fb79f448c18c256d3f7486371a223d8b2c2e7a39",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "f2161f70446015863e75af6419bf671cbc88a2a44509798b0f7611f05c53b739",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Construct a full file path by concatenating multiple path components into a single variable"
+      "UserIntent": null
     },
     {
       "Text": "if %path.Value% does not contain  \"%\" then",
@@ -164,7 +164,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-06-24T10:26:56.3674892+00:00",
       "WaitForExecution": true,
@@ -223,10 +223,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "13f6bdfde5f973368f5e6fa3cb459391ed09b4d8bb7e6a7554acf6f5ea737e23",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "21d84626c3b989121d215754e04f058192be9dc911e2e8af54336052cdf079cd",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Check if the variable %path.Value% does not contain the character '%'"
+      "UserIntent": null
     },
     {
       "Text": "read file %absoluteFilePath%, write to %content%\n        on error key:FileNotFound call HandleError",
@@ -239,7 +239,7 @@
       "Indent": 4,
       "Execute": false,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-06-24T10:27:00.0599519+00:00",
       "WaitForExecution": true,
@@ -312,10 +312,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "49e37c4f893413f18b0b9c1a38c8c12a8fce2f7e934b0555b5c7ffb736f50310",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "d44e54f6535ae44564f94fa78dd0e788a0d5e82ab68981b170b208c6993bb4b4",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Read the contents of a file specified by the absolute file path and store the contents in a variable, with error handling for file not found."
+      "UserIntent": null
     },
     {
       "Text": "render template \"/modules/%step.ModuleType%.html\", write to %module%",
@@ -328,7 +328,7 @@
       "Indent": 4,
       "Execute": false,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-06-24T10:27:03.0589911+00:00",
       "WaitForExecution": true,
@@ -387,10 +387,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "9474583c5d184015e470b6a62c356182cbe44176a485199349d6c7274fa119a1",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "f4a2ba2f14f62f11ed184fc02499801fab2c9b98929737d46e1775c4719eea40",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Render an HTML template file based on the module type and store the rendered output in a variable"
+      "UserIntent": null
     }
   ],
   "SubGoals": [],
@@ -405,8 +405,8 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "d74d035def81795987af8b338d732d1a7804df8eae28728f563e1849c0a41f57",
-  "Hash": "85644a3e131366b0f842a04653fb56c723d0e87b5295d01007e30c3302bfb3b6",
+  "FileHash": "7ce62f6369075b3a47bbea6653b92bbca35b2ab5210967f0728442664343abcd",
+  "Hash": "0c93968248535411f6e77b9c7326783561b0ae821ec601998447ddd6f50028fd",
   "IncomingVariablesRequired": {
     "instruction": "The instruction containing the parameters to filter for the file path.",
     "request": "The request object that contains the application path.",

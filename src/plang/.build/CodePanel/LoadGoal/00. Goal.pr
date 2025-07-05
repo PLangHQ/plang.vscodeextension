@@ -166,8 +166,8 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "d74d035def81795987af8b338d732d1a7804df8eae28728f563e1849c0a41f57",
-  "Hash": "d54c08023346c7416a2cbcff26a92ccd399ac0a12455fc136cb23b7f704f5bbb",
+  "FileHash": "7ce62f6369075b3a47bbea6653b92bbca35b2ab5210967f0728442664343abcd",
+  "Hash": "6424f2099c9e9a2dbc61fa807bce9c4e9a2086d8371ac8cb54544f20ed75f0ff",
   "IncomingVariablesRequired": {
     "content": "This variable is used to store the rendered output of the template 'GoalCodePanel.html'. It must be defined before calling this goal."
   },
