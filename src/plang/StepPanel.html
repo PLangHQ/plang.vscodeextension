@@ -82,7 +82,7 @@
     }
 </script>
 <hr>
-{{ if instruction.Function.Name }}
+{{ if instruction.Function && instruction.Function.Name }}
 <h5>{{ instruction.Function.Name }} on {{ step.ModuleType }}</h5>
 {{ else }}
 <h5>{{ step.ModuleType }}</h5>
@@ -90,13 +90,13 @@
 📕 <a href="https://github.com/PLangHQ/plang/blob/main/Documentation/modules/{{ step.ModuleType }}.md">More info
     {{ step.ModuleType }}</a>
 <p>{{ step.Description | html.escape }}</p>
-{{ if instruction.Function.Explanation }}
+{{ if instruction.Function && instruction.Function.Explanation }}
     <h5>LLM Explanation</h5>
     {{ instruction.Function.Explanation | html.escape }}
 {{ end }}
 {{ module }}
 
-{{ if instruction.Function.Parameters && instruction.Function.Parameters.size > 0 }}
+{{ if instruction.Function && instruction.Function.Parameters && instruction.Function.Parameters.size > 0 }}
 <hr>
 <h4>🧮 {{ instruction.Function.Name }} Parameters</h4>
 <table>
@@ -119,7 +119,8 @@
 </table>
 {{ end }}
 
-{{ if instruction.Function.ReturnValues && instruction.Function.ReturnValues.size > 0 }}
+
+{{ if instruction.Function && instruction.Function.ReturnValues && instruction.Function.ReturnValues.size > 0 }}
 <h4>🔁 Return value</h4>
 <table>
     <thead>

@@ -50,12 +50,15 @@ PLang.Modules.FileModule
 - if %path.Value% does not contain  "%" then 
     - read file %absoluteFilePath%, write to %content%
         on error key:FileNotFound call HandleError
+        on error, call ErrorOnFile
     - render template "/modules/%step.ModuleType%.html", write to %module%
 
 HandleError
 - write out "%absoluteFilePath% not found"
 - end goal and previous
 
+ErrorOnFile
+- write out %!error.Message%
 
 LoadGoalsCalled
 /- foreach %goal.GoalSteps% call FindGoalsToCall item=%step%

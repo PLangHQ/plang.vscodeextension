@@ -3,6 +3,7 @@
     {{ 
         sqlObj = instruction.Function | goalToCall "GetSqlObject"
     }}
+    {{ if instruction.Function }}
 
     {{ if instruction.Function.Parameters && instruction.Function.Parameters.size > 0 }}
     
@@ -55,5 +56,7 @@
             - write out {{ sqlObj.returnvalues.VariableName }}
         </code>
         
+    {{ end }}
+
     {{ end }}
 </div>

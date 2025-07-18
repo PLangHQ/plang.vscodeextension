@@ -27,7 +27,7 @@ export class PathHelper {
         if (fs.existsSync(buildDir)) return path.normalize(dir);
 
         if (fs.existsSync(path.join(dir, 'Start.goal'))) { return dir; }
-        if (!dir.endsWith('setup') && fs.existsSync(path.join(dir, 'Setup.goal'))) { return dir;}
+        //if (!dir.endsWith('setup') && fs.existsSync(path.join(dir, 'Setup.goal'))) { return dir;}
 
         let parentDir = path.join(dir, '../');
         if (parentDir == dir) return '';

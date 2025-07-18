@@ -32,14 +32,6 @@
         });
     }
 
-    function rebuildStep() {
-        path = '{{ step.RelativePrPath | string.replace "\\" "/" }}';
-        vscode.postMessage({
-            command: 'rebuildStep',
-            data: path
-        });
-    }
-
     function run(onlyFile, csdebug) {
         vscode.postMessage({
             command: 'run',

@@ -1,59 +1,36 @@
 import * as vscode from 'vscode';
 import { GoalDebugSession } from '../debugAdapter';
-import { match } from 'assert';
 
 export class PlangCompletionProvider implements vscode.CompletionItemProvider {
-    public debugSession?: GoalDebugSession;
-    public constructor(debuggerInstance: GoalDebugSession) {
-        this.debugSession = debuggerInstance;
-    }
+    constructor(private readonly session: GoalDebugSession) {}
 
-    provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList> {
-        const fileText = document.getText();
-        const pattern = /%[^%\n\s]+%/g;
-        const matches = fileText.match(pattern) || [];
-        const linePrefix = document.lineAt(position).text.substring(0, position.character);
-        const currentVariable = linePrefix.substring(linePrefix.lastIndexOf('%'), position.character);
-        let completionItems: vscode.CompletionItem[] = [];
+    provideCompletionItems(
+        doc: vscode.TextDocument,
+        pos: vscode.Position,
+        _tk: vscode.CancellationToken,
+        ctx: vscode.CompletionContext
+    ): vscode.ProviderResult<vscode.CompletionItem[] | vscode.CompletionList> {
+        const vars = doc.getText().match(/%[^%\s\n]+%/g) ?? [];
+        if (!vars.length) return [];
 
-        if (context.triggerKind === vscode.CompletionTriggerKind.TriggerCharacter && currentVariable.startsWith("%")) {
-           
-            for (let i = 0; i < matches.length; i++) {
-                var item = completionItems.find(p => p.label == matches[i]);
-                if (item || matches[i].endsWith('%')) continue;
+        const varRange = doc.getWordRangeAtPosition(pos, /%[^%\s\n]*%?/);
+        if (!varRange) return [];
 
-                item = new vscode.CompletionItem(matches[i], vscode.CompletionItemKind.Text);
+        const typed = doc.getText(varRange).replace(/%$/, ''); // drop trailing % if present
+        const items: vscode.CompletionItem[] = [];
 
-                for (let i = 0; this.debugSession && i < this.debugSession?.variables.length; i++) {
-                    if (this.debugSession?.variables[i].name == matches[i].replaceAll('%', '')) {
-                        item.detail = JSON.stringify(this.debugSession?.variables[i]);
-                        i = this.debugSession.variables.length;
-                    }
-                }
-                item.insertText = matches[i].substring(1);
-                completionItems.push(item);
-            
-            }
-        } else {
-            let word = '';
-            const wordAtPosition = document.getWordRangeAtPosition(position);
-            if (wordAtPosition) {
-                word = document.getText(wordAtPosition);
-            }
-            if (word == '') return [];
+        for (const raw of vars) {
+            if (!raw.startsWith(typed) || items.find(i => i.label === raw)) continue;
 
-            for (let i = 0; i < matches.length; i++) {
-                var item = completionItems.find(p => p.label == matches[i]);
-                if (item) continue;
+            const item = new vscode.CompletionItem(raw, vscode.CompletionItemKind.Text);
+            item.textEdit = vscode.TextEdit.replace(varRange, raw);
 
-                if (matches[i].indexOf(word) != -1) {
-                    item = new vscode.CompletionItem(matches[i], vscode.CompletionItemKind.Text);
-                    item.insertText = matches[i].substring(1);
-                    completionItems.push(item);
-                }
-            }
-        
+            const name = raw.replace(/%/g, '');
+            const v = this.session?.variables.find(x => x.name === name);
+            if (v) item.detail = JSON.stringify(v);
+
+            items.push(item);
         }
-        return completionItems;
+        return items;
     }
 }

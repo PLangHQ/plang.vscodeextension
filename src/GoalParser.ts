@@ -130,9 +130,14 @@ export class GoalParser {
     }
     
 
-    public getStep(editor: vscode.TextEditor, lineNumber: number, goalLineNr: number): [string, number] {
+    public getStep(editor: vscode.TextEditor, lineNumber: number, goalLineNr: number, level : number = 0): [string, number] {
         if (lineNumber < 0 || editor.document.lineCount < lineNumber) return ['', 0];
         try {
+
+            if (level == 50) {
+                var i = 0;
+                return ['', 0]
+            }
             var line: vscode.TextLine = editor.document.lineAt(lineNumber);
             if (line.text.trim().startsWith('-')) {
                 let stepText = line.text.trim();
@@ -143,6 +148,7 @@ export class GoalParser {
                     } else if (!line.text.match('[^\w]+')) {
                         i = editor.document.lineCount;
                     } else {
+                        if (line.text.startsWith('/')) break;
                         stepText += '\n' + line.text;
                     }
                 }
@@ -150,14 +156,14 @@ export class GoalParser {
             }
 
             if (line.text.trim().startsWith('/')) {
-                return this.getStep(editor, lineNumber + 1, goalLineNr);
+                return this.getStep(editor, lineNumber + 1, goalLineNr, ++level);
             }
 
             if (line.text.startsWith(' ') || line.text.startsWith('\t')) {
                 if (lineNumber - 1 == 0) {
                     return ['', lineNumber];
                 }
-                return this.getStep(editor, lineNumber - 1, goalLineNr)
+                return this.getStep(editor, lineNumber - 1, goalLineNr, ++level)
             }
             return ['', lineNumber];
         } catch (e) {

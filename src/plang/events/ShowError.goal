@@ -1,0 +1,6 @@
+ShowError
+- write out "<pre>%!error.Message%</pre>
+- write out to system %!error%
+
+ShowErrorMessage
+- write out "<pre>%!error</pre>"

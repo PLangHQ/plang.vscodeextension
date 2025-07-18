@@ -1,0 +1,3 @@
+Events
+- on error where exception: "ProgramError", call ShowError
+- on error, call ShowErrorMessage

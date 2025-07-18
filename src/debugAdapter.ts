@@ -61,7 +61,7 @@ export class GoalDebugSession extends DebugSession {
     protected initializeRequest(response: DebugProtocol.InitializeResponse, args: DebugProtocol.InitializeRequestArguments): void {
         response.body = response.body || {};
         response.body.supportsSetVariable = true;
-        response.body.supportsStepBack = true;
+        response.body.supportsStepBack = false;
         response.body.supportsDataBreakpoints = true;
         response.body.supportsConfigurationDoneRequest = true;
         response.body.supportsFunctionBreakpoints = true;
@@ -687,7 +687,7 @@ export class GoalDebugSession extends DebugSession {
 
         var error = this.data["!Error"];
         if (error) {
-            this.addObject(error);
+            this.addObject(error, "!Error");
         }
         var event = this.data["!Event"];
         if (event) {
@@ -773,9 +773,10 @@ export class GoalDebugSession extends DebugSession {
         return 'Events' in val;
     }
 
-    addObject(value: SimpleValue) {
+    addObject(value: SimpleValue, name : string = '') {
 
         try {
+            if (!value.Name) value.Name = name;
             var valueInReference = this.getObjectValue(value.Name);
 
 
