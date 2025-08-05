@@ -15,7 +15,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-07-17T23:33:20.1755756+00:00",
       "WaitForExecution": true,
@@ -74,10 +74,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "6fa9802891297fceee8bcb8c1598423b5e1653a4581a9feb28e34214285aed40",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "09407fdf99c55c5d6b1d172bcdebd411090f5ca93fc654e2b32706d01b5834b4",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\events\\ShowError.goal",
-      "UserIntent": "Display the content of the error message variable to the user or output stream formatted as preformatted text"
+      "UserIntent": null
     },
     {
       "Text": "write out to system %!error%",
@@ -170,8 +170,8 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "1856a7d4b27e09cc86369ed88e746e80b62bcc847690f379afca976038dc7646",
-  "Hash": "ff5c9acf6fefb0238ca7aa8d28398bd5f6b3e8fd36af757e46a965471e8ccac7",
+  "FileHash": "7638d36b4e364e8d38a7c20a489ed03568c0dd98000cffd654d9c4cfe2420018",
+  "Hash": "4b65e2969993004274a83c3d8999847a82f196e7167910cdc015a1fb7f652e8e",
   "IncomingVariablesRequired": {
     "error": "An object that contains the error details, including a message property."
   },

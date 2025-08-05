@@ -35,6 +35,7 @@ export class GoalDebugSession extends DebugSession {
     private StringType = 'string';
     private hoverFunction: vscode.Disposable | undefined;
     private debugHighlightDecorationType: vscode.TextEditorDecorationType;
+    private errorDecorationType: vscode.TextEditorDecorationType;
     private highlightDecorationType: vscode.TextEditorDecorationType;
     private stopOnNext: boolean = false;
     private variablesRefCache: SimpleValue[] = [];
@@ -45,7 +46,10 @@ export class GoalDebugSession extends DebugSession {
     constructor() {
         super();
         this.sendEvent(new InitializedEvent());
-
+        this.errorDecorationType = vscode.window.createTextEditorDecorationType({
+            backgroundColor: new vscode.ThemeColor('editorError.background'), // choose your desired color
+            color: 'black'
+        });
         this.debugHighlightDecorationType = vscode.window.createTextEditorDecorationType({
             backgroundColor: 'yellow', // choose your desired color
             color: 'black'
@@ -157,11 +161,20 @@ export class GoalDebugSession extends DebugSession {
         if (!this.editor) return;
         this.editor!.setDecorations(this.debugHighlightDecorationType, []);
         this.editor!.setDecorations(this.highlightDecorationType, []);
+        this.editor!.setDecorations(this.errorDecorationType, []);
     }
+    public setErrorDecorations(range: Range[]) {
+        if (!this.editor) return;
+        this.editor!.setDecorations(this.errorDecorationType, range);
+        this.editor!.setDecorations(this.debugHighlightDecorationType, []);
+        this.editor!.setDecorations(this.highlightDecorationType, []);
+    }
+
     public setDebugDecorations(range: Range[]) {
         if (!this.editor) return;
         this.editor!.setDecorations(this.debugHighlightDecorationType, range);
         this.editor!.setDecorations(this.highlightDecorationType, []);
+        this.editor!.setDecorations(this.errorDecorationType, []);
     }
     public setDecorations(range: Range[]) {
         if (!this.editor) return;
@@ -192,7 +205,7 @@ export class GoalDebugSession extends DebugSession {
         this.httpResponse = null;
         super.terminateRequest(response, args);
     }
-   
+
     protected threadsRequest(response: DebugProtocol.ThreadsResponse): void {
         // Return the single thread
         response.body = {
@@ -322,7 +335,7 @@ export class GoalDebugSession extends DebugSession {
     }
 
 
-
+    lastErrorId = null;
     public async checkBreakpoint(data: any, res: any) {
         try {
             if (this.httpResponse != null) {
@@ -333,16 +346,38 @@ export class GoalDebugSession extends DebugSession {
                 res.send('{"continue":true}');
                 return;
             }
-            if (!this.stopOnNext && data["line"]) {
-                let breakpoints = vscode.debug.breakpoints;
-                let line = data["line"];
-                let goalFilePath = path.normalize(data["AbsolutePath"]).toLowerCase();
-                let fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint
-                    && bp.enabled && bp.location.range.start.line == (line - 1) &&
-                    path.normalize(bp.location.uri.fsPath).toLowerCase() === goalFilePath
-                ) as vscode.SourceBreakpoint[];
-                res.send('{"continue":' + (fileBreakpoints.length > 0) + '}');
-                return;
+
+            this.absolutePath = data["AbsolutePath"];
+            let error = data["!Error"];
+            this.step = data["!Step"];
+            this.goal = data["!Goal"];
+            this.goalVars = data["!GoalVariables"];
+            this.memoryStack = data["!MemoryStack"];
+            this.instruction = data["!Instruction"];
+
+            if (error != null && error != '' && error != '%!error%' && error.Id != this.lastErrorId) {
+                this.lastErrorId = error.Id;
+                this.diagnosticCollection.clear();
+
+                var rootPath = this.goal.AbsoluteAppStartupFolderPath;
+                this.httpResponse = res;
+
+                await this.setupErrorBreakpoint(rootPath, error);
+
+                return true;
+            } else {
+
+                if (!this.stopOnNext && data["line"]) {
+                    let breakpoints = vscode.debug.breakpoints;
+                    let line = data["line"];
+                    let goalFilePath = path.normalize(data["AbsolutePath"]).toLowerCase();
+                    let fileBreakpoints = breakpoints.filter(bp => bp instanceof vscode.SourceBreakpoint
+                        && bp.enabled && bp.location.range.start.line == (line - 1) &&
+                        path.normalize(bp.location.uri.fsPath).toLowerCase() === goalFilePath
+                    ) as vscode.SourceBreakpoint[];
+                    res.send('{"continue":' + (fileBreakpoints.length > 0) + '}');
+                    return;
+                }
             }
 
             if (!data["AbsolutePath"] || !data["!Step"]) {
@@ -350,30 +385,8 @@ export class GoalDebugSession extends DebugSession {
                 return;
             }
 
-            this.absolutePath = data["AbsolutePath"];
-            this.stepAbsolutePath = data["StepAbsolutePath"];
-            this.step = data["!Step"];
-            this.goal = data["!Goal"];
-            this.goalVars = data["!GoalVariables"];
-            this.memoryStack = data["!MemoryStack"];
-            this.instruction = data["!Instruction"];
-            let error = data["!Error"];
-            if (error != null && error != '') {
-                if (typeof (error) == this.StringType) {
-                    try {
-                        error = JSON.parse(error);
-                    } catch (e) {
-                        console.error('json parse on error', error)
-                        console.error(e)
-                    }
-                }
-                if (this.step.Hash != error.Step.Hash) {
-                    error = null;
-                }
-                //this.step = error.Step;
-                //this.goal = error.Goal;
-            }
-            this.diagnosticCollection.clear()
+
+
             if (!this.step) return;
 
             const goalAbsolutePath = path.normalize(this.absolutePath).toLowerCase();
@@ -384,12 +397,6 @@ export class GoalDebugSession extends DebugSession {
                 && bp.enabled && bp.location.range.start.line == (this.step.LineNumber - 1) &&
                 path.normalize(bp.location.uri.fsPath).toLowerCase() === goalAbsolutePath
             ) as vscode.SourceBreakpoint[];
-
-
-            if (error != null && error != '') {
-
-                error = await this.setupErrorBreakpoint(error, fileBreakpoints);
-            }
 
             if (!this.stopOnNext && fileBreakpoints.length == 0) {
                 res.send('{"ok":true}');
@@ -417,8 +424,10 @@ export class GoalDebugSession extends DebugSession {
             this.httpResponse = res;
             this.nextStepFile = document.fileName;
 
+
             this.setDebugDecorations([line.range]);
             this.sendEvent(new StoppedEvent('breakpoint', 1));
+
 
             return true;
 
@@ -430,27 +439,27 @@ export class GoalDebugSession extends DebugSession {
 
 
 
-    private async setupErrorBreakpoint(error: any, fileBreakpoints: vscode.SourceBreakpoint[]) {
-        if (typeof (error) == this.StringType) {
-            error = JSON.parse(error);
-        }
-        const document = await vscode.workspace.openTextDocument(this.absolutePath);
+    private async setupErrorBreakpoint(appRoot: string, error: any) {
+        let errorStepAbsolutePath = path.join(appRoot, error.Step.RelativeGoalPath);
+
+        const document = await vscode.workspace.openTextDocument(errorStepAbsolutePath);
         if (this.nextStepFile == '') this.nextStepFile = document.fileName;
 
-        const lineNr = Math.max(0, this.step.LineNumber - 1);
+        const lineNr = Math.max(0, error.Step.LineNumber - 1);
         let line = document.lineAt(0);
         if (document.lineCount > lineNr) {
             line = document.lineAt(lineNr);
         }
 
-
-        let fileUri = vscode.Uri.file(this.absolutePath);
+        this.nextStepFile = document.fileName;
+        let fileUri = vscode.Uri.file(errorStepAbsolutePath);
         //let lineNumber = ;
         let errorLocation = new vscode.Location(fileUri, line.range);
 
-        fileBreakpoints.push(new vscode.SourceBreakpoint(errorLocation));
+        const bp = new vscode.SourceBreakpoint(new vscode.Location(fileUri, new vscode.Position(lineNr, 0)), true);
+        //vscode.debug.addBreakpoints([bp]);
 
-        let errorMessage = error.Message;
+        let errorMessage = error.MessageOrDetail;
         if (!errorMessage && error.Exception.Message) {
             errorMessage = error.Exception.Message;
         }
@@ -477,9 +486,28 @@ export class GoalDebugSession extends DebugSession {
                 )
             );
         }
-
         this.diagnosticCollection.set(fileUri, [diagnostic]);
+
+        this.isSteppingInto = false;
+
+        this.isPaused = true;
+        this.nextStepFile = document.fileName;
+this.stopOnNext = true;
+
+
+        this.setErrorDecorations([line.range]);
+       // this.sendEvent(new StoppedEvent('pause', 1));
+        this.sendEvent(new StoppedEvent('breakpoint', 1));
+        vscode.debug.activeDebugSession!.customRequest('pause');
+
+        
         return error;
+    }
+
+    protected pauseRequest(response: DebugProtocol.PauseResponse, args: DebugProtocol.PauseArguments): void {
+        // Pause the execution of the program
+        this.sendEvent(new StoppedEvent('pause', 1));
+        this.sendResponse(response);
     }
 
     protected async evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): Promise<void> {
@@ -597,7 +625,7 @@ export class GoalDebugSession extends DebugSession {
             return;
         }
 
-        this.loadVariablePanel(args.variablesReference);        
+        this.loadVariablePanel(args.variablesReference);
 
         response.body = {
             variables: this.variables
@@ -606,10 +634,10 @@ export class GoalDebugSession extends DebugSession {
     }
 
     loadVariablePanel(variablesReference: number) {
-        
+
         var obj = this.getObjectValueById(variablesReference);
         if (!obj) return;
-        
+
 
         if (obj && obj.Type != this.StringType) {
             if (obj.Type == "!Properties") {
@@ -681,29 +709,43 @@ export class GoalDebugSession extends DebugSession {
     }
 
     loadVariableReferences() {
-        
+
         var memoryStack = this.data["!MemoryStack"];
         this.addMemoryStack(memoryStack);
 
         var error = this.data["!Error"];
-        if (error) {
+        if (error && typeof error != 'string') {
+            error.Name = "!Error";
+            error.debugText = error.Message;
+            error.Type = error.MessageOrDetail;
             this.addObject(error, "!Error");
         }
-        var event = this.data["!Event"];
-        if (event) {
-            event.Name = "!Event";
 
-            this.addObject(event);
-        }
+
         var step = this.data["!Step"];
         if (step) {
             step.Name = "!Step";
+            step.debugText = step.Text;
             this.addObject(step);
         }
         var goal = this.data["!Goal"];
         if (goal) {
             goal.Name = "!Goal";
+            goal.debugText = goal.GoalName;
             this.addObject(goal);
+        }
+        var instruction = this.data["!Instruction"];
+        if (instruction) {
+            instruction.Name = "!Instruction";
+            instruction.debugText = instruction.ModuleType;
+            this.addObject(instruction);
+        }
+
+        var event = this.data["!Event"];
+        if (event) {
+            event.Name = "!Event";
+            event.debugText = event.GoalStep.Text;
+            this.addObject(event);
         }
         //this.addPropertyToObject(this.data);
 
@@ -711,20 +753,22 @@ export class GoalDebugSession extends DebugSession {
             this.goalVars = JSON.parse(this.goalVars);
         }
         for (let i = 0; i < this.goalVars.length; i++) {
+            if (this.goalVars[i].VariableName.startsWith('!')) continue;
+
             let value: SimpleValue = { Name: this.goalVars[i].VariableName, Type: typeof (this.goalVars[i].Value), Value: this.goalVars[i].Value };
 
             this.addObject(value);
         }
     }
 
-    private showLens : any;
+    private showLens: any;
 
     checkForModule() {
         if (this.showLens) {
             let variableName = this.showLens.instruction.Function.ReturnValues[0].VariableName;
             let objectValue = this.getObjectValue(variableName);
             if (!objectValue) return;
-            
+
             this.sendEvent({
                 event: 'showLens',
                 body: { objectValue },
@@ -738,7 +782,7 @@ export class GoalDebugSession extends DebugSession {
 
         if (!this.instruction || !this.instruction.Function || !this.instruction.Function.ReturnValues || this.instruction.Function.ReturnValues.length == 0) return;
 
-        this.showLens = { step: this.step, instruction: this.instruction};
+        this.showLens = { step: this.step, instruction: this.instruction };
         /* = (instr) => {
             
         }*/
@@ -773,97 +817,20 @@ export class GoalDebugSession extends DebugSession {
         return 'Events' in val;
     }
 
-    addObject(value: SimpleValue, name : string = '') {
+    addObject(value: SimpleValue, name: string = '') {
 
         try {
             if (!value.Name) value.Name = name;
             var valueInReference = this.getObjectValue(value.Name);
-
-
-            if (this.isObjectValue(value)) {
-
-            } else {
-            }
 
             if (valueInReference) {
                 value.ObjectReferenceId = valueInReference.ObjectReferenceId;
             } else {
                 value.ObjectReferenceId = ++this.currentVariablesRef;
             }
-            /*
-            if (val && val.Type && val.Type.startsWith('System.String,')) {
-                val.Type = this.StringType;
-            }
-            if (val && objectValue && objectValue.Type == val.Type && val.Value) {
-                objectValue.Value = val.Value;
-                this.variables.push({
-                    name: key,
-                    type: objectValue.Type,
-                    value: this.cleanValue(objectValue),
-                    variablesReference: objectValue.ObjectReferenceId
-                });
-                return;
-            } else if (objectValue) {
-                //this.variablesRefCache = this.variablesRefCache.filter(p => p.VariableName !== key);
-                //this.variables = this.variables.filter(p => p.variablesReference !== objectValue?.ObjectReferenceId);
-            }
-    
-    
-            if (!val) {
-                objectValue.Value = new String('');
-                objectValue.ObjectReferenceId = 0;
-                objectValue.Type = this.StringType;
-            } else if (!val.Value && !val.Type) {
-                objectValue.Value = val ?? null;
-                if (val.Type) {
-                    objectValue.Type = val.Type;
-                } else {
-                    objectValue.Type = typeof val;
-                }
-                if ((objectValue.Value as ObjectValue)?.Initiated == false) {
-                    objectValue.ObjectReferenceId = 0;
-                } else if (objectValue.Value?.toString().startsWith('[object Object]')) {
-                    objectValue.ObjectReferenceId = ++this.currentVariablesRef;
-                } else {
-                    objectValue.ObjectReferenceId = 0;
-                }
-            } else {
-                objectValue = val;
-    
-                if (val.Type == this.StringType) {
-                    objectValue.Type = this.StringType;
-                    objectValue.ObjectReferenceId = 0;
-                } else if (val.Type.startsWith('Newtonsoft.Json.Linq')) {
-                    objectValue.Type = val.Type;
-                    if (val.Value.toString().indexOf('[object Object]') == -1) {
-                        val.Value = val.Value;
-                        objectValue.ObjectReferenceId = 0;
-                    } else {
-                        objectValue.Value = val.Value;
-                        objectValue.ObjectReferenceId = ++this.currentVariablesRef;
-                    }
-    
-                } else {
-                    objectValue.ObjectReferenceId = ++this.currentVariablesRef;
-                    objectValue.Type = (val.Type ?? (val.Value as ObjectValue)?.Type ?? "Object");
-                }
-            }
-            objectValue.Name = key;
-    
-            if (!objectValue.ObjectReferenceId) {
-                objectValue.ObjectReferenceId = ++this.currentVariablesRef;
-            }
-            */
+
             this.addValue(value);
-            /*
-            this.variablesRefCache.push(objectValue);
-            let item = {
-                name: key,
-                type: objectValue.Type,
-                value: this.cleanValue(objectValue),
-                variablesReference: objectValue.ObjectReferenceId,
-            };
-            this.variables.push(item);*/
+
         } catch (e) {
             console.log(e);
         }
@@ -899,6 +866,10 @@ export class GoalDebugSession extends DebugSession {
         if (!val || val == null) return '';
 
         var objValue = null;
+        if (val.debugText) {
+            return val.debugText;
+        }
+
         if (val.ObjectReferenceId && !val.Type) {
             objValue = val.Value;
         }
@@ -913,25 +884,26 @@ export class GoalDebugSession extends DebugSession {
             return 'null';
         }
 
+        let value = '';
         if (val.Type == this.StringType && val.Value.toString() != "[object Object]") {
-            val = val.Value ?? '';
+            value = val.Value ?? '';
         } else if (typeof val == 'object') {
-            val = (this.UseValue(val.Type, val)) ? val.Value : 'Object';
+            value = (this.UseValue(val.Type, val)) ? val.Value : 'Object';
         }
-        if (val == null) val = 'null';
+        if (value == null) value = 'null';
 
-        val = val.toString().replaceAll('\n', '').replaceAll('\r', '').replaceAll('\t', '');
+        value = value.toString().replaceAll('\n', '').replaceAll('\r', '').replaceAll('\t', '');
 
-        return val;
+        return value;
     }
 
-    private UseValue(type : any, val : any) {
+    private UseValue(type: any, val: any) {
         if (!type) return true;
 
         const allowed = ["number", 'bool', "System.String", "System.Double", "System.Int", "System.Bool", "System.Date", "System.Guid"];
-        
+
         let useValue = allowed.some(prefix => type.startsWith(prefix));
-        console.log(useValue + ' | type:', type, val);
+        if (!useValue && type.indexOf('JValue') != -1) useValue = true;
         return useValue;
     }
 }

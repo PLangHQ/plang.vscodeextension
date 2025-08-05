@@ -15,9 +15,9 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-17T23:27:59.2544915+00:00",
+      "Generated": "2025-07-18T14:05:10.7245154+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -25,7 +25,7 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 17,
+      "LineNumber": 16,
       "LlmRequest": {
         "temperature": 0.0,
         "top_p": 0.0,
@@ -74,10 +74,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "b652f532e92cd1155237c452340450adc2ebcfeb004651d3309cb36baf3460e2",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "ba8a79c46d1794a99a814574fc603ce14e9c11de1e3eb518f46996c3bd57a799",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Render an HTML template file and store the rendered output into a variable"
+      "UserIntent": null
     },
     {
       "Text": "end goal and previous",
@@ -91,9 +91,9 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-17T23:27:59.3752736+00:00",
+      "Generated": "2025-07-18T14:05:10.811654+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -101,7 +101,7 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 1,
-      "LineNumber": 18,
+      "LineNumber": 17,
       "LlmRequest": {
         "temperature": 0.0,
         "top_p": 0.0,
@@ -150,10 +150,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "268c31da61f10000c713b35570c0314880b6b8cb3360b65131465c4405400093",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "2494d1d004bbaa390c01169d5412e02c2a0939d47517cf0bb62bc06e620ac067",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Terminate the current goal execution and return to the previous step or goal"
+      "UserIntent": null
     }
   ],
   "SubGoals": [],
@@ -168,8 +168,7 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "927d793e95ef09d2350935e306bcfb9d5abdb39efdd251285a89d75c381856ae",
-  "Hash": "7c4e491d54d58ceae5867c219f123a22387419de1bc099f1b23a6c38f8200a53",
+  "Hash": "3e883f2f8a1c6abb77fbb8c6ebb85590e7f210a5c85bc90d4d75de6924d79229",
   "IncomingVariablesRequired": {
     "content": "This variable is used to store the rendered HTML content from the 'StepNotBuiltPanel.html' template."
   },

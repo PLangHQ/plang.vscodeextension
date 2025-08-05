@@ -1,4 +1,3 @@
-
 <h3>{{ goal.GoalName }} - Goal Information</h3>
 <p>{{ goal.Description }}</p>
 <div class="uk-flex uk-margin">
@@ -47,7 +46,7 @@
     function build(csdebug) {
         vscode.postMessage({
             command: 'build',
-            data: {csdebug:csdebug}
+            data: { csdebug: csdebug }
         });
     }
 
@@ -60,30 +59,21 @@
 </script>
 <hr>
 {{ if goal.IncomingVariablesRequired != '' }}
-{{ keys_list = goal.IncomingVariablesRequired | object.keys }}
-{{ values_list = goal.IncomingVariablesRequired | object.values }}
+    {{ keys_list = goal.IncomingVariablesRequired | object.keys }}
+    {{ values_list = goal.IncomingVariablesRequired | object.values }}
 
-{{ if keys_list.size > 0 && keys_list.size == values_list.size }}
-<h3>Required variables</h3>
+    {{ if keys_list.size > 0 && keys_list.size == values_list.size }}
+    <h3>Required variables</h3>
     <table>
-{{ for key in keys_list }}
-    <tr>
-        <th>{{ key }}</th>
-        <td>{{ values_list[for.index] }}</td>
-</tr>
-  {{ end }}
-</table>
-{{ end }}
-
-{{ end }}
-
-{{ if goalsCouldBeCalled && goalsCouldBeCalled.size > 0 }}
-    <h3>Goals called</h3>
-    {{ for obj in goalsCouldBeCalled }}
-        {{ if obj[0].Value != '' && obj[0].Value != null }}
-    - {{ obj[0].Value }}<br>
+        {{ for key in keys_list }}
+        <tr>
+            <th>{{ key }}</th>
+            <td>{{ values_list[for.index] }}</td>
+        </tr>
         {{ end }}
-   {{ end }}
+    </table>
+    {{ end }}
+
 {{ end }}
 
 
@@ -96,4 +86,3 @@
         </div>
     </li>
 </ul>
-

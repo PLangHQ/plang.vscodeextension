@@ -39,6 +39,7 @@
         });
     }
     function openFile(path) {
+        console.log('path', path);
         vscode.postMessage({
             command: 'openFile',
             data: path

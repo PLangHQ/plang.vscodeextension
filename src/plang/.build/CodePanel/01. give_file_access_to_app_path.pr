@@ -1,0 +1,28 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "give file access to %request.body.appPath%",
+  "ModuleType": "PLang.Modules.FileModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "The user wants to grant file system access permissions to the path specified in %request.body.appPath%. The function GiveAccess is designed to give access to a specified path, which matches the user's intent.",
+    "Name": "GiveAccess",
+    "Parameters": [
+      {
+        "Type": "System.String",
+        "Name": "path",
+        "Value": "%request.body.appPath%"
+      }
+    ],
+    "ReturnValues": null
+  },
+  "Properties": {
+    "Parameters": {
+      "path": {
+        "Name": "path",
+        "FullTypeName": "System.String"
+      }
+    },
+    "ReturnValues": {}
+  }
+}

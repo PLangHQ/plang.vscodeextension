@@ -15,9 +15,9 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-17T23:27:59.5495443+00:00",
+      "Generated": "2025-07-18T14:05:10.9353801+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -25,7 +25,7 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 21,
+      "LineNumber": 20,
       "LlmRequest": {
         "temperature": 0.0,
         "top_p": 0.0,
@@ -74,10 +74,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "c98e770985581b30ef79250ec59ccb41ca959772c32eef247d762171037246ff",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "e9c8b9311c77379bbace85672d55bcd776c73ebc502e5df737389d2c8ce61097",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Render the HTML template 'EventPanel.html' and store the rendered output into the variable %content%"
+      "UserIntent": null
     }
   ],
   "SubGoals": [],
@@ -92,8 +92,7 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "927d793e95ef09d2350935e306bcfb9d5abdb39efdd251285a89d75c381856ae",
-  "Hash": "c0d192366d624538eb13b7c846ae3de486e24fac266c18e2d04cff097c2c33ed",
+  "Hash": "ad9a8117fdee7d71b669304e82ee52ef96ad3cfc3a54e7990f98ced87b166609",
   "IncomingVariablesRequired": {
     "content": "A variable to store the rendered HTML content of the 'EventPanel.html' template."
   },

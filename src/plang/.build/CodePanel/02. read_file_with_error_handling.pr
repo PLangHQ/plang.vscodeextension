@@ -1,0 +1,56 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "read file %request.body.goalBuildPath%, write to %goal%\n    on error 'cannot be found', call LoadStepNotBuilt",
+  "ModuleType": "PLang.Modules.FileModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "The user wants to read the contents of a file specified by %request.body.goalBuildPath% and write the contents into the variable %goal%. The appropriate function to read a text file and return its content is ReadTextFile. The user also specifies error handling for file not found, but error handling is ignored as per instructions.",
+    "Name": "ReadTextFile",
+    "Parameters": [
+      {
+        "Type": "System.String",
+        "Name": "path",
+        "Value": "%request.body.goalBuildPath%"
+      },
+      {
+        "Type": "System.String",
+        "Name": "returnValueIfFileNotExisting",
+        "Value": ""
+      },
+      {
+        "Type": "System.Boolean",
+        "Name": "throwErrorOnNotFound",
+        "Value": false
+      }
+    ],
+    "ReturnValues": [
+      {
+        "Type": "System.Object",
+        "VariableName": "%goal%"
+      }
+    ]
+  },
+  "Properties": {
+    "Parameters": {
+      "path": {
+        "Name": "path",
+        "FullTypeName": "System.String"
+      },
+      "returnValueIfFileNotExisting": {
+        "Name": "returnValueIfFileNotExisting",
+        "FullTypeName": "System.String"
+      },
+      "throwErrorOnNotFound": {
+        "Name": "throwErrorOnNotFound",
+        "FullTypeName": "System.Boolean"
+      }
+    },
+    "ReturnValues": {
+      "%goal%": {
+        "Name": "%goal%",
+        "FullTypeName": "System.Object"
+      }
+    }
+  }
+}

@@ -15,9 +15,9 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-17T23:28:00.589253+00:00",
+      "Generated": "2025-07-18T14:05:53.8353663+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -25,7 +25,7 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 38,
+      "LineNumber": 42,
       "LlmRequest": {
         "temperature": 0.0,
         "top_p": 0.0,
@@ -74,10 +74,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "713aa93a8f75eb878ac3dea0557f72e152579f70588a1237f15174ff8ca3ac1b",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "a9ecccab7895fd9da796d57081eeb6597073dc67968b89d8b2e6d5c867df4b17",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Render an HTML template file dynamically based on the module type and store the rendered output in a variable"
+      "UserIntent": null
     }
   ],
   "SubGoals": [],
@@ -92,8 +92,7 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "927d793e95ef09d2350935e306bcfb9d5abdb39efdd251285a89d75c381856ae",
-  "Hash": "1c1cbae97d1a961199195a9169bd9246475fc46553ff212cb1e391cc115687ec",
+  "Hash": "ec13e254e9a14a0796d6160e40ee2298274b7b0704e473a23b1cef55f34cbdcf",
   "IncomingVariablesRequired": {
     "step.ModuleType": "A string that specifies the type of module to be rendered in the template."
   },

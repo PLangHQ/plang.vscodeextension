@@ -1,0 +1,56 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "render template \"StepPanel.html\", write to %content%",
+  "ModuleType": "PLang.Modules.TemplateEngineModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "The user wants to render the HTML template file 'StepPanel.html' and store the rendered output into the variable %content%. The RenderFile function is suitable for rendering a file and returning the content as a string. Since the user wants to write the output into a variable, writeToOutputStream is false.",
+    "Name": "RenderFile",
+    "Parameters": [
+      {
+        "Type": "System.String",
+        "Name": "path",
+        "Value": "StepPanel.html"
+      },
+      {
+        "Type": "System.Collections.Generic.Dictionary`2[System.String,System.Object]",
+        "Name": "variables",
+        "Value": null
+      },
+      {
+        "Type": "System.Boolean",
+        "Name": "writeToOutputStream",
+        "Value": false
+      }
+    ],
+    "ReturnValues": [
+      {
+        "Type": "System.String",
+        "VariableName": "%content%"
+      }
+    ]
+  },
+  "Properties": {
+    "Parameters": {
+      "path": {
+        "Name": "path",
+        "FullTypeName": "System.String"
+      },
+      "variables": {
+        "Name": "variables",
+        "FullTypeName": "System.Collections.Generic.Dictionary`2[System.String,System.Object]"
+      },
+      "writeToOutputStream": {
+        "Name": "writeToOutputStream",
+        "FullTypeName": "System.Boolean"
+      }
+    },
+    "ReturnValues": {
+      "%content%": {
+        "Name": "%content%",
+        "FullTypeName": "System.String"
+      }
+    }
+  }
+}

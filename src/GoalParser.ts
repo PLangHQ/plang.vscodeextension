@@ -110,7 +110,7 @@ export class GoalParser {
     
         if (line.text != '' && line.text[0] && line.text[0].match(/^[a-zA-Z0-9]+$/)) {
             var firstGoal = this.isFirstGoal(editor, lineNumber);
-            return [line.text, lineNumber, firstGoal];
+            return [line.text.trim(), lineNumber, firstGoal];
         }
     
         return this.getGoal(editor, lineNumber - 1)

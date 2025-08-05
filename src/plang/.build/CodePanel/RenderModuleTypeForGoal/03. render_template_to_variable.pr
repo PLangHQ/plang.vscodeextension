@@ -1,33 +1,23 @@
 {
   "Hash": null,
   "SignedMessage": null,
-  "Text": "render template \"StepPanel.html\", write to %content%",
+  "Text": "render template \"/modules/CallGoalInfo.html\", write to %render%",
   "ModuleType": "PLang.Modules.TemplateEngineModule",
   "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
   "Function": {
-    "Reasoning": "The user wants to render the HTML template file 'StepPanel.html' and store the rendered output into the variable %content%. The RenderFile function is suitable for rendering a file and returning the content as a string. Since the user wants to write the output into a variable, writeToOutputStream is false.",
+    "Reasoning": "The user wants to render an HTML template file and store the rendered output into the variable %render%. The RenderFile function is suitable for rendering a file path and returning the rendered content as a string, which can then be stored in a variable.",
     "Name": "RenderFile",
     "Parameters": [
       {
         "Type": "System.String",
         "Name": "path",
-        "Value": "StepPanel.html"
-      },
-      {
-        "Type": "Dictionary<String, Object>",
-        "Name": "variables",
-        "Value": null
-      },
-      {
-        "Type": "System.Boolean",
-        "Name": "writeToOutputStream",
-        "Value": false
+        "Value": "/modules/CallGoalInfo.html"
       }
     ],
     "ReturnValues": [
       {
         "Type": "System.String",
-        "VariableName": "%content%"
+        "VariableName": "%render%"
       }
     ]
   },
@@ -53,9 +43,9 @@
       ]
     },
     "ReturnValues": {
-      "%content%": [
+      "%render%": [
         {
-          "Name": "%content%",
+          "Name": "%render%",
           "FullTypeName": "System.String"
         }
       ]
@@ -90,7 +80,7 @@
           "content": [
             {
               "type": "text",
-              "text": "## Canonical User Intent (already disambiguated by LLM)\r\nRender the HTML template file named 'StepPanel.html' and store the rendered output into the variable %content%\n## functions available starts ##\r\n{\"Methods\":[{\"Description\":\"Render a file path either into a write into value or straight to the output stream when no return variable is defined. Set writeToOutputStream=true when no variable is defined to write into\",\"MethodName\":\"RenderFile\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"path\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"Dictionary<String, Object>\",\"Name\":\"variables\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false},{\"Type\":\"System.Boolean\",\"Name\":\"writeToOutputStream\",\"DefaultValue\":false,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.String\"}},{\"Description\":null,\"MethodName\":\"RenderContent\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"content\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"fullPath\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false},{\"Type\":\"Dictionary<String, Object>\",\"Name\":\"variables\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.String\"}}],\"SupportingObjects\":[]}\r\n## functions available ends ##\r\n## defined variables ##\r\ncontent (type:object), \r\n## defined variables ##"
+              "text": "## Canonical User Intent (already disambiguated by LLM)\r\nRender an HTML template file and store the rendered output into a variable\n## functions available starts ##\r\n{\"Methods\":[{\"Description\":\"Render a file path either into a write into value or straight to the output stream when no return variable is defined. Set writeToOutputStream=true when no variable is defined to write into\",\"MethodName\":\"RenderFile\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"path\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"Dictionary<String, Object>\",\"Name\":\"variables\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false},{\"Type\":\"System.Boolean\",\"Name\":\"writeToOutputStream\",\"DefaultValue\":false,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.String\"}},{\"Description\":null,\"MethodName\":\"RenderContent\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"content\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"fullPath\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false},{\"Type\":\"Dictionary<String, Object>\",\"Name\":\"variables\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.String\"}}],\"SupportingObjects\":[]}\r\n## functions available ends ##\r\n## defined variables ##\r\nrender (type:object), \r\n## defined variables ##"
             }
           ]
         },
@@ -99,14 +89,14 @@
           "content": [
             {
               "type": "text",
-              "text": "render template \"StepPanel.html\", write to %content%"
+              "text": "render template \"/modules/CallGoalInfo.html\", write to %render%"
             }
           ]
         }
       ],
       "type": "PLang.Modules.GenericFunctionBuilder",
       "caching": true,
-      "RawResponse": "{\n  \"Reasoning\": \"The user wants to render the HTML template file 'StepPanel.html' and store the rendered output into the variable %content%. The RenderFile function is suitable for rendering a file and returning the content as a string. Since the user wants to write the output into a variable, writeToOutputStream is false.\",\n  \"Name\": \"RenderFile\",\n  \"Parameters\": [\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"path\",\n      \"Value\": \"StepPanel.html\"\n    },\n    {\n      \"Type\": \"Dictionary<String, Object>\",\n      \"Name\": \"variables\",\n      \"Value\": null\n    },\n    {\n      \"Type\": \"System.Boolean\",\n      \"Name\": \"writeToOutputStream\",\n      \"Value\": false\n    }\n  ],\n  \"ReturnValues\": [\n    {\n      \"Type\": \"System.String\",\n      \"VariableName\": \"%content%\"\n    }\n  ]\n}"
+      "RawResponse": "{\n  \"Reasoning\": \"The user wants to render an HTML template file and store the rendered output into the variable %render%. The RenderFile function is suitable for rendering a file path and returning the rendered content as a string, which can then be stored in a variable.\",\n  \"Name\": \"RenderFile\",\n  \"Parameters\": [\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"path\",\n      \"Value\": \"/modules/CallGoalInfo.html\"\n    }\n  ],\n  \"ReturnValues\": [\n    {\n      \"Type\": \"System.String\",\n      \"VariableName\": \"%render%\"\n    }\n  ]\n}"
     }
   ]
 }

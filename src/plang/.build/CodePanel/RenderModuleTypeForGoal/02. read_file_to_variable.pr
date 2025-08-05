@@ -1,0 +1,38 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "read file %request.body.appPath%/%goalToCall.Value.Path%, write to %goalToCallPr%",
+  "ModuleType": "PLang.Modules.FileModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "The user wants to read the content of a file located at a path constructed by joining two variables %request.body.appPath% and %goalToCall.Value.Path%. The content should be written to the variable %goalToCallPr%. The ReadTextFile function is suitable for reading text file content and returning it, which can then be assigned to the target variable.",
+    "Name": "ReadTextFile",
+    "Parameters": [
+      {
+        "Type": "System.String",
+        "Name": "path",
+        "Value": "%request.body.appPath%/%goalToCall.Value.Path%"
+      }
+    ],
+    "ReturnValues": [
+      {
+        "Type": "System.Object",
+        "VariableName": "%goalToCallPr%"
+      }
+    ]
+  },
+  "Properties": {
+    "Parameters": {
+      "path": {
+        "Name": "path",
+        "FullTypeName": "System.String"
+      }
+    },
+    "ReturnValues": {
+      "%goalToCallPr%": {
+        "Name": "%goalToCallPr%",
+        "FullTypeName": "System.Object"
+      }
+    }
+  }
+}

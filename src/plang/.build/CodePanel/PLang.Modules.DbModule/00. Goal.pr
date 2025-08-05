@@ -5,7 +5,7 @@
   "GoalSteps": [
     {
       "Text": "render template \"/modules/%step.ModuleType%.html\", write to %module%",
-      "Comment": "- foreach %instruction.Properties.TableNames%, call GetTableInfo item=%tableName%",
+      "Comment": null,
       "ModuleType": "PLang.Modules.TemplateEngineModule",
       "Name": "render_template_based_on_module_type",
       "Description": "Render the HTML template located at the path '/modules/{moduleType}.html', where {moduleType} is dynamically replaced by the value of the variable %step.ModuleType%. The rendered HTML content is then stored in the variable %module% for further use.",
@@ -15,9 +15,9 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-17T23:28:00.9555047+00:00",
+      "Generated": "2025-07-18T14:05:54.1945352+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -25,7 +25,7 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 45,
+      "LineNumber": 48,
       "LlmRequest": {
         "temperature": 0.0,
         "top_p": 0.0,
@@ -74,14 +74,14 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "65baf9b1ee76b85699b4b8012dcc40c65bb28dd793c48b3ee1d61d1b38340ea0",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "9bb2346c9bac54124a71a14b34e71fa977d2ea1857e0e3556e64cab3d6fd1873",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Render an HTML template file dynamically based on the module type and store the rendered output in a variable"
+      "UserIntent": null
     }
   ],
   "SubGoals": [],
-  "Description": "The PLang.Modules.DbModule goal processes a list of table names defined in %instruction.Properties.TableNames% by calling the GetTableInfo function for each table name. It then renders a template based on the module type specified in %step.ModuleType% and writes the output to the %module% variable.",
+  "Description": "This Goal, PLang.Modules.DbModule, is responsible for rendering a template based on the specified module type. It takes the module type from the step and writes the rendered template to the variable %module%. The template file is dynamically determined by the value of %step.ModuleType%.",
   "Visibility": 0,
   "GoalFileName": "CodePanel.goal",
   "RelativeGoalPath": "\\CodePanel.goal",
@@ -92,12 +92,9 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "927d793e95ef09d2350935e306bcfb9d5abdb39efdd251285a89d75c381856ae",
-  "Hash": "0681a193a5ef2411ff608aca3e48cdff39a5c33de75a647408ad07b3335f58d4",
+  "Hash": "511af3a96542082b3ea7e5b03761445b9e4cd5264df30b465db43cd1882dee40",
   "IncomingVariablesRequired": {
-    "instruction.Properties.TableNames": "A list of table names to retrieve information for.",
-    "step.ModuleType": "The type of module used to determine the template to render.",
-    "module": "The variable where the rendered template output will be stored."
+    "step.ModuleType": "The type of module that determines which template to render."
   },
   "DataSourceName": null,
   "IsSetup": false,

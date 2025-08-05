@@ -3,4 +3,5 @@ ShowError
 - write out to system %!error%
 
 ShowErrorMessage
-- write out "<pre>%!error</pre>"
+- render template "error.html", write to %content%
+- call goal /HtmlOut

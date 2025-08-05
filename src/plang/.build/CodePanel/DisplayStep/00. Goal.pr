@@ -15,9 +15,9 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-17T23:27:59.740322+00:00",
+      "Generated": "2025-07-18T14:05:15.5565436+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -25,7 +25,7 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 24,
+      "LineNumber": 23,
       "LlmRequest": {
         "temperature": 0.0,
         "top_p": 0.0,
@@ -74,10 +74,10 @@
       },
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "baa7d5a5205e26e513d6832bed1eb7ff7fb2967a946895e9b99b3848b4ce20e7",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "a9400f3fc29db37afc0a7cfeac6a9649785e2c4ea6a6fc37bf13a95d3c190db0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Check if the variable %step.RelativePrPath% is empty and based on that condition, decide which step to execute next"
+      "UserIntent": null
     }
   ],
   "SubGoals": [],
@@ -92,8 +92,7 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "FileHash": "927d793e95ef09d2350935e306bcfb9d5abdb39efdd251285a89d75c381856ae",
-  "Hash": "52e002e534f09b4f0d7b4ac65d91759c4ed6db7bc3739014e395e34590b328b3",
+  "Hash": "ac1284d76655b8f70d4f607c14426545a57535d9e47f8d4313865bf8f223bf21",
   "IncomingVariablesRequired": {
     "step.RelativePrPath": "A string that represents the relative path of the step. It determines which action to take based on its emptiness."
   },

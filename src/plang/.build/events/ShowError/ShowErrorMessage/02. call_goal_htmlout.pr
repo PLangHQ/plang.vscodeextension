@@ -1,0 +1,84 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "call goal /HtmlOut",
+  "ModuleType": "PLang.Modules.CallGoalModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "The user wants to call the goal named '/HtmlOut' without any parameters or return values. The RunGoal function is appropriate for invoking a goal by name.",
+    "Name": "RunGoal",
+    "Parameters": [
+      {
+        "Type": "PLang.Models.GoalToCallInfo",
+        "Name": "goalInfo",
+        "Value": {
+          "Path": ".build\\HtmlOut\\00. Goal.pr",
+          "Name": "/HtmlOut",
+          "Parameters": {}
+        }
+      }
+    ],
+    "ReturnValues": null
+  },
+  "Properties": {
+    "Parameters": {
+      "goalInfo": [
+        {
+          "Name": "Path",
+          "FullTypeName": "System.String"
+        },
+        {
+          "Name": "Name",
+          "FullTypeName": "System.String"
+        },
+        {
+          "Name": "Parameters",
+          "FullTypeName": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"
+        }
+      ],
+      "waitForExecution": [
+        {
+          "Name": "waitForExecution",
+          "FullTypeName": "System.Boolean"
+        }
+      ],
+      "delayWhenNotWaitingInMilliseconds": [
+        {
+          "Name": "delayWhenNotWaitingInMilliseconds",
+          "FullTypeName": "System.Int32"
+        }
+      ],
+      "waitForXMillisecondsBeforeRunningGoal": [
+        {
+          "Name": "waitForXMillisecondsBeforeRunningGoal",
+          "FullTypeName": "System.UInt32"
+        }
+      ],
+      "keepMemoryStackOnAsync": [
+        {
+          "Name": "keepMemoryStackOnAsync",
+          "FullTypeName": "System.Boolean"
+        }
+      ],
+      "isolated": [
+        {
+          "Name": "isolated",
+          "FullTypeName": "System.Boolean"
+        }
+      ],
+      "disableSystemGoals": [
+        {
+          "Name": "disableSystemGoals",
+          "FullTypeName": "System.Boolean"
+        }
+      ],
+      "isEvent": [
+        {
+          "Name": "isEvent",
+          "FullTypeName": "System.Boolean"
+        }
+      ]
+    },
+    "ReturnValues": {}
+  }
+}

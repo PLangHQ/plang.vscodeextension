@@ -35,25 +35,25 @@
     {{ end }}
 
 
-    {{ if instruction.Function.Name == "Select" && sqlObj.returnvalues.size > 0 }}
+    {{ if instruction.Function.Name == "Select" && sqlObj.returnValues && sqlObj.returnValues.size > 0 }}
     <h4>Example usage</h4>   
-    You can use {{ sqlObj.returnvalues[0].VariableName }} in the following way
+    You can use {{ sqlObj.returnValues[0].VariableName }} in the following way
     <br />
         <code>
-            - write out {{ instruction.Function.ReturnValues[0].VariableName }}
+            - write out {{ sqlObj.returnValues[0].VariableName }}
         </code>
-        <br> or loop through {{ instruction.Function.ReturnValues[0].VariableName }}<br>
+        <br> or loop through {{ sqlObj.returnValues[0].VariableName }}<br>
         <code>
             
-            - go through  {{ instruction.Function.ReturnValues[0].VariableName }} call ProcessItem
+            - go through  {{ sqlObj.returnValues[0].VariableName }} call ProcessItem
         </code>
     {{ end }}
-    {{ if instruction.Function.Name == "SelectOneRow" && sqlObj.returnvalues.size > 0 }}
+    {{ if instruction.Function.Name == "SelectOneRow" && sqlObj.returnValues && sqlObj.returnValues.size > 0 }}
     <h4>Example usage</h4>    
-    You can write out {{ sqlObj.returnvalues.VariableName }} to the user in the following way
+    You can write out {{ sqlObj.returnValues.VariableName }} to the user in the following way
     <br /><br />
         <code>
-            - write out {{ sqlObj.returnvalues.VariableName }}
+            - write out {{ sqlObj.returnValues.VariableName }}
         </code>
         
     {{ end }}

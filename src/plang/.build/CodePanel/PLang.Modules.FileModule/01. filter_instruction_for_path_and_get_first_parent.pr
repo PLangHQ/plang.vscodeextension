@@ -5,11 +5,11 @@
   "ModuleType": "PLang.Modules.FilterModule",
   "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
   "Function": {
-    "Reasoning": "The user wants to filter the %instruction% object to find entries where the nested property 'Function.Parameters.Name' equals 'path', then get the parent object of that entry, and retrieve the first such entry. The result should be stored in %path%. The FilterOnPropertyAndValue function supports filtering by property and value, extracting the parent, and retrieving the first item, which matches the user's intent perfectly.",
+    "Reasoning": "The user wants to filter the %instruction% object to find entries where the property 'Function.Parameters.Name' equals 'path', then get the parent object of that entry, take the first such entry, and write it to %path%. The FilterOnPropertyAndValue function supports filtering by property and value, extracting the parent, and retrieving the first item, which matches the user's intent exactly.",
     "Name": "FilterOnPropertyAndValue",
     "Parameters": [
       {
-        "Type": "System.Object",
+        "Type": "PLang.Runtime.ObjectValue",
         "Name": "variableToExtractFrom",
         "Value": "%instruction%"
       },
@@ -26,7 +26,7 @@
       {
         "Type": "System.String",
         "Name": "operatorToFilterOnValue",
-        "Value": "equals"
+        "Value": "="
       },
       {
         "Type": "System.String",
@@ -37,11 +37,6 @@
         "Type": "System.String",
         "Name": "propertyToExtract",
         "Value": "parent"
-      },
-      {
-        "Type": "System.Boolean",
-        "Name": "throwErrorWhenNothingFound",
-        "Value": false
       },
       {
         "Type": "System.String",
@@ -57,6 +52,11 @@
         "Type": "System.Boolean",
         "Name": "throwErrorOnEmptyResult",
         "Value": false
+      },
+      {
+        "Type": "System.Object",
+        "Name": "defaultValue",
+        "Value": null
       }
     ],
     "ReturnValues": [
@@ -68,6 +68,68 @@
   },
   "Properties": {
     "Parameters": {
+      "variableToExtractFrom": [
+        {
+          "Name": "Name",
+          "FullTypeName": "System.String"
+        },
+        {
+          "Name": "Root",
+          "FullTypeName": "PLang.Runtime.ObjectValue"
+        },
+        {
+          "Name": "IsSystemVariable",
+          "FullTypeName": "System.Boolean"
+        },
+        {
+          "Name": "Value",
+          "FullTypeName": "System.Object"
+        },
+        {
+          "Name": "Type",
+          "FullTypeName": "System.Type"
+        },
+        {
+          "Name": "Initiated",
+          "FullTypeName": "System.Boolean"
+        },
+        {
+          "Name": "Parent",
+          "FullTypeName": "PLang.Runtime.ObjectValue"
+        },
+        {
+          "Name": "Properties",
+          "FullTypeName": "PLang.Models.Properties"
+        },
+        {
+          "Name": "IsProperty",
+          "FullTypeName": "System.Boolean"
+        },
+        {
+          "Name": "Created",
+          "FullTypeName": "System.DateTime"
+        },
+        {
+          "Name": "Updated",
+          "FullTypeName": "System.DateTime"
+        },
+        {
+          "Name": "Path",
+          "FullTypeName": "System.String"
+        },
+        {
+          "Name": "PathAsVariable",
+          "FullTypeName": "System.String"
+        },
+        {
+          "Name": "Order",
+          "FullTypeName": "System.Int32"
+        },
+        {
+          "Name": "IsEmpty",
+          "FullTypeName": "System.Boolean"
+        }
+      ],
       "propertyToFilterOn": [
         {
           "Name": "propertyToFilterOn",
@@ -90,12 +152,6 @@
         {
           "Name": "propertyToExtract",
           "FullTypeName": "System.String"
-        }
-      ],
-      "throwErrorWhenNothingFound": [
-        {
-          "Name": "throwErrorWhenNothingFound",
-          "FullTypeName": "System.Boolean"
         }
       ],
       "retrieveOneItem": [
@@ -134,7 +190,7 @@
       "presencePenalty": 0.0,
       "maxLength": 4000,
       "llmResponseType": "json",
-      "scheme": "{\n\t\"Reasoning\": string,\n\t\"Name\": string,\n\t\"Parameters\"?: [{\n\t\"Type\": string,\n\t\"Name\": string,\n\t\"Value\"?: object\n}] = null,\n\t\"ReturnValues\"?: [{\n\t\"Type\": string,\n\t\"VariableName\": string\n}] = null\n}",
+      "scheme": "{\"Reasoning\" : String, \"Name\" : String, \"Parameters\" : List<{\"Type\" : String, \"Name\" : String, \"Value\" : Object}> = null, \"ReturnValues\" : List<{\"Type\" : String, \"VariableName\" : String}> = null}",
       "model": "gpt-4.1-mini",
       "promptMessage": [
         {
@@ -146,7 +202,7 @@
             },
             {
               "type": "text",
-              "text": "You MUST respond in JSON, scheme:\r\n {\n\t\"Reasoning\": string,\n\t\"Name\": string,\n\t\"Parameters\"?: [{\n\t\"Type\": string,\n\t\"Name\": string,\n\t\"Value\"?: object\n}] = null,\n\t\"ReturnValues\"?: [{\n\t\"Type\": string,\n\t\"VariableName\": string\n}] = null\n}"
+              "text": "You MUST respond in JSON, scheme:\r\n {\"Reasoning\" : String, \"Name\" : String, \"Parameters\" : List<{\"Type\" : String, \"Name\" : String, \"Value\" : Object}> = null, \"ReturnValues\" : List<{\"Type\" : String, \"VariableName\" : String}> = null}"
             }
           ]
         },
@@ -155,7 +211,7 @@
           "content": [
             {
               "type": "text",
-              "text": "## Canonical User Intent (already disambiguated by LLM)\r\nExtract the first parent entry from the %instruction% variable where the nested property Function.Parameters.Name equals 'path', and store this result in the %path% variable.\n## functions available starts ##\r\n{\"Methods\":[{\"Description\":\"Parses an input that is wrapped with markdown code format and return text inside those code blocks\",\"MethodName\":\"ExtractMarkdownWrapping\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"input\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String[]\",\"Name\":\"format\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Extracts all html element matches elementName, e.g. if user want to extract link, elementNames=[\\\"a\\\"]\",\"MethodName\":\"ExtractElementsFromHtml\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"html\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"List<string>\",\"Name\":\"elementNames\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"PLang.Modules.FilterModule.Program+HtmlNode\"}},{\"Description\":\"matching: contains|startwith|endwith|equals. retrieveOneItem: first|last|number (retrieveOneItem can also be a number representing the index.)\",\"MethodName\":\"FindTextInContent\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"content\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"textToFind\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"matching\",\"DefaultValue\":\"contains\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Joins a list of items into one string\",\"MethodName\":\"Join\",\"Parameters\":[{\"Type\":\"System.Collections.Generic.List`1[System.Object]\",\"Name\":\"list\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"seperator\",\"DefaultValue\":\", \",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String[]\",\"Name\":\"exclude\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.String\"}},{\"Description\":\"Gets an item from list, giving the first, last or by index according to user definition. retrieveOneItem: first|last|number (retrieveOneItem can also be a number representing the index.)\",\"MethodName\":\"GetItem\",\"Parameters\":[{\"Type\":\"System.Object\",\"Name\":\"variableToExtractFrom\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Use this function when the intent is to filter a list based solely on the property name or pattern of the property name, without needing to match a specific value within that property. \\r\\nThis function is suitable when the user specifies conditions like \\\"property starts with\\\", \\\"property ends with\\\", or \\\"property contains\\\" without mentioning a value to filter by.\\r\\n\\r\\noperatorOnPropertyToFilterOn can be: =|!=|startswith|endswith|contains\\r\\nretrieveOneItem: null|first|last|number (retrieveOneItem can also be a number representing the index.)\\r\\ncan return a list of elements or one element, depending on if retrieveOneItem is set.\\r\\n<example>\\r\\n- filter %list% where property is 'Name' => variableToExtractFrom=\\\"%list%\\\", propertyToFilterOn=\\\"Name\\\"\\r\\n- filter %list% where property contains 'Addr', return the first => variableToExtractFrom=\\\"%list%\\\", propertyToFilterOn=\\\"Name\\\", operatorOnPropertyToFilterOn=\\\"contains\\\", retrieveOneItem=\\\"first\\\"\\r\\n</example>\\r\\n\",\"MethodName\":\"FilterOnProperty\",\"Parameters\":[{\"Type\":\"System.Object\",\"Name\":\"variableToExtractFrom\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"propertyToFilterOn\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"operatorOnPropertyToFilterOn\",\"DefaultValue\":\"=\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\" Use this function when the intent is to filter a list based on both the property name and a specific value within that property. \\r\\nThis function is appropriate when the user specifies conditions that involve both a property and a value, such as \\\"property is 'Name' and value is 'John'\\\", or when operators on both the property and value are needed.\\r\\n\\r\\npropertyToFilterOn: required, property of a list to filter on\\r\\nvalueToFilterBy: required, find a specific Value that is stored in the propertyToFilterOn\\r\\noperatorOnPropertyToFilter can be following(sperated by |): <|>|equals|startswith|endswith|contains.\\r\\nretrieveOneItem: first|last|retrieveOneItem can also be a number representing the index.\\r\\noperatorOnPropertyToFilter: equals|startswith|endswith|contains\\r\\npropertyToExtract: by default it returns the element that matches the property, can be defined as 'parent' or when propertyToExtract is specified it will find that property and return the object from that property.\\r\\noperatorToFilterOnValue: =|!= \\r\\noperatorToFilterOnValueComparer: insensitive|case-sensitive\\r\\nthrowErrorOnEmptyResult: set to true when user defines on error for key:NotFound og status code: 404 or when user defines so\\r\\n<example>\\r\\n- filter %json% where property starts with \\\"%item%/\\\" and has \\\"John\\\" as value, get parent object, write to %libraries% => variableToExtractFrom=\\\"%json%\\\", \\r\\n\\tpropertyToFilterOn=\\\"%item%/\\\", valueToFilterBy=\\\"John\\\", operatorToFilterOnValue=\\\"contains\\\", operatorOnPropertyToFilter=\\\"startswith\\\", propertyToExtract=\\\"parent\\\"\\r\\n\\toperatorToFilterOnValueComparer=\\\"insensitive\\\"\\r\\n- filter %list% where property is \\\"Quantity\\\" and is larger then \\\"10\\\", give me first, write to %library% => variableToExtractFrom=\\\"%list%\\\", \\r\\n\\tpropertyToFilterOn=\\\"Quantity\\\", valueToFilterBy=\\\"10\\\", operatorToFilterOnValue=\\\">\\\", operatorOnPropertyToFilter=\\\"=\\\"\\r\\n\\toperatorToFilterOnValueComparer=\\\"case-sensitive\\\"\\r\\n\\tretrieveOneItem=\\\"first\\\"\\r\\n</example>\\r\\n\",\"MethodName\":\"FilterOnPropertyAndValue\",\"Parameters\":[{\"Type\":\"System.Object\",\"Name\":\"variableToExtractFrom\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"propertyToFilterOn\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.Object\",\"Name\":\"valueToFilterBy\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"operatorToFilterOnValue\",\"DefaultValue\":\"=\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"operatorOnPropertyToFilter\",\"DefaultValue\":\"=\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"propertyToExtract\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.Boolean\",\"Name\":\"throwErrorWhenNothingFound\",\"DefaultValue\":false,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"operatorToFilterOnValueComparer\",\"DefaultValue\":\"insensitive\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.Boolean\",\"Name\":\"throwErrorOnEmptyResult\",\"DefaultValue\":false,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Retrieve element(s) from html by a css selector, retrieveOneItem: first|last|number (retrieveOneItem can also be a number representing the index.) \",\"MethodName\":\"ExtractByCssSelector\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"html\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"cssSelector\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":null,\"MethodName\":\"ExtractFromXPath\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"html\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"xpath\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true}],\"ReturnValue\":{\"Type\":\"System.Object\"}}],\"SupportingObjects\":[]}\r\n## functions available ends ##\r\n## defined variables ##\r\ninstruction (type:object), path (type:object), \r\n## defined variables ##"
+              "text": "## Canonical User Intent (already disambiguated by LLM)\r\nExtract the first parent entry from the %instruction% variable where the nested property Function.Parameters.Name equals 'path', and store this result in the %path% variable.\n## functions available starts ##\r\n{\"Methods\":[{\"Description\":\"Parses an input that is wrapped with markdown code format and return text inside those code blocks\",\"MethodName\":\"ExtractMarkdownWrapping\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"input\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String[]\",\"Name\":\"format\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Extracts all html element matches elementName, e.g. if user want to extract link, elementNames=[\\\"a\\\"]\",\"MethodName\":\"ExtractElementsFromHtml\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"html\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"List<string>\",\"Name\":\"elementNames\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"PLang.Modules.FilterModule.Program+HtmlNode\"}},{\"Description\":\"matching: contains|startwith|endwith|equals. retrieveOneItem: first|last|number (retrieveOneItem can also be a number representing the index.)\",\"MethodName\":\"FindTextInContent\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"content\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"textToFind\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"matching\",\"DefaultValue\":\"contains\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Joins a list of items into one string\",\"MethodName\":\"Join\",\"Parameters\":[{\"Type\":\"System.Collections.Generic.List`1[System.Object]\",\"Name\":\"list\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"seperator\",\"DefaultValue\":\", \",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String[]\",\"Name\":\"exclude\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.String\"}},{\"Description\":\"Gets an item from list, giving the first, last or by index according to user definition. retrieveOneItem: first|last|number (retrieveOneItem can also be a number representing the index.)\",\"MethodName\":\"GetItem\",\"Parameters\":[{\"Type\":\"System.Object\",\"Name\":\"variableToExtractFrom\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Use this function when the intent is to filter a list based solely on the property name or pattern of the property name, without needing to match a specific value within that property. \\r\\nThis function is suitable when the user specifies conditions like \\\"property starts with\\\", \\\"property ends with\\\", or \\\"property contains\\\" without mentioning a value to filter by.\\r\\n\\r\\noperatorOnPropertyToFilterOn can be: =|!=|startswith|endswith|contains\\r\\nretrieveOneItem: null|first|last|number (retrieveOneItem can also be a number representing the index.)\\r\\noperatorToFilterOnValueComparer: insensitive|case-sensitive\\r\\ncan return a list of elements or one element, depending on if retrieveOneItem is set.\\r\\nthrowErrorOnEmptyResult: set to true when user defines retrieveOneItem and on error for key:NotFound og status code: 404 or when user defines so\\r\\ndefaultValue: when defaultValue is defined, the throwErrorOnEmptyResult=false\\r\\n<example>\\r\\n- filter %types% where property: %type.Name%, write to %item% => variableToExtractFrom=\\\"%types%\\\", propertyToFilterOn=\\\"%type.Name%\\\", operatorOnPropertyToFilterOn=\\\"=\\\"\\r\\n- filter %list% where property is 'Name' => variableToExtractFrom=\\\"%list%\\\", propertyToFilterOn=\\\"Name\\\"\\r\\n- filter %list% where property contains 'Addr', return the first => variableToExtractFrom=\\\"%list%\\\", propertyToFilterOn=\\\"Name\\\", operatorOnPropertyToFilterOn=\\\"contains\\\", retrieveOneItem=\\\"first\\\", throwErrorOnEmptyResult=true\\r\\n</example>\\r\\n\",\"MethodName\":\"FilterOnProperty\",\"Parameters\":[{\"Type\":\"System.Object\",\"Name\":\"variableToExtractFrom\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"propertyToFilterOn\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"operatorOnPropertyToFilterOn\",\"DefaultValue\":\"=\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"operatorToFilterOnValueComparer\",\"DefaultValue\":\"insensitive\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.Boolean\",\"Name\":\"throwErrorOnEmptyResult\",\"DefaultValue\":false,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.Object\",\"Name\":\"defaultValue\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\" Use this function when the intent is to filter a list based on both the property name and a specific value within that property. \\r\\nThis function is appropriate when the user specifies conditions that involve both a property and a value, such as \\\"property is 'Name' and value is 'John'\\\", or when operators on both the property and value are needed.\\r\\n\\r\\npropertyToFilterOn: required, property of a list to filter on\\r\\nvalueToFilterBy: required, find a specific Value that is stored in the propertyToFilterOn\\r\\noperatorOnPropertyToFilter can be following(sperated by |): <|>|equals|startswith|endswith|contains.\\r\\nretrieveOneItem: first|last|retrieveOneItem can also be a number representing the index.\\r\\noperatorOnPropertyToFilter: equals|startswith|endswith|contains\\r\\npropertyToExtract: by default it returns the element that matches the property, can be defined as 'parent' or when propertyToExtract is specified it will find that property and return the object from that property.\\r\\noperatorToFilterOnValue: =|!= \\r\\noperatorToFilterOnValueComparer: insensitive|case-sensitive\\r\\nthrowErrorOnEmptyResult: set to true when user defines retrieveOneItem and on error for key:NotFound og status code: 404 or when user defines so\\r\\ndefaultValue: when defaultValue is defined, the throwErrorOnEmptyResult=false\\r\\n<example>\\r\\n- filter %json% where property starts with \\\"%item%/\\\" and has \\\"John\\\" as value, get parent object, write to %libraries% => variableToExtractFrom=\\\"%json%\\\", \\r\\n\\tpropertyToFilterOn=\\\"%item%/\\\", valueToFilterBy=\\\"John\\\", operatorToFilterOnValue=\\\"contains\\\", operatorOnPropertyToFilter=\\\"startswith\\\", propertyToExtract=\\\"parent\\\"\\r\\n\\toperatorToFilterOnValueComparer=\\\"insensitive\\\"\\r\\n- filter %list% where property is \\\"Quantity\\\" and is larger then \\\"10\\\", give me first, write to %library% => variableToExtractFrom=\\\"%list%\\\", \\r\\n\\tpropertyToFilterOn=\\\"Quantity\\\", valueToFilterBy=\\\"10\\\", operatorToFilterOnValue=\\\">\\\", operatorOnPropertyToFilter=\\\"=\\\"\\r\\n\\toperatorToFilterOnValueComparer=\\\"case-sensitive\\\"\\r\\n\\tretrieveOneItem=\\\"first\\\"\\r\\n\\tthrowErrorOnEmptyResult=true\\r\\n</example>\\r\\n\",\"MethodName\":\"FilterOnPropertyAndValue\",\"Parameters\":[{\"Type\":\"PLang.Runtime.ObjectValue\",\"Name\":\"variableToExtractFrom\",\"Description\":\"(see Type information in SupportingObjects)\",\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"propertyToFilterOn\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.Object\",\"Name\":\"valueToFilterBy\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"operatorToFilterOnValue\",\"DefaultValue\":\"=\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"operatorOnPropertyToFilter\",\"DefaultValue\":\"=\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"propertyToExtract\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.String\",\"Name\":\"operatorToFilterOnValueComparer\",\"DefaultValue\":\"insensitive\",\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.Boolean\",\"Name\":\"throwErrorOnEmptyResult\",\"DefaultValue\":false,\"Description\":null,\"IsRequired\":false},{\"Type\":\"System.Object\",\"Name\":\"defaultValue\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":\"Retrieve element(s) from html by a css selector, retrieveOneItem: first|last|number (retrieveOneItem can also be a number representing the index.) \",\"MethodName\":\"ExtractByCssSelector\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"html\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"cssSelector\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"retrieveOneItem\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":false}],\"ReturnValue\":{\"Type\":\"System.Object\"}},{\"Description\":null,\"MethodName\":\"ExtractFromXPath\",\"Parameters\":[{\"Type\":\"System.String\",\"Name\":\"html\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"xpath\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true}],\"ReturnValue\":{\"Type\":\"System.Object\"}}],\"SupportingObjects\":[{\"Type\":\"PLang.Runtime.ObjectValue\",\"Name\":\"variableToExtractFrom\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":[{\"Type\":\"System.Boolean\",\"Name\":\"IsSystemVariable\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.Object\",\"Name\":\"Value\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.Type\",\"Name\":\"Type\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":true},{\"Type\":\"System.Boolean\",\"Name\":\"Initiated\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"PLang.Models.Properties\",\"Name\":\"Properties\",\"Description\":null,\"DefaultValue\":null,\"TypeProperties\":null,\"IsRequired\":true},{\"Type\":\"System.DateTime\",\"Name\":\"Created\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.DateTime\",\"Name\":\"Updated\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true},{\"Type\":\"System.String\",\"Name\":\"Path\",\"DefaultValue\":null,\"Description\":null,\"IsRequired\":true}],\"IsRequired\":false}]}\r\n## functions available ends ##\r\n## defined variables ##\r\ninstruction (type:object), path (type:object), \r\n## defined variables ##"
             }
           ]
         },
@@ -171,7 +227,7 @@
       ],
       "type": "PLang.Modules.GenericFunctionBuilder",
       "caching": true,
-      "RawResponse": "{\n  \"Reasoning\": \"The user wants to filter the %instruction% object to find entries where the nested property 'Function.Parameters.Name' equals 'path', then get the parent object of that entry, and retrieve the first such entry. The result should be stored in %path%. The FilterOnPropertyAndValue function supports filtering by property and value, extracting the parent, and retrieving the first item, which matches the user's intent perfectly.\",\n  \"Name\": \"FilterOnPropertyAndValue\",\n  \"Parameters\": [\n    {\n      \"Type\": \"System.Object\",\n      \"Name\": \"variableToExtractFrom\",\n      \"Value\": \"%instruction%\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"propertyToFilterOn\",\n      \"Value\": \"Function.Parameters.Name\"\n    },\n    {\n      \"Type\": \"System.Object\",\n      \"Name\": \"valueToFilterBy\",\n      \"Value\": \"path\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"operatorToFilterOnValue\",\n      \"Value\": \"equals\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"operatorOnPropertyToFilter\",\n      \"Value\": \"=\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"propertyToExtract\",\n      \"Value\": \"parent\"\n    },\n    {\n      \"Type\": \"System.Boolean\",\n      \"Name\": \"throwErrorWhenNothingFound\",\n      \"Value\": false\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"retrieveOneItem\",\n      \"Value\": \"first\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"operatorToFilterOnValueComparer\",\n      \"Value\": \"insensitive\"\n    },\n    {\n      \"Type\": \"System.Boolean\",\n      \"Name\": \"throwErrorOnEmptyResult\",\n      \"Value\": false\n    }\n  ],\n  \"ReturnValues\": [\n    {\n      \"Type\": \"System.Object\",\n      \"VariableName\": \"%path%\"\n    }\n  ]\n}"
+      "RawResponse": "{\n  \"Reasoning\": \"The user wants to filter the %instruction% object to find entries where the property 'Function.Parameters.Name' equals 'path', then get the parent object of that entry, take the first such entry, and write it to %path%. The FilterOnPropertyAndValue function supports filtering by property and value, extracting the parent, and retrieving the first item, which matches the user's intent exactly.\",\n  \"Name\": \"FilterOnPropertyAndValue\",\n  \"Parameters\": [\n    {\n      \"Type\": \"PLang.Runtime.ObjectValue\",\n      \"Name\": \"variableToExtractFrom\",\n      \"Value\": \"%instruction%\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"propertyToFilterOn\",\n      \"Value\": \"Function.Parameters.Name\"\n    },\n    {\n      \"Type\": \"System.Object\",\n      \"Name\": \"valueToFilterBy\",\n      \"Value\": \"path\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"operatorToFilterOnValue\",\n      \"Value\": \"=\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"operatorOnPropertyToFilter\",\n      \"Value\": \"=\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"propertyToExtract\",\n      \"Value\": \"parent\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"retrieveOneItem\",\n      \"Value\": \"first\"\n    },\n    {\n      \"Type\": \"System.String\",\n      \"Name\": \"operatorToFilterOnValueComparer\",\n      \"Value\": \"insensitive\"\n    },\n    {\n      \"Type\": \"System.Boolean\",\n      \"Name\": \"throwErrorOnEmptyResult\",\n      \"Value\": false\n    },\n    {\n      \"Type\": \"System.Object\",\n      \"Name\": \"defaultValue\",\n      \"Value\": null\n    }\n  ],\n  \"ReturnValues\": [\n    {\n      \"Type\": \"System.Object\",\n      \"VariableName\": \"%path%\"\n    }\n  ]\n}"
     }
   ]
 }
