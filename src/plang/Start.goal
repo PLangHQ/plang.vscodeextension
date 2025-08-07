@@ -1,5 +1,8 @@
 Start
-- start webserver, port 60878
+- start webserver, port: 60878, on start call SetupRoutes
+- write out "plang server started at 60878"
+
+SetupRoutes
 - add route "/diagnostics", POST, call Diagnostics
 - add route "/runtest", POST, call RunTest
 - add route "/CreateStepTest", POST, call CreateStepTest
@@ -9,7 +12,7 @@ Start
 - add route "/ExecutionPath", POST, call ExecutionPath
 - add route "/RenderLlm", POST, call RenderLlm
 - add route "/Gui", POST, call Gui
-- write out "plang server started at 60878"
+
 
 Diagnostics
 - read llm/diagnosticsSystem.txt, write to %system%

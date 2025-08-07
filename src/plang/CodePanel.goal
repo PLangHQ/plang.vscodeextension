@@ -52,12 +52,9 @@ PLang.Modules.FileModule
 - set %absoluteFilePath% = %request.body.appPath%/%goal.RelativeGoalFolderPath%/%path.Value%
 - if %path.Value% does not contain  "%" then 
     - read file %absoluteFilePath%, write to %content%
-        on error key:FileNotFound call HandleError
+        on error key:FileNotFound ignore error
         on error, call ErrorOnFile
     - render template "/modules/%step.ModuleType%.html", write to %module%
-
-HandleError
-- end goal and previous
 
 ErrorOnFile
 - write out %!error.Message%

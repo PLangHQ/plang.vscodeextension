@@ -15,9 +15,9 @@ export class PlangHelper {
 
 
     public static async Call(path: string, body: any, method: string = 'POST'): Promise<string> {
-        ((process.env) as any).NODE_TLS_REJECT_UNAUTHORIZED = '0';
+        
         try {
-            var response = await fetch('https://localhost:60878/' + path, {
+            var response = await fetch('http://localhost:60878/' + path, {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

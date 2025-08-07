@@ -26,11 +26,11 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 31,
+      "LineNumber": 34,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "3c8c9789123c6fbd82be40685e25f718a13ecb167d37a4df50c650dbc9817def",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "a02196940ac0787ad6774169e4bec8282e020ce7ebcf43569efe14fa817991ac",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\Start.goal",
       "UserIntent": null
     }
@@ -53,7 +53,7 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "17adb1efbd30a2b03048504de349e72ece334aa459a13b895428f2959e127c8b",
+  "Hash": "893b79b2a3373bd15c50577756d9b3eb70c8107e04226360a9b7365e1597165f",
   "IncomingVariablesRequired": {
     "request.goalPath": "The path to the goal that needs to be tested.",
     "request.stepPrFileName": "The name of the step properties file that contains the test steps."

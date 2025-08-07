@@ -1,0 +1,36 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "start webserver, port: 60878, on start call SetupRoutes",
+  "ModuleType": "PLang.Modules.WebserverModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "The user wants to start a webserver on port 60878 and execute a setup routine named SetupRoutes when the server starts. The StartWebserver function allows specifying the port and an OnStart goal to call, which matches the user's intent.",
+    "Name": "StartWebserver",
+    "Parameters": [
+      {
+        "Type": "PLang.Modules.WebserverModule.Program+WebserverProperties",
+        "Name": "webserverProperties",
+        "Value": {
+          "Name": "default",
+          "Host": "localhost",
+          "Port": 60878,
+          "OnStart": {
+            "Name": "SetupRoutes",
+            "Parameters": {}
+          }
+        }
+      }
+    ],
+    "ReturnValues": null
+  },
+  "Properties": {
+    "Parameters": {
+      "webserverProperties": {
+        "Name": "webserverProperties",
+        "FullTypeName": "PLang.Modules.WebserverModule.Program+WebserverProperties"
+      }
+    },
+    "ReturnValues": {}
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "add route \"/GoalNotFound\", POST, call GoalNotFound",
+  "ModuleType": "PLang.Modules.WebserverModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "User wants to add a new HTTP POST route '/GoalNotFound' that calls the goal named 'GoalNotFound'. The AddRoute function is suitable for defining routes with HTTP methods and goal to call.",
+    "Name": "AddRoute",
+    "Parameters": [
+      {
+        "Type": "System.String",
+        "Name": "path",
+        "Value": "/GoalNotFound"
+      },
+      {
+        "Type": "System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]",
+        "Name": "pathParameters",
+        "Value": []
+      },
+      {
+        "Type": "PLang.Models.GoalToCallInfo",
+        "Name": "goalToCall",
+        "Value": {
+          "Path": ".build\\GoalNotFound\\00. Goal.pr",
+          "Name": "GoalNotFound",
+          "Parameters": {}
+        }
+      },
+      {
+        "Type": "PLang.Modules.WebserverModule.Program+RequestProperties",
+        "Name": "requestProperties",
+        "Value": {
+          "Methods": [
+            "POST"
+          ],
+          "MaxContentLengthInBytes": 0,
+          "SignedRequestRequired": false
+        }
+      },
+      {
+        "Type": "PLang.Modules.WebserverModule.Program+ResponseProperties",
+        "Name": "responseProperties",
+        "Value": null
+      }
+    ],
+    "ReturnValues": null
+  },
+  "Properties": {
+    "Parameters": {
+      "path": {
+        "Name": "path",
+        "FullTypeName": "System.String"
+      },
+      "pathParameters": {
+        "Name": "pathParameters",
+        "FullTypeName": "System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]"
+      },
+      "goalToCall": {
+        "Name": "goalToCall",
+        "FullTypeName": "PLang.Models.GoalToCallInfo"
+      },
+      "requestProperties": {
+        "Name": "requestProperties",
+        "FullTypeName": "PLang.Modules.WebserverModule.Program+RequestProperties"
+      },
+      "responseProperties": {
+        "Name": "responseProperties",
+        "FullTypeName": "PLang.Modules.WebserverModule.Program+ResponseProperties"
+      }
+    },
+    "ReturnValues": {}
+  }
+}

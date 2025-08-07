@@ -29,7 +29,7 @@
       "LineNumber": 51,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "6a3589f4974452f5a07334c0b14374a6b5ae932e66851492e840c354eb7221d3",
+      "Hash": "9102d05bda0c499e302744bd8a11c82f891335197fd744c70c6ae240fcb2c49b",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
       "UserIntent": null
@@ -46,7 +46,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-08-05T21:58:52.0414319+00:00",
       "WaitForExecution": true,
@@ -60,10 +60,10 @@
       "LineNumber": 52,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "c1ed213a6b35a23ddaaf8316ca423f6c605894dd399ad54fc7eb96732377744a",
-      "BuilderVersion": "1.0.0.0",
+      "Hash": "f6ebc1d3ad630c717a05cbd1c52ebad84b3fe147d73486c606a6b897f8ab217d",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Combine multiple path components into a single absolute file path and store it in a variable"
+      "UserIntent": null
     },
     {
       "Text": "if %path.Value% does not contain  \"%\" then",
@@ -97,11 +97,11 @@
       "UserIntent": null
     },
     {
-      "Text": "read file %absoluteFilePath%, write to %content%\n        on error key:FileNotFound call HandleError\n        on error, call ErrorOnFile",
+      "Text": "read file %absoluteFilePath%, write to %content%\n        on error key:FileNotFound ignore error\n        on error, call ErrorOnFile",
       "Comment": null,
       "ModuleType": "PLang.Modules.FileModule",
       "Name": "read_file_with_error_handling",
-      "Description": "Attempt to read the file located at the path stored in %absoluteFilePath% and write the file's content into the variable %content%. If a FileNotFound error occurs, call the HandleError step. For any other errors during the file read operation, call the ErrorOnFile step.",
+      "Description": "Attempt to read the file located at the path stored in %absoluteFilePath% and write the file contents to the variable %content%. If a FileNotFound error occurs, ignore it and continue. For any other errors, call the error handling step or goal named ErrorOnFile.",
       "PrFileName": "04. read_file_with_error_handling.pr",
       "RelativePrPath": ".build\\CodePanel\\PLang.Modules.FileModule\\04. read_file_with_error_handling.pr",
       "InstructionHash": null,
@@ -110,20 +110,16 @@
       "RunOnce": false,
       "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-18T14:06:05.8494532+00:00",
+      "Generated": "2025-08-05T22:10:13.2627185+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": [
         {
-          "IgnoreError": false,
+          "IgnoreError": true,
           "Message": null,
           "StatusCode": null,
           "Key": "FileNotFound",
-          "GoalToCall": {
-            "Path": null,
-            "Name": "HandleError",
-            "Parameters": {}
-          },
+          "GoalToCall": null,
           "GoalToCallParameters": null,
           "RetryHandler": null,
           "RunRetryBeforeCallingGoalToCall": false
@@ -151,7 +147,7 @@
       "LineNumber": 54,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "2f500afc7776ef256f3ed658cccbdf925948c1682999cfc310313e1efb1f7238",
+      "Hash": "1e586ab42142431c04e7fdde3e784440df32c981558a0737069c507b62b82575",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
       "UserIntent": null
@@ -189,7 +185,7 @@
     }
   ],
   "SubGoals": [],
-  "Description": "The PLang.Modules.FileModule goal is designed to handle file operations based on a specified path. It filters the input instructions to extract the file path, constructs an absolute file path using the application path and a relative goal folder path, and then reads the content of the file at that absolute path. If the file is not found, it triggers error handling. Finally, it renders a template using the module type derived from the step.",
+  "Description": "The PLang.Modules.FileModule goal processes a file based on a specified path. It filters the instruction to obtain the path, constructs an absolute file path using the application path and a relative goal folder path, and then reads the file if the path does not contain a '%' character. If the file is read successfully, it renders a template using the module type derived from the step.",
   "Visibility": 0,
   "GoalFileName": "CodePanel.goal",
   "PrFileName": "00. Goal.pr",
@@ -206,14 +202,14 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "1d29c3d018a76c7b3ba74cb5b36884048154c6d1d9b7746fbb80a74069724551",
+  "Hash": "12849a5c0d28c29e414bf55f021f608f06ba317fa5f26ea9a2425bb3dffd3520",
   "IncomingVariablesRequired": {
-    "instruction": "The instruction containing the file path to be processed.",
-    "request.body.appPath": "The base application path used to construct the absolute file path.",
-    "goal.RelativeGoalFolderPath": "The relative path to the goal's folder that is appended to the application path.",
-    "path.Value": "The value of the path extracted from the instruction, which should not contain '%' to proceed with file reading.",
-    "content": "The variable where the content of the file will be stored after reading.",
-    "module": "The variable where the rendered template will be stored."
+    "%instruction%": "The instruction containing the parameters to filter for the file path.",
+    "%request.body.appPath%": "The application path from the request body used to construct the absolute file path.",
+    "%goal.RelativeGoalFolderPath%": "The relative folder path associated with the goal to complete the absolute file path.",
+    "%path.Value%": "The value of the path that is being processed, which should not contain a '%' character to proceed with file reading.",
+    "%content%": "The variable where the content of the file will be written after reading.",
+    "%module%": "The variable where the rendered template will be written."
   },
   "DataSourceName": null,
   "IsSetup": false,

@@ -1,0 +1,74 @@
+{
+  "Hash": null,
+  "SignedMessage": null,
+  "Text": "add route \"/ExecutionPath\", POST, call ExecutionPath",
+  "ModuleType": "PLang.Modules.WebserverModule",
+  "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
+  "Function": {
+    "Reasoning": "User wants to add a new HTTP POST route '/ExecutionPath' that calls the goal named 'ExecutionPath'. The AddRoute function is suitable for this, with the path set to '/ExecutionPath', the HTTP method set to POST, and the goal to call set to 'ExecutionPath' with no parameters.",
+    "Name": "AddRoute",
+    "Parameters": [
+      {
+        "Type": "System.String",
+        "Name": "path",
+        "Value": "/ExecutionPath"
+      },
+      {
+        "Type": "System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]",
+        "Name": "pathParameters",
+        "Value": []
+      },
+      {
+        "Type": "PLang.Models.GoalToCallInfo",
+        "Name": "goalToCall",
+        "Value": {
+          "Path": ".build\\ExecutionPath\\00. Goal.pr",
+          "Name": "ExecutionPath",
+          "Parameters": {}
+        }
+      },
+      {
+        "Type": "PLang.Modules.WebserverModule.Program+RequestProperties",
+        "Name": "requestProperties",
+        "Value": {
+          "Methods": [
+            "POST"
+          ],
+          "MaxContentLengthInBytes": 0,
+          "SignedRequestRequired": false
+        }
+      },
+      {
+        "Type": "PLang.Modules.WebserverModule.Program+ResponseProperties",
+        "Name": "responseProperties",
+        "Value": null
+      }
+    ],
+    "ReturnValues": null
+  },
+  "Properties": {
+    "Parameters": {
+      "path": {
+        "Name": "path",
+        "FullTypeName": "System.String"
+      },
+      "pathParameters": {
+        "Name": "pathParameters",
+        "FullTypeName": "System.Collections.Generic.List`1[PLang.Modules.WebserverModule.Program+ParamInfo]"
+      },
+      "goalToCall": {
+        "Name": "goalToCall",
+        "FullTypeName": "PLang.Models.GoalToCallInfo"
+      },
+      "requestProperties": {
+        "Name": "requestProperties",
+        "FullTypeName": "PLang.Modules.WebserverModule.Program+RequestProperties"
+      },
+      "responseProperties": {
+        "Name": "responseProperties",
+        "FullTypeName": "PLang.Modules.WebserverModule.Program+ResponseProperties"
+      }
+    },
+    "ReturnValues": {}
+  }
+}
