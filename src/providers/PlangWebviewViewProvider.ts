@@ -156,7 +156,7 @@ export class PlangWebviewViewProvider implements vscode.WebviewViewProvider {
             llmServiceParam = '--llmservice=' + llmService;
         }
         if (csdebug) {
-            llmServiceParam += ' --csdebug';
+            llmServiceParam += ' --csdebug --debug';
         }
 
         editor?.document.save();
@@ -202,7 +202,9 @@ export class PlangWebviewViewProvider implements vscode.WebviewViewProvider {
 
         let baseAppPath = PathHelper.getRootPath(editor.document.fileName);
         let fullFilePath = path.join(baseAppPath, filePath)
-        if (!filePath.startsWith('/')) {
+
+
+        if (!filePath.startsWith('.build') && !filePath.startsWith('/')) {
             var dirPath = path.dirname(editor.document.fileName);
             fullFilePath = path.join(dirPath, filePath);
         }

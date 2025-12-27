@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { findVariableRanges } from '../extension';
 import { ObjectValue } from '../models/Models';
 
 export class DebugAwareCodeLensProvider implements vscode.CodeLensProvider {
@@ -21,7 +20,8 @@ export class DebugAwareCodeLensProvider implements vscode.CodeLensProvider {
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
         if (!this.objectValue) return this.lenses;
-
+        return this.lenses;
+        /*
         const ranges = await findVariableRanges(this.objectValue.PathAsVariable);
        
         var currentLenses = ranges.map(range =>
@@ -44,6 +44,6 @@ export class DebugAwareCodeLensProvider implements vscode.CodeLensProvider {
             if (insert) this.lenses.push(currentLenses[b]);
         }
 
-        return this.lenses;
+        return this.lenses;*/
     }
 }

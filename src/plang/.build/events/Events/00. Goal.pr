@@ -1,7 +1,6 @@
 {
   "GoalName": "Events",
   "Comment": null,
-  "Text": "Events",
   "GoalSteps": [
     {
       "Text": "on error where exception: \"ProgramError\", call ShowError",
@@ -18,7 +17,7 @@
       "RunOnce": false,
       "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-08-06T17:53:57.6664381+00:00",
+      "Generated": "2025-11-04T15:32:36.6339103+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -54,13 +53,14 @@
         "IncludeOsGoals": false,
         "IsOnStep": false,
         "Id": "After_AppError_*_ShowError_False___True__False____ProgramError_False",
-        "UniqueId": "08010dab-1680-468f-8eaa-30f3ad0e97e8",
+        "UniqueId": "e723e877-1ef5-4c83-aa6c-542becbbcc10",
         "Goal": null,
         "GoalStep": null,
         "Instruction": null,
         "Stopwatch": null,
         "SourceGoal": null,
-        "SourceStep": null
+        "SourceStep": null,
+        "IsSystem": false
       },
       "IsEvent": true,
       "Hash": null,
@@ -86,7 +86,7 @@
       "RunOnce": false,
       "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-08-06T17:53:57.6798932+00:00",
+      "Generated": "2025-11-04T15:32:36.6426323+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -122,13 +122,14 @@
         "IncludeOsGoals": false,
         "IsOnStep": false,
         "Id": "After_AppError_.*_ShowErrorMessage_False___True__False_____False",
-        "UniqueId": "27e3d60e-4527-4a7f-b885-fdbe1b4cea98",
+        "UniqueId": "1d259e15-9323-43ae-aece-b3c8627e1f5a",
         "Goal": null,
         "GoalStep": null,
         "Instruction": null,
         "Stopwatch": null,
         "SourceGoal": null,
-        "SourceStep": null
+        "SourceStep": null,
+        "IsSystem": false
       },
       "IsEvent": true,
       "Hash": null,
@@ -159,7 +160,7 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": null,
+  "Hash": "c87a4d8cd353507c7305f645e3fa41f7d4307aedb5d2520057e4b0f362b03bb7",
   "IsSystem": false,
   "UniqueId": null,
   "CurrentStepIndex": 0,

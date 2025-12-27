@@ -2,7 +2,7 @@
     "name": "plang-extension",
     "displayName": "plang-extension",
     "description": "Add support for plang programming language to VS Code",
-    "version": "0.1.29",
+    "version": "0.1.30",
     "icon": "logo.png",
     "engines": {
         "vscode": "^1.79.0"
@@ -28,7 +28,7 @@
     ],
     "activationEvents": [
         "onLanguage:goal",
-        "onDebug:goal", 
+        "onDebug:goal",
         "onView:plangWebview"
     ],
     "main": "./dist/extension.js",
@@ -38,7 +38,9 @@
                 "viewType": "goal.guiCustomEditor",
                 "displayName": "GUI Custom Editor",
                 "selector": [
-                    { "filenamePattern": "*.gui" }
+                    {
+                        "filenamePattern": "*.gui"
+                    }
                 ]
             }
         ],
@@ -48,12 +50,12 @@
                     "id": "plangInfoSidebar",
                     "title": "Plang Info",
                     "icon": "media/logo.png"
-                }, 
+                },
                 {
                     "id": "plangChatSidebar",
                     "title": "Plang Chat",
                     "icon": "media/logo.png"
-                }, 
+                },
                 {
                     "id": "plangExecutionSidebar",
                     "title": "Plang Execution",
@@ -70,14 +72,16 @@
                     "type": "webview"
                 }
             ],
-            "plangChatSidebar" :[ {
+            "plangChatSidebar": [
+                {
                     "id": "plangWebviewChat",
                     "name": "Plang Chat",
                     "icon": "media/logo.svg",
                     "type": "webview"
                 }
             ],
-            "plangExecutionSidebar" :[ {
+            "plangExecutionSidebar": [
+                {
                     "id": "plangWebviewExec",
                     "name": "Plang Execution",
                     "icon": "media/logo.svg",
@@ -98,7 +102,6 @@
                 "configuration": "./language-configuration.json"
             }
         ],
-        
         "grammars": [
             {
                 "language": "goal",
@@ -112,6 +115,37 @@
             }
         ],
         "debuggers": [
+            {
+                "type": "goal-v2",
+                "label": "PLang Debug V2",
+                "configurationAttributes": {
+                    "launch": {
+                        "required": [],
+                        "properties": {
+                            "goalPath": {
+                                "type": "string",
+                                "description": "Goal file to debug",
+                                "default": "Start"
+                            },
+                            "cwd": {
+                                "type": "string",
+                                "description": "Working directory"
+                            },
+                            "breakpoints": {
+                                "type": "array",
+                                "description": "Initial breakpoints as PrPaths"
+                            }
+                        }
+                    }
+                },
+                "initialConfigurations": [
+                    {
+                        "type": "goal-v2",
+                        "request": "launch",
+                        "name": "PLang Debug V2"
+                    }
+                ]
+            },
             {
                 "type": "goal",
                 "label": "Goal Debugger",
@@ -140,7 +174,7 @@
                 {
                     "command": "extension.createStepTest",
                     "group": "01_builder",
-                    "when": "resourceExtname == .goal"                    
+                    "when": "resourceExtname == .goal"
                 },
                 {
                     "command": "extension.runFromStep",
@@ -162,16 +196,27 @@
         },
         "commands": [
             {
+            "command": "extension.runV2",
+            "title": "PLang: Run (V2 Debugger)"
+            },
+            {
+            "command": "extension.runGoalFileV2",
+            "title": "PLang: Run Current Goal (V2 Debugger)"
+            },
+            {
                 "command": "extension.goToLine",
-                "title": "▶️ Run from here", "category": "builder"
+                "title": "▶️ Run from here",
+                "category": "builder"
             },
             {
                 "command": "extension.regenerateStep",
-                "title": "🔄 Regenerate step", "category": "builder"
+                "title": "🔄 Regenerate step",
+                "category": "builder"
             },
             {
                 "command": "extension.createStepTest",
-                "title": "🧪 Create test for step", "category": "tests"
+                "title": "🧪 Create test for step",
+                "category": "tests"
             },
             {
                 "command": "extension.runFromStep",

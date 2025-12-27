@@ -1,7 +1,6 @@
 {
   "GoalName": "DoStuff",
   "Comment": null,
-  "Text": "DoStuff",
   "GoalSteps": [
     {
       "Text": "return %data%",
@@ -30,7 +29,7 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "3c9cf55f2831651b087a81dd0aa2a1fb4f9c9cd8c2aef51cc428e943ec8b35d7",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\DoStuff.goal",
       "UserIntent": null
     }
@@ -46,16 +45,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\DoStuff\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\DoStuff",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\DoStuff.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\DoStuff\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\DoStuff",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "c81f39889ae4eae19014982e3cb10b7cdb620498eb27c2955129eb208a058f98",
+  "Hash": "339ff8857834c1eb9d2badf73e9b86b1311254a89989bd3251910e53330cb274",
   "IncomingVariablesRequired": {
     "%data%": "The data that needs to be returned by the goal."
   },

@@ -1,7 +1,6 @@
 {
   "GoalName": "ModuleHadError",
   "Comment": null,
-  "Text": "ModuleHadError",
   "GoalSteps": [
     {
       "Text": "render template \"/events/error.html\", write to %module%",
@@ -30,7 +29,7 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "8a69781cd842145024d2f6da67f400d6f50d19710cfb96928f287a439100da8f",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
       "UserIntent": null
     }
@@ -44,16 +43,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\ModuleHadError\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\ModuleHadError",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\ModuleHadError\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\ModuleHadError",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "72eb59020be4acd7c922bcace0e43cca2d84fcd0b154300dac0e0206e757eb9a",
+  "Hash": "a382d6b61278770204e9d3bb3f927a0502d1815dacb1703318167efa69178c42",
   "IncomingVariablesRequired": {
     "module": "A variable to store the rendered error template."
   },

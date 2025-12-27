@@ -1,7 +1,6 @@
 {
   "GoalName": "GetSqlObject",
   "Comment": null,
-  "Text": "GetSqlObject",
   "GoalSteps": [
     {
       "Text": "filter %data.Parameters% where \"Name\"=\"sql\", extract \"Value\" property, get first item in list, write to %sql%",
@@ -92,7 +91,7 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "691450f84dcf90542eccfd2b8fa88b1756b5fd888f4004e2aced73757c7549af",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\DoStuff.goal",
       "UserIntent": null
     }
@@ -106,16 +105,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\DoStuff\\GetSqlObject\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\DoStuff\\GetSqlObject",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\DoStuff.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\DoStuff\\GetSqlObject\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\DoStuff\\GetSqlObject",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "2422e41f731446a6fe95b2f1519fc2acd976650fb577577fa0097845806af6ac",
+  "Hash": "b4eed2c0b63fc836c82d4008ce3ffd23223fb02fa3d7af0a55f9c0878cea0b19",
   "IncomingVariablesRequired": {
     "data": "An object containing Parameters, Name, and ReturnValues properties."
   },

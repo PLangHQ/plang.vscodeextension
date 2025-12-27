@@ -1,7 +1,6 @@
 {
   "GoalName": "GoalNotFound",
   "Comment": null,
-  "Text": "GoalNotFound",
   "GoalSteps": [
     {
       "Text": "render \"GoalNotFound.html\", write to %content%",
@@ -75,16 +74,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\GoalNotFound\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\GoalNotFound",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\GoalNotFound.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\GoalNotFound\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\GoalNotFound",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "b21b228244d692e508fc7ddf2466a4d01bea07237fde5ac065bff83fea4d06ca",
+  "Hash": "6ab59a28c208ce987e521da48299119c1a13c1e9ce522a2b7913210a33df7f5a",
   "IncomingVariablesRequired": {
     "\\%content\\%": "This variable is used to store the rendered HTML content for the 'GoalNotFound' page."
   },

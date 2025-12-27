@@ -24,6 +24,8 @@ import { PlangWebviewExecViewProvider } from './providers//PlangWebviewExecViewP
 import { GuiCustomEditorProvider } from './providers/GuiCustomEditorProvider';
 import { DebugAwareCodeLensProvider } from './providers/DebugAwareCodeLensProvider';
 import { ObjectValue } from './models/Models';
+import { StartDebuggerV2 } from './debugger/StartDebuggerV2';
+import { PlangBridge } from './PlangBridge';
 
 
 
@@ -43,6 +45,7 @@ let plangWebviewExecPath: PlangWebviewExecViewProvider;
 let guiEditor: GuiCustomEditorProvider;
 let llmDecoratorType: vscode.TextEditorDecorationType;
 let plangFolderPath : string;
+let plangBridge : PlangBridge;
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -57,12 +60,51 @@ export async function activate(context: vscode.ExtensionContext) {
     debugVariableHighlighter = new DebugVariableHighlighter();
     context.subscriptions.push(debugVariableHighlighter);
 
+  const lensProvider = new DebugAwareCodeLensProvider();
+    context.subscriptions.push(
+        vscode.languages.registerCodeLensProvider('goal', lensProvider)
+    );
+vscode.debug.onDidReceiveDebugSessionCustomEvent((e) => {
+        if (e.event === 'showLens') {
+            lensProvider.setShowLens(e.body.objectValue);
+        }
+    });
+
+    plangBridge = new PlangBridge();
+    plangBridge.start();
+
+
+  
+
+  let disposable = vscode.commands.registerCommand('plang.selectLLMService', async () => {
+        const options = ['Plang', 'OpenAI'];
+        const selected = await vscode.window.showQuickPick(options, {
+            placeHolder: 'Choose LLM code builder service',
+        });
+
+        if (selected) {
+            await vscode.workspace.getConfiguration().update('plang.llmservice', selected, vscode.ConfigurationTarget.Global);
+        }
+    });
+
+    context.subscriptions.push(disposable);
+     
+    // Hook into cursor position changes
+    vscode.window.onDidChangeTextEditorSelection((e) => {
+        if (e.textEditor.document.languageId === 'goal') {
+            plangBridge.onLineSelected(e.textEditor, e.selections[0].active.line);
+        }
+    });
+  /*
+  context.subscriptions.push(vscode.languages.registerCompletionItemProvider('goal', new PlangCompletionProvider(plangBridge), '%'));
+
+
     startDebugger = new StartDebugger(context);
 
     debugFactory = startDebugger.getDebugFactory();
     debugSession = debugFactory.debugSession!;
 
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('goal', new PlangCompletionProvider(debugSession), '%'));
+
 
     guiEditor = new GuiCustomEditorProvider(context);
     context.subscriptions.push(vscode.window.registerCustomEditorProvider(GuiCustomEditorProvider.viewType, guiEditor, {
@@ -70,19 +112,6 @@ export async function activate(context: vscode.ExtensionContext) {
         supportsMultipleEditorsPerDocument: false
     }));
 
-    const lensProvider = new DebugAwareCodeLensProvider();
-    context.subscriptions.push(
-        vscode.languages.registerCodeLensProvider('goal', lensProvider)
-    );
-
-
-     vscode.debug.onDidReceiveDebugSessionCustomEvent((e) => {
-        if (e.event === 'showLens') {
-            lensProvider.setShowLens(e.body.objectValue);
-        }
-    });
-
-  
 
     await setupServer();
     setupPlangServer().then(() => {
@@ -113,18 +142,8 @@ export async function activate(context: vscode.ExtensionContext) {
         console.error(e);
     });
 
-    let disposable = vscode.commands.registerCommand('plang.selectLLMService', async () => {
-        const options = ['Plang', 'OpenAI'];
-        const selected = await vscode.window.showQuickPick(options, {
-            placeHolder: 'Choose LLM code builder service',
-        });
+    
 
-        if (selected) {
-            await vscode.workspace.getConfiguration().update('plang.llmservice', selected, vscode.ConfigurationTarget.Global);
-        }
-    });
-
-    context.subscriptions.push(disposable);
 
     setupDebugger(context);
 
@@ -167,7 +186,27 @@ export async function activate(context: vscode.ExtensionContext) {
     }));
 
 
-    
+    // Initialize V2 debugger
+const startDebuggerV2 = new StartDebuggerV2(context);
+
+// Register command to start V2 debugger
+context.subscriptions.push(
+    vscode.commands.registerCommand('extension.runV2', () => {
+        startDebuggerV2.start();
+    })
+);
+
+context.subscriptions.push(
+    vscode.commands.registerCommand('extension.runGoalFileV2', async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const fileName = editor.document.fileName;
+            const basePath = PathHelper.getRootPath(fileName);
+            const relativePath = fileName.replace(basePath, '').replace(/^[\\\/]/, '');
+            await startDebuggerV2.start(relativePath);
+        }
+    })
+);
 
    
     llmDecoratorType = vscode.window.createTextEditorDecorationType({
@@ -201,10 +240,7 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     textDecoration = new TextDecoration(extContext);
-    /*
-    vscode.window.onDidChangeActiveTextEditor(loadGoal, null, context.subscriptions);
-    loadGoal();
-*/
+
     context.subscriptions.push(
         vscode.window.onDidChangeTextEditorSelection(event => {
             const editor = event.textEditor;
@@ -218,9 +254,11 @@ export async function activate(context: vscode.ExtensionContext) {
             }
         })
     );
-
+*/
 }
 
+
+/*
 
 function setupDebugger(context: vscode.ExtensionContext) {
 
@@ -233,7 +271,7 @@ function setupDebugger(context: vscode.ExtensionContext) {
         debugFactory.debugSession = undefined;
 
         console.log('Debug session ended');
-        plangWebviewExecPath.Clear();
+        //if (plangWebviewExecPath) plangWebviewExecPath.Clear();
         //}
     }));
 
@@ -399,7 +437,7 @@ async function findUsage() {
     if (step == null) {
         var specificPath = path.join(rootPath, '.build');
         const normalizedPath = specificPath.replace(/\\/g, '/');
-        const pattern = `${normalizedPath}/**/*.pr`;
+        const pattern = `${normalizedPath}/**.pr`;
         const files = await findPrFilesAtPath(specificPath);
         for (var i = 0; i < files.length; i++) {
             if (files[i].indexOf('00. Goal.pr') == -1) continue;
@@ -473,3 +511,4 @@ export async function setLlmRequest(variableName: string) {
     //editor.setDecorations(llmDecoratorType, ranges);
 
 }
+    */

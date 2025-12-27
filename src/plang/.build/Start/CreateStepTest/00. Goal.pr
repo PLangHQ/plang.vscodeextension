@@ -1,7 +1,7 @@
 {
   "GoalName": "CreateStepTest",
   "Comment": null,
-  "Text": "CreateStepTest",
+  "Version": 1,
   "GoalSteps": [
     {
       "Text": "run apps/Tests/CreateStepTest, goalPath=%request.goalPath%, stepPrFileName=%request.stepPrFileName%, output=\"html\"",
@@ -26,10 +26,10 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 34,
+      "LineNumber": 27,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "a02196940ac0787ad6774169e4bec8282e020ce7ebcf43569efe14fa817991ac",
+      "Hash": "4db7bf1571389c0063f11411a5067f70c818140ea9856dfe87e4d9bccd7d6a10",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\Start.goal",
       "UserIntent": null
@@ -40,25 +40,23 @@
   "Visibility": 0,
   "GoalFileName": "Start.goal",
   "PrFileName": "00. Goal.pr",
+  "PrPath": ".build\\Start\\CreateStepTest\\00. Goal.pr",
   "RelativeGoalPath": "\\Start.goal",
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\Start\\CreateStepTest\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\Start\\CreateStepTest",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\Start.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\Start\\CreateStepTest\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\Start\\CreateStepTest",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
   "BuilderVersion": "1.0.0.0",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "893b79b2a3373bd15c50577756d9b3eb70c8107e04226360a9b7365e1597165f",
+  "Hash": "8b17d2d6ae21160faee7dae4e698a7dfff77f5cc4b0478462d24c91f6a204b4e",
   "IncomingVariablesRequired": {
     "request.goalPath": "The path to the goal that needs to be tested.",
     "request.stepPrFileName": "The name of the step properties file that contains the test steps."
   },
   "DataSourceName": null,
   "IsSetup": false,
-  "IsEvent": false
+  "IsEvent": false,
+  "IsStart": true
 }

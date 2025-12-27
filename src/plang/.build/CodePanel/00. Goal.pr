@@ -1,7 +1,6 @@
 {
   "GoalName": "CodePanel",
   "Comment": null,
-  "Text": "CodePanel",
   "GoalSteps": [
     {
       "Text": "give file access to %request.body.appPath%",
@@ -15,7 +14,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-08-05T21:57:32.9885832+00:00",
       "WaitForExecution": true,
@@ -30,9 +29,9 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "826e786bfd6a7fe0f360a308c7e25aff35e6ced75f0708ac3d3b6a7e35e2526c",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Grant file system access permissions to the path specified in the variable %request.body.appPath%"
+      "UserIntent": null
     },
     {
       "Text": "read file %request.body.goalBuildPath%, write to %goal%\n    on error 'cannot be found', call LoadStepNotBuilt",
@@ -46,7 +45,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-08-05T21:57:47.4322569+00:00",
       "WaitForExecution": true,
@@ -76,9 +75,9 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "7a198cac8838e18c83738f4672ae3b29a66824b5b59f4016a7b541cd1a09ceb6",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Read the contents of a file specified by the variable %request.body.goalBuildPath% and store the contents into the variable %goal%. If the file cannot be found, handle the error by calling the LoadStepNotBuilt step."
+      "UserIntent": null
     },
     {
       "Text": "if %request.body.lineNumber% != -1 then call LoadStep, else LoadGoal",
@@ -92,7 +91,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-08-05T21:57:58.597851+00:00",
       "WaitForExecution": true,
@@ -107,9 +106,9 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "846334bef3cc98d5e39e3fca36ea3e9760e5cf5c63f64c6ddf893eec9116c477",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Conditionally execute a specific step or goal based on the value of the lineNumber in the request body"
+      "UserIntent": null
     },
     {
       "Text": "call goal HtmlOut",
@@ -156,9 +155,9 @@
     ".build\\CodePanel\\PLang.Modules.ConditionalModule\\00. Goal.pr",
     ".build\\CodePanel\\PLang.Modules.DbModule\\00. Goal.pr",
     ".build\\CodePanel\\PLang.Modules.FileModule\\00. Goal.pr",
-    ".build\\CodePanel\\HandleError\\00. Goal.pr",
     ".build\\CodePanel\\ErrorOnFile\\00. Goal.pr",
-    ".build\\CodePanel\\RenderModuleTypeForGoal\\00. Goal.pr"
+    ".build\\CodePanel\\RenderModuleTypeForGoal\\00. Goal.pr",
+    ".build\\CodePanel\\PLang.Modules.UiModule\\00. Goal.pr"
   ],
   "Description": "The CodePanel goal is designed to manage file access and processing based on the provided request parameters. It first grants access to a specified application path, then attempts to read a file from a given build path and writes its content to a variable named %goal%. If the file cannot be found, it triggers an error handling step called LoadStepNotBuilt. The goal then checks if the line number provided in the request is not equal to -1; if true, it calls LoadStep, otherwise, it proceeds to call LoadGoal. Finally, it invokes the goal HtmlOut to complete the process.",
   "Visibility": 1,
@@ -168,16 +167,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "9f05dcf1a405bcab20109339dfce0c1e544cd424d6c528cc648a80969aa5636b",
+  "Hash": "66f1e870dd35238a4c1a4eeea30e0c49d1927568abf72006c8af15cdc8ec064b",
   "IncomingVariablesRequired": {
     "request.body.appPath": "The path to the application that needs file access.",
     "request.body.goalBuildPath": "The path to the file that needs to be read and processed.",

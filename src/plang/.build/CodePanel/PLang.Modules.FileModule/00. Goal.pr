@@ -1,7 +1,6 @@
 {
   "GoalName": "PLang.Modules.FileModule",
   "Comment": null,
-  "Text": "PLang.Modules.FileModule",
   "GoalSteps": [
     {
       "Text": "filter %instruction% where \"Function.Parameters.Name\"=\"path\", get parent, first entry, write to %path%",
@@ -193,16 +192,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\PLang.Modules.FileModule\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\PLang.Modules.FileModule",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\PLang.Modules.FileModule\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\PLang.Modules.FileModule",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "12849a5c0d28c29e414bf55f021f608f06ba317fa5f26ea9a2425bb3dffd3520",
+  "Hash": "6a5f36ee3e846212fae7250b56ef95a3ead623c7211728d421e22e8b3844118d",
   "IncomingVariablesRequired": {
     "%instruction%": "The instruction containing the parameters to filter for the file path.",
     "%request.body.appPath%": "The application path from the request body used to construct the absolute file path.",

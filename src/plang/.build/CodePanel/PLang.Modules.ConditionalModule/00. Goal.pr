@@ -1,7 +1,6 @@
 {
   "GoalName": "PLang.Modules.ConditionalModule",
   "Comment": null,
-  "Text": "PLang.Modules.ConditionalModule",
   "GoalSteps": [
     {
       "Text": "render template \"/modules/PLang.Modules.CodeModule.html\", write to %module%",
@@ -44,16 +43,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\PLang.Modules.ConditionalModule\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\PLang.Modules.ConditionalModule",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\PLang.Modules.ConditionalModule\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\PLang.Modules.ConditionalModule",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "14bc24a31fd82636445bc153a5cb267f0aee7c06f6f2a150767dc8b0efec7ece",
+  "Hash": "87a08e8f7c66f5a1d29967df6f0670da22ecd83e662ec3338f1eb70ed7012771",
   "IncomingVariablesRequired": {
     "%module%": "A variable that will store the rendered output of the template."
   },

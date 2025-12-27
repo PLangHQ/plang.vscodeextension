@@ -1,7 +1,6 @@
 {
   "GoalName": "LoadStepInfo",
   "Comment": null,
-  "Text": "LoadStepInfo",
   "GoalSteps": [
     {
       "Text": "read file %request.body.appPath%/%step.RelativePrPath%, into %instruction%\n    on error key:\"FileNotFound\" call LoadStepNotBuilt",
@@ -15,7 +14,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-08-05T21:58:39.1576637+00:00",
       "WaitForExecution": true,
@@ -45,9 +44,9 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "0db9a957431dfb7779a05b54c8b2404cd7f055ee7d568d438db5768ed22d467f",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Read the contents of a file specified by a dynamic path and store it into a variable, with error handling for file not found"
+      "UserIntent": null
     },
     {
       "Text": "call goal %step.ModuleType%\n    on error key:'GoalNotFound' call WriteOut\n    on error call ModuleHadError",
@@ -212,16 +211,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\LoadStepInfo\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\LoadStepInfo",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\LoadStepInfo\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\LoadStepInfo",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "94209b2c020bc57ea76147b7dc12f1d9684d136ae16a04858b18b8d15f097b05",
+  "Hash": "0f5f1033f1898daaa8aff9ea5de11863b26f27d2b50b3f41ae1049335cdd562e",
   "IncomingVariablesRequired": {
     "%request.body.appPath%": "The base application path from which the step's relative path is derived.",
     "%step.RelativePrPath%": "The relative path of the step used to locate the instruction file.",

@@ -1,6 +1,4 @@
 {
-  "Hash": null,
-  "SignedMessage": null,
   "Text": "foreach %goalsToCall% call RenderModuleTypeForGoal item=%goalToCall%",
   "ModuleType": "PLang.Modules.LoopModule",
   "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
@@ -97,5 +95,9 @@
       ]
     },
     "ReturnValues": {}
-  }
+  },
+  "BuilderVersion": null,
+  "Hash": null,
+  "SignedMessage": null,
+  "LlmRequest": []
 }

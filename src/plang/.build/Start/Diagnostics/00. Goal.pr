@@ -1,7 +1,7 @@
 {
   "GoalName": "Diagnostics",
   "Comment": null,
-  "Text": "Diagnostics",
+  "Version": 1,
   "GoalSteps": [
     {
       "Text": "read llm/diagnosticsSystem.txt, write to %system%",
@@ -26,10 +26,10 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 18,
+      "LineNumber": 11,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "faa1f94cec7d1533ba9ad934f2b11913fdc56ed803e662eea7dd50225e108688",
+      "Hash": "b00203685f6c374b0d94e85377868fec27b7b9fad93ed5bce0511ff826860a76",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\Start.goal",
       "UserIntent": null
@@ -57,10 +57,10 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 1,
-      "LineNumber": 19,
+      "LineNumber": 12,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "8776360185fb02426a08e3935a0a0a88049e7f57423f70a44beccbfe5d49fac0",
+      "Hash": "7fe80919afeb236c54647feaf1e20f4c36783691d541d3b34f5a1b95e0d22e49",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\Start.goal",
       "UserIntent": null
@@ -79,7 +79,7 @@
       "RunOnce": false,
       "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-17T23:11:39.2675668+00:00",
+      "Generated": "2025-11-04T15:34:23.1110458+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -88,10 +88,10 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 2,
-      "LineNumber": 25,
+      "LineNumber": 18,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "a4eda2105c91cd992a3feb8f769793eb51c150611cbd7cc967f038e9cbfe5736",
+      "Hash": "9a3aa9231b0503bb99ccb1d77509017a6b5c876c511c590bd9bdabea63d72d14",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\Start.goal",
       "UserIntent": null
@@ -102,20 +102,17 @@
   "Visibility": 0,
   "GoalFileName": "Start.goal",
   "PrFileName": "00. Goal.pr",
+  "PrPath": ".build\\Start\\Diagnostics\\00. Goal.pr",
   "RelativeGoalPath": "\\Start.goal",
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\Start\\Diagnostics\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\Start\\Diagnostics",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\Start.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\Start\\Diagnostics\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\Start\\Diagnostics",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
   "BuilderVersion": "1.0.0.0",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "bfc9736ae82e7039a7f56bcf6be9664535ff85b7416ec633a389df8a47ee7e13",
+  "Hash": "a99ce1640d33f9156df5d7ecf4ef47407e2e454c177820b7e725ff082498c581",
   "IncomingVariablesRequired": {
     "request.stepText": "The text of the step request from the user.",
     "request.action": "The action that corresponds to the user's request.",
@@ -123,5 +120,6 @@
   },
   "DataSourceName": null,
   "IsSetup": false,
-  "IsEvent": false
+  "IsEvent": false,
+  "IsStart": true
 }

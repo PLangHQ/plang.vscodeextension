@@ -1,6 +1,4 @@
 {
-  "Hash": null,
-  "SignedMessage": null,
   "Text": "if %request.body.lineNumber% != -1 then call LoadStep, else LoadGoal",
   "ModuleType": "PLang.Modules.ConditionalModule",
   "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
@@ -56,5 +54,9 @@
       }
     },
     "ReturnValues": {}
-  }
+  },
+  "BuilderVersion": null,
+  "Hash": null,
+  "SignedMessage": null,
+  "LlmRequest": []
 }

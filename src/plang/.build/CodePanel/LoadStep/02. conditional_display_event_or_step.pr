@@ -1,6 +1,4 @@
 {
-  "Hash": null,
-  "SignedMessage": null,
   "Text": "if %step.EventBinding% is not empty then, DisplayEvent, else call DisplayStep",
   "ModuleType": "PLang.Modules.ConditionalModule",
   "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
@@ -94,5 +92,9 @@
       ]
     },
     "ReturnValues": {}
-  }
+  },
+  "BuilderVersion": null,
+  "Hash": null,
+  "SignedMessage": null,
+  "LlmRequest": []
 }

@@ -1,7 +1,6 @@
 {
   "GoalName": "BuilderEvents",
   "Comment": null,
-  "Text": "BuilderEvents",
   "GoalSteps": [
     {
       "Text": "before builder ends, call goal CopyFiles",
@@ -18,7 +17,7 @@
       "RunOnce": false,
       "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-08-06T17:53:57.6369354+00:00",
+      "Generated": "2025-11-04T15:32:36.6078067+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -54,13 +53,14 @@
         "IncludeOsGoals": false,
         "IsOnStep": false,
         "Id": "Before_Goal_builder_CopyFiles_False___True__False_____False",
-        "UniqueId": "9f4cfbd9-321e-4bb0-8624-aaf33a29fc86",
+        "UniqueId": "bec36071-4e57-41a4-9d5b-53a6b87c82a4",
         "Goal": null,
         "GoalStep": null,
         "Instruction": null,
         "Stopwatch": null,
         "SourceGoal": null,
-        "SourceStep": null
+        "SourceStep": null,
+        "IsSystem": false
       },
       "IsEvent": true,
       "Hash": null,
@@ -91,7 +91,7 @@
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": null,
+  "Hash": "e56ce6db99b45ba420ceeebebe569794b8b8505dfcda133a70dfd6a7b661bba6",
   "IsSystem": false,
   "UniqueId": null,
   "CurrentStepIndex": 0,

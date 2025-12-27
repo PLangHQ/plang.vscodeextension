@@ -1,7 +1,6 @@
 {
   "GoalName": "LoadStep",
   "Comment": null,
-  "Text": "LoadStep",
   "GoalSteps": [
     {
       "Text": "filter %goal% where \"GoalSteps.LineNumber\" = %request.body.lineNumber%, extract parent, first item, write to %step%",
@@ -15,7 +14,7 @@
       "Indent": 0,
       "Execute": true,
       "RunOnce": false,
-      "Confidence": "Very High",
+      "Confidence": null,
       "Inconsistency": null,
       "Generated": "2025-08-05T21:58:16.5808885+00:00",
       "WaitForExecution": true,
@@ -30,9 +29,9 @@
       "EventBinding": null,
       "IsEvent": false,
       "Hash": "9606d1be7c8ea9f0e8c584b24963710ab58684a049d992820283f42c854c8983",
-      "BuilderVersion": "1.0.0.0",
+      "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": "Filter the 'goal' list to find the step with a specific line number, then extract the parent of that step and store the first such item in the 'step' variable"
+      "UserIntent": null
     },
     {
       "Text": "if %step.EventBinding% is not empty then, DisplayEvent, else call DisplayStep",
@@ -75,16 +74,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\LoadStep\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\LoadStep",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\LoadStep\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\LoadStep",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "01b82ea30d79fedb5a785f181a4de2db4c943ac9ec400e5aecf1a03239309f9e",
+  "Hash": "8b09e26933b5c8c32297dc50efceef451bc96783d9da86cac592044c0788f18b",
   "IncomingVariablesRequired": {
     "%goal%": "The goal to be filtered based on the line number.",
     "%request.body.lineNumber%": "The line number from the request body used to filter the goal.",

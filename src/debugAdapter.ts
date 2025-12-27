@@ -229,7 +229,7 @@ export class GoalDebugSession extends DebugSession {
         this.stopOnNext = false;
         this.nextStepFile = this.editor?.document.fileName;
 
-        if (!(this.httpResponse! as any).closed) {
+        if (this.httpResponse && !(this.httpResponse! as any).closed) {
             if (!obj) obj = {};
             obj.ok = true;
             let responseObj = JSON.stringify(obj);
@@ -358,13 +358,16 @@ export class GoalDebugSession extends DebugSession {
             if (error != null && error != '' && error != '%!error%' && error.Id != this.lastErrorId) {
                 this.lastErrorId = error.Id;
                 this.diagnosticCollection.clear();
-
+                try {
                 var rootPath = this.goal.AbsoluteAppStartupFolderPath;
                 this.httpResponse = res;
 
                 await this.setupErrorBreakpoint(rootPath, error);
-
                 return true;
+                } catch (e) {
+                    console.error(e);
+                }
+                
             } else {
 
                 if (!this.stopOnNext && data["line"]) {
@@ -375,6 +378,7 @@ export class GoalDebugSession extends DebugSession {
                         && bp.enabled && bp.location.range.start.line == (line - 1) &&
                         path.normalize(bp.location.uri.fsPath).toLowerCase() === goalFilePath
                     ) as vscode.SourceBreakpoint[];
+                    console.log("goalFilePath" + goalFilePath);
                     res.send('{"continue":' + (fileBreakpoints.length > 0) + '}');
                     return;
                 }
@@ -460,8 +464,12 @@ export class GoalDebugSession extends DebugSession {
         //vscode.debug.addBreakpoints([bp]);
 
         let errorMessage = error.MessageOrDetail;
-        if (!errorMessage && error.Exception.Message) {
-            errorMessage = error.Exception.Message;
+        if (!errorMessage) {
+            if (error.Exception && error.Exception.Message) {
+                errorMessage = error.Exception.Message;
+            } else {
+                errorMessage = error.Message;
+            }
         }
 
         const diagnostic = new vscode.Diagnostic(
@@ -530,14 +538,19 @@ this.stopOnNext = true;
             if (diagnostic && diagnostic.length > 0 && diagnostic[0].range.start.line == (args as any).line - 1) {
                 let diagnosticMessage = diagnostic[0].message;
                 diagnosticMessage += diagnostic[0].relatedInformation?.map(d => d.message).join("\n");
+                
+                let step = this.data["!Step"];
+                if (!step) return;
+
+                this.stepAbsolutePath = step.AbsolutePrFilePath;
                 if (!this.stepAbsolutePath) return;
 
                 const data = fs.readFileSync(this.stepAbsolutePath).toString();
                 let prFile = JSON.parse(data) as any;
 
-                var result = await PlangHelper.Call('diagnostics', { error: diagnosticMessage, stepText: this.step.Text, action: prFile.Action });
+               // var result = await PlangHelper.Call('diagnostics', { error: diagnosticMessage, stepText: this.step.Text, action: prFile.Action });
                 response.body = {
-                    result: " ❌ ERROR\n\t" + diagnosticMessage + "\n 💡 HINT\n\t" + Util.wrapText(result.trim()),
+                    result: " ❌ ERROR\n\t" + diagnosticMessage.trim(),
                     variablesReference: 0
                 };
                 this.sendResponse(response);
@@ -711,6 +724,9 @@ this.stopOnNext = true;
     loadVariableReferences() {
 
         var memoryStack = this.data["!MemoryStack"];
+        if (typeof memoryStack == 'string') {
+            memoryStack = JSON.parse(memoryStack);
+        }
         this.addMemoryStack(memoryStack);
 
         var error = this.data["!Error"];

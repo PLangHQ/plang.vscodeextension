@@ -1,7 +1,7 @@
 {
   "GoalName": "RenderModuleTypeForGoal",
   "Comment": null,
-  "Text": "RenderModuleTypeForGoal",
+  "Version": 1,
   "GoalSteps": [
     {
       "Text": "if %goalToCall.Value.Path% is not empty then",
@@ -35,23 +35,40 @@
       "UserIntent": null
     },
     {
-      "Text": "read file %request.body.appPath%/%goalToCall.Value.Path%, write to %goalToCallPr%",
+      "Text": "read file %request.body.appPath%/%goalToCall.Value.Path%, write to %goalToCallPr%\n        on error 404 call GoalToCallNotFound",
       "Comment": null,
       "ModuleType": "PLang.Modules.FileModule",
-      "Name": "read_file_to_variable",
-      "Description": "Construct the file path by combining the value of %request.body.appPath% and %goalToCall.Value.Path%, then read the file content at that path and store the content into the variable %goalToCallPr% for further use.",
-      "PrFileName": "02. read_file_to_variable.pr",
-      "RelativePrPath": ".build\\CodePanel\\RenderModuleTypeForGoal\\02. read_file_to_variable.pr",
+      "Name": "read_file_with_error_handling",
+      "Description": "Read the file located at the path composed of %request.body.appPath% and %goalToCall.Value.Path%, then write the file content to the variable %goalToCallPr%. If a 404 error occurs (file not found), call the goal named GoalToCallNotFound to handle this error.",
+      "PrFileName": "02. read_file_with_error_handling.pr",
+      "RelativePrPath": ".build\\CodePanel\\RenderModuleTypeForGoal\\02. read_file_with_error_handling.pr",
       "InstructionHash": null,
       "Indent": 4,
       "Execute": false,
       "RunOnce": false,
-      "Confidence": null,
+      "Confidence": "Very High",
       "Inconsistency": null,
-      "Generated": "2025-08-05T21:59:06.5140789+00:00",
+      "Generated": "2025-12-17T13:40:55.9159802+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
-      "ErrorHandlers": null,
+      "ErrorHandlers": [
+        {
+          "IgnoreError": false,
+          "Message": null,
+          "StatusCode": 404,
+          "Key": null,
+          "GoalToCall": {
+            "Path": ".build\\CodePanel\\GoalToCallNotFound\\00. Goal.pr",
+            "Name": "GoalToCallNotFound",
+            "Parameters": {},
+            "IsAsync": false,
+            "WaitBeforeExecutingInMs": 0,
+            "AfterExecution": null
+          },
+          "RetryHandler": null,
+          "RunRetryBeforeCallingGoalToCall": false
+        }
+      ],
       "Retry": false,
       "RetryCount": 1,
       "CacheHandler": null,
@@ -60,10 +77,10 @@
       "LineNumber": 64,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "995bbb56c8667294dee313dcfb9f9a589737015688713388523006ded763b05d",
+      "Hash": "8ec980c04ee29dc8aaa4cb29dfe8918637e0e3d15ec77afd6839df5e3d8e5dbe",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
-      "UserIntent": null
+      "UserIntent": "Read the content of a file from a specified path and store it in a variable, with error handling for file not found"
     },
     {
       "Text": "render template \"/modules/CallGoalInfo.html\", write to %render%",
@@ -88,10 +105,10 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 2,
-      "LineNumber": 65,
+      "LineNumber": 66,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "a3b26d3b1976cbd0695dadd4e1c83ed83b610b916897a97b78e44cdaa6068f67",
+      "Hash": "fb9d3f89752fe8bee24127f1e5751862764c2c8dd21124b848ed175dd8852867",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
       "UserIntent": null
@@ -119,42 +136,40 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 3,
-      "LineNumber": 66,
+      "LineNumber": 67,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "3b13c089469f3d8f4f0b15ec7947992b8060b4f6fd760c15a730ddb9bb1e4113",
+      "Hash": "62bedd1a1d1b5da099b99f3f5d66e92dcc933cea0dd71f92485ae08a34b72c49",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
       "UserIntent": null
     }
   ],
   "SubGoals": [],
-  "Description": "The RenderModuleTypeForGoal goal checks if the path of the goal to call is not empty. If it is not empty, it reads a file from a specified path, renders a template, and appends the rendered content to a module variable.",
+  "Description": "The RenderModuleTypeForGoal is designed to render a module type based on a specified goal. It first checks if the path of the goal to call is not empty. If it is not empty, it attempts to read a file from the specified application path and the goal's path, writing the content to a variable. If the file is not found (error 404), it calls another goal to handle the not found case. Next, it renders a specific template and writes the output to a render variable. Finally, it appends the rendered content to a module variable.",
   "Visibility": 0,
   "GoalFileName": "CodePanel.goal",
   "PrFileName": "00. Goal.pr",
+  "PrPath": ".build\\CodePanel\\RenderModuleTypeForGoal\\00. Goal.pr",
   "RelativeGoalPath": "\\CodePanel.goal",
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\RenderModuleTypeForGoal\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\RenderModuleTypeForGoal",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\RenderModuleTypeForGoal\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\RenderModuleTypeForGoal",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
   "BuilderVersion": "1.0.0.0",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "59e125780c1bd0bf1cc51add8b6bdd2a74489565b415cbcf58bf4563b3ed48cb",
+  "Hash": "11ff882c0f66bf31d8f8b8e4d0edf534263c3530b0ac2df0a4a25c4b476c191e",
   "IncomingVariablesRequired": {
-    "%goalToCall.Value.Path%": "The path of the goal to call, which should not be empty to proceed with the steps.",
-    "%request.body.appPath%": "The base application path used to construct the full file path for reading.",
-    "%goalToCallPr%": "A variable to store the content read from the specified file.",
-    "%render%": "A variable to store the rendered template content.",
-    "%module%": "A variable to which the rendered content will be appended."
+    "goalToCall.Value.Path": "The path of the goal to call, which should not be empty to proceed with the execution.",
+    "request.body.appPath": "The base application path from which the file will be read.",
+    "goalToCallPr": "A variable to store the content read from the specified file.",
+    "render": "A variable to store the rendered template output.",
+    "module": "A variable to which the rendered content will be appended."
   },
   "DataSourceName": null,
   "IsSetup": false,
-  "IsEvent": false
+  "IsEvent": false,
+  "IsStart": false
 }

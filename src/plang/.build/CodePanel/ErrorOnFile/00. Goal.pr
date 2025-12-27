@@ -1,7 +1,6 @@
 {
   "GoalName": "ErrorOnFile",
   "Comment": null,
-  "Text": "ErrorOnFile",
   "GoalSteps": [
     {
       "Text": "write out %!error.Message%",
@@ -17,7 +16,7 @@
       "RunOnce": false,
       "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-18T14:06:08.5638501+00:00",
+      "Generated": "2025-11-04T15:33:11.4919471+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -29,7 +28,7 @@
       "LineNumber": 60,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "4dbddff8382c3267582b897e35b31fc151a6ede7bf3738a5a9ab3a4556cf4f18",
+      "Hash": "078c117a62b9e88e585fc7fea038c22b863f1ee544c732268907160c9fe31f0a",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
       "UserIntent": null
@@ -44,16 +43,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\ErrorOnFile\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\ErrorOnFile",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\ErrorOnFile\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\ErrorOnFile",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "12a757756d4a512c63adef871fa0e4d206516de80d5181892975dac55562f71e",
+  "Hash": "bd67fd43b5ecd4ad20f79d8339e03ada7dd3109d18dc2d3b4313a85fe8c57dcb",
   "IncomingVariablesRequired": {
     "!error.Message": "The message that describes the error that occurred."
   },

@@ -1,18 +1,11 @@
 Start
-- start webserver, port: 60878, on start call SetupRoutes
-- write out "plang server started at 60878"
+- [out] set system output config content type=%!system.output%
+- listen to stdin, call ParseMessage
+- write out "Plang IDE started"
 
-SetupRoutes
-- add route "/diagnostics", POST, call Diagnostics
-- add route "/runtest", POST, call RunTest
-- add route "/CreateStepTest", POST, call CreateStepTest
-- add route "/CodePanel", POST, call CodePanel
-- add route "/ChatPanel", POST, call ChatPanel
-- add route "/GoalNotFound", POST, call GoalNotFound
-- add route "/ExecutionPath", POST, call ExecutionPath
-- add route "/RenderLlm", POST, call RenderLlm
-- add route "/Gui", POST, call Gui
-
+ParseMessage
+- if %message.type% == "call" then
+    - call goal %message.goalToCall.Name% %message.goalToCall.Parameters%
 
 Diagnostics
 - read llm/diagnosticsSystem.txt, write to %system%

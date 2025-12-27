@@ -1,6 +1,4 @@
 {
-  "Hash": null,
-  "SignedMessage": null,
   "Text": "call goal HtmlOut",
   "ModuleType": "PLang.Modules.CallGoalModule",
   "GenericFunctionType": "PLang.Modules.BaseBuilder+GenericFunction",
@@ -80,5 +78,9 @@
       ]
     },
     "ReturnValues": {}
-  }
+  },
+  "BuilderVersion": null,
+  "Hash": null,
+  "SignedMessage": null,
+  "LlmRequest": []
 }

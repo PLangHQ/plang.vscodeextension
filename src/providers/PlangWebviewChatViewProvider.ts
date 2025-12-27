@@ -83,6 +83,8 @@ export class PlangWebviewChatViewProvider implements vscode.WebviewViewProvider 
         if (!this._view) return;
 
         var [goal, step] = this.goalParser.getStepAndGoal()
+        if (!goal) return;
+        
         let lineNumber = (step) ? step.LineNumber : -1;
     
         var html = await PlangHelper.Call('ChatPanel', {currrentFile: goal.AbsoluteGoalFolderPath });

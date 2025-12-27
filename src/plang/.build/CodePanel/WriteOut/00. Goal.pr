@@ -1,7 +1,6 @@
 {
   "GoalName": "WriteOut",
   "Comment": null,
-  "Text": "WriteOut",
   "GoalSteps": [
     {
       "Text": "write out to system \"Not found: %step.ModuleType%\"",
@@ -17,7 +16,7 @@
       "RunOnce": false,
       "Confidence": null,
       "Inconsistency": null,
-      "Generated": "2025-07-18T14:05:53.6943807+00:00",
+      "Generated": "2025-11-04T15:33:04.9367539+00:00",
       "WaitForExecution": true,
       "LoggerLevel": null,
       "ErrorHandlers": null,
@@ -29,7 +28,7 @@
       "LineNumber": 39,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "fff0f5e2670234ad2a2e684ba926ce5ab6d05305f02205ab488aeea109c89e85",
+      "Hash": "057ff3d57bc6ee3712f36c78a6ef0bd3e0c4f6446ee962ae7fa225a623f030eb",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\CodePanel.goal",
       "UserIntent": null
@@ -44,16 +43,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\WriteOut\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\WriteOut",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\WriteOut\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\WriteOut",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "a28d74c57450b48c3fbba1a0834aed1a3189f15b3d209e082db01d24af81d91b",
+  "Hash": "5ea528884ba00524ab777d2984dfb54d082731c807776fea741b5e8cc0c7c023",
   "IncomingVariablesRequired": {
     "step.ModuleType": "The type of the module that is being referenced, which should be provided to indicate which module was not found."
   },

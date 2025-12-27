@@ -1,7 +1,6 @@
 {
   "GoalName": "PLang.Modules.CodeModule",
   "Comment": null,
-  "Text": "PLang.Modules.CodeModule",
   "GoalSteps": [
     {
       "Text": "render template \"/modules/%step.ModuleType%.html\", write to %module%",
@@ -44,16 +43,12 @@
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\CodePanel\\PLang.Modules.CodeModule\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\CodePanel\\PLang.Modules.CodeModule",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\CodePanel.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\PLang.Modules.CodeModule\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\CodePanel\\PLang.Modules.CodeModule",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
-  "BuilderVersion": "1.0.0.0",
+  "BuilderVersion": "0.1.18.1",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "787695eeeec6f81957e786aae760887a185ebdb9ac84b31ac1ce63fc3add2248",
+  "Hash": "cef00a51cc912082990bfe48f9484be8229a865599638fc5d774f78c170ac69b",
   "IncomingVariablesRequired": {
     "step.ModuleType": "A string that specifies the type of module to be rendered in the template."
   },

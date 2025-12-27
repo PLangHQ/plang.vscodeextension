@@ -1,7 +1,7 @@
 {
   "GoalName": "RunTest",
   "Comment": null,
-  "Text": "RunTest",
+  "Version": 1,
   "GoalSteps": [
     {
       "Text": "load plang step from %goalPath%, %stepPrFileName%, write to %step%",
@@ -26,10 +26,10 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 0,
-      "LineNumber": 28,
+      "LineNumber": 21,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "88ec01164dbdd25fa1ef5f270259fa16a2df75c39e89b1225a7a2b7d24b1cf49",
+      "Hash": "0b6c35f11e4c71a0502d00954d9f7007f2fa88fcabeb9da4a6a45ed4ce69069e",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\Start.goal",
       "UserIntent": null
@@ -57,10 +57,10 @@
       "CacheHandler": null,
       "CancellationHandler": null,
       "Number": 1,
-      "LineNumber": 29,
+      "LineNumber": 22,
       "EventBinding": null,
       "IsEvent": false,
-      "Hash": "0aba0be24fe09e9031d78c6da4cc8af964512b133bb6e40eb565e47dcde5290b",
+      "Hash": "5a0ef7b1deb728321039ac56cce3f2639455a97c02d0fa871a57ba72ffbae904",
       "BuilderVersion": null,
       "RelativeGoalPath": "\\Start.goal",
       "UserIntent": null
@@ -71,20 +71,17 @@
   "Visibility": 0,
   "GoalFileName": "Start.goal",
   "PrFileName": "00. Goal.pr",
+  "PrPath": ".build\\Start\\RunTest\\00. Goal.pr",
   "RelativeGoalPath": "\\Start.goal",
   "RelativeGoalFolderPath": "\\",
   "RelativePrPath": ".build\\Start\\RunTest\\00. Goal.pr",
   "RelativePrFolderPath": ".build\\Start\\RunTest",
-  "AbsoluteGoalPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\Start.goal",
-  "AbsolutePrFilePath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\Start\\RunTest\\00. Goal.pr",
-  "AbsolutePrFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang\\.build\\Start\\RunTest",
-  "AbsoluteAppStartupFolderPath": "C:\\Users\\Ingi Gauti\\source\\repos\\plang.vscodeextension\\src\\plang",
   "RelativeAppStartupFolderPath": null,
   "BuilderVersion": "1.0.0.0",
   "GoalInfo": null,
   "Injections": [],
   "Signature": null,
-  "Hash": "af56936ecacb9f86fe49c11dbf32fbc78f87385f994704ea8f55db699fec3103",
+  "Hash": "0843c60e0e182800f51a06eff482784201cb7e6bf9f1bfd29d0fb1f01f80734f",
   "IncomingVariablesRequired": {
     "goalPath": "The path where the Plang step is located.",
     "stepPrFileName": "The name of the file containing the Plang step.",
@@ -92,5 +89,6 @@
   },
   "DataSourceName": null,
   "IsSetup": false,
-  "IsEvent": false
+  "IsEvent": false,
+  "IsStart": true
 }

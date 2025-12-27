@@ -59,6 +59,14 @@ export class GoalParser {
                 i =  goal.GoalSteps.length;
             }
         }*/
+        for (let i=0;i < goal.GoalSteps.length;i++) {
+            if (goal.GoalSteps[i].LineNumber == lineNr2+1 && goal.GoalSteps[i].Text.indexOf(stepText.trim()) != -1) {
+                nr = (i + 1).toString().padStart(2, '0');
+                step = goal.GoalSteps[i];
+                i = goal.GoalSteps.length;
+            }
+        }
+
         for (let i = 0; !step && stepText != '' && i < goal.GoalSteps.length; i++) {
             try {
                 
@@ -145,11 +153,13 @@ export class GoalParser {
                     line = editor.document.lineAt(i);
                     if (line.text.trim().startsWith('-')) {
                         i = editor.document.lineCount;
-                    } else if (!line.text.match('[^\w]+')) {
+                    } else if (line.text.match('[^\w]+')) {
                         i = editor.document.lineCount;
                     } else {
                         if (line.text.startsWith('/')) break;
-                        stepText += '\n' + line.text;
+                        if (line.text.trim() != '') {
+                            stepText += '\n' + line.text;
+                        }
                     }
                 }
                 return [stepText.replace('-', '').trim(), lineNumber];

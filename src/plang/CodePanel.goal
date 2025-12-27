@@ -62,5 +62,19 @@ ErrorOnFile
 RenderModuleTypeForGoal
 - if %goalToCall.Value.Path% is not empty then
     - read file %request.body.appPath%/%goalToCall.Value.Path%, write to %goalToCallPr%
+        on error 404 call GoalToCallNotFound
     - render template "/modules/CallGoalInfo.html", write to %render%
     - append string %render% to %module%
+
+
+PLang.Modules.UiModule
+- filter %instruction% where "Function.Name"="RenderTemplate", get parent, first entry, write to %function%
+- if %function.IsTemplateFile% is true then
+    - read file %request.body.appPath%/%goalToCall.Value.Path%, write to %goalToCallPr%
+    - render template "/modules/CallGoalInfo.html", write to %render%
+    - append string %render% to %module%
+
+
+GoalToCallNotFound
+- append "Could not find %goalToCall.Value.Path%" to %module%
+- end goal and previous
